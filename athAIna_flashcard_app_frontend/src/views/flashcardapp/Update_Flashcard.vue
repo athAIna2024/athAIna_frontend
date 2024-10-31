@@ -7,7 +7,7 @@ export default {
 <template>
   <div class="">
     Update flashcard is just the same with create flashcard so once you finished doing it, you can just copy the template and change
-    the form method to PUT
+    the form method to PUT or whatever it is acceptable for Vue.js
     Refer to 4.5 Update Flashcards in Figma
   </div>
 </template>

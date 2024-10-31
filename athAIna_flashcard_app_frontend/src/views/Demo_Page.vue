@@ -1,13 +1,12 @@
 <script>
 export default {
-  name: 'Forgot_Password',
+  name: 'Demo_Page',
 };
 </script>
 
 <template>
   <div class="">
-    Forgot Password
-    Refer to 5.7 Forget password in Figma
+    Demo Page
   </div>
 </template>
 

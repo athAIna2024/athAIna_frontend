@@ -1,13 +1,13 @@
 <script>
 export default {
-  name: 'Forgot_Password',
+  name: 'View_Learning_Progress',
 };
 </script>
 
 <template>
   <div class="">
-    Forgot Password
-    Refer to 5.7 Forget password in Figma
+    View Learning Progress
+    Refer to 6.1 View Learning Progress in Figma
   </div>
 </template>
 

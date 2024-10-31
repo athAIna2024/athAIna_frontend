@@ -1,13 +1,13 @@
 <script>
 export default {
-  name: 'Forgot_Password',
+  name: 'Subject_Selector',
 };
 </script>
 
 <template>
   <div class="">
-    Forgot Password
-    Refer to 5.7 Forget password in Figma
+    Subject selector for studyset
+    Refer to 4.13 in Figma
   </div>
 </template>
 

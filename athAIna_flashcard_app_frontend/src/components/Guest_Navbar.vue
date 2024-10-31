@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'Navbar',
+  name: 'Guest_Navbar',
 };
 </script>
 

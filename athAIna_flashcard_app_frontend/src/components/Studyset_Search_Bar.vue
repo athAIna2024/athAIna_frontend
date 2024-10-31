@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div class="">
-    Search bar for studysets
+    Search bar for studyset
   </div>
 </template>
 
