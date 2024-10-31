@@ -1,13 +1,12 @@
 <script>
 export default {
-  name: 'Create_Studyset',
+  name: 'Flashcard_Search_Bar',
 };
 </script>
 
 <template>
   <div class="">
-    Create Studyset Form
-    Refer to 4.8 Create Studyset in Figma
+    Search bar for flashcards
   </div>
 </template>
 

@@ -1,13 +1,12 @@
 <script>
 export default {
-  name: 'Create_Flashcard',
+  name: 'Generate_Flashcard_with_AI.vue',
 };
 </script>
 
 <template>
   <div class="">
-    Create Flashcard Form
-    Refer to 4.1 Create flashcards manually in Figma
+    Refer to 4.2 AI Flashcard Generation
   </div>
 </template>
 

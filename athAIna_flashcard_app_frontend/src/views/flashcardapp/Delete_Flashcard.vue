@@ -1,13 +1,13 @@
 <script>
 export default {
-  name: 'Create_Studyset',
+  name: 'Delete_Flashcard',
 };
 </script>
 
 <template>
   <div class="">
-    Create Studyset Form
-    Refer to 4.8 Create Studyset in Figma
+    Delete Flashcard Base Modal
+    Refer to 4.7 Create flashcards manually in Figma
   </div>
 </template>
 
