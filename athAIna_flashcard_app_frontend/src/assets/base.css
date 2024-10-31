@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    * {
+        @apply p-0;
+        @apply m-0;
+        @apply box-border;
+
+    }
+    body {
+        @apply text-athAIna-base;
+        @apply text-athAIna-violet;
+
+        @apply max-w-screen-xl;
+        @apply mx-auto;
+    }
+
+
+}
+
+@layer components {
+    .btn {
+        @apply bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
+        @apply text-athAIna-white;
+        @apply font-bold;
+
+        @apply py-2.5;
+        @apply rounded-full;
+        @apply w-32;
+
+    }
+
+    .btn:hover {
+        @apply transition-all duration-300;
+        @apply opacity-80;
+    }
+}
