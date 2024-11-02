@@ -48,8 +48,6 @@ export default {
   <div class="">
     Grid Library of Flashcards
   </div>
-  <Flashcard_Search_Bar />
-  <Flashcard_Card />
   <div class="flex flex-row justify-between">
     <h1 class="text-AthMagenta p-10"> Networking </h1>
     <div class="p-10">
