@@ -1,6 +1,11 @@
 <script>
 export default {
   name: 'Flashcard_Search_Bar',
+  data() {
+    return {
+      input: ''
+    }
+  }
 };
 </script>
 
