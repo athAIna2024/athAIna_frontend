@@ -25,11 +25,13 @@ export default {
     </div>
   </div>
   <div class="border-athAIna-red border-2 rounded-lg grid grid-cols-3">
+    <ul>
     <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
       <router-link :to="{ name: 'flashcard-detail', params: { id: flashcard.id } }">
         <Flashcard_Card />
       </router-link>
     </li>
+    </ul>
     <div class="item error" v-if="input&&!filteredList().length">
       <p>No results found!</p>
     </div>
