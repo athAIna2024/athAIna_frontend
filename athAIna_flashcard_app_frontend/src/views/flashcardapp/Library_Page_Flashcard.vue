@@ -30,9 +30,16 @@ export default {
           answer: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.',
           category: 'Networking'
         }]
+    };
+  },
+  methods: {
+    filteredList() {
+      return this.flashcards.filter(flashcard => {
+        return flashcard.question.toLowerCase().includes(this.input.toLowerCase());
+      });
     }
   }
-}
+};
 </script>
 
 <template>
