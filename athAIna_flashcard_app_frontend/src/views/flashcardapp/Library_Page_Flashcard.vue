@@ -24,7 +24,7 @@ export default {
       <button class="mx-10">Add flashcard</button>
     </div>
   </div>
-  <div class="border border-athAIna-red border-2 rounded-lg grid grid-cols-3">
+  <div class="border-athAIna-red border-2 rounded-lg grid grid-cols-3">
     <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
       <router-link :to="{ name: 'flashcard-detail', params: { id: flashcard.id } }">
         <Flashcard_Card />
