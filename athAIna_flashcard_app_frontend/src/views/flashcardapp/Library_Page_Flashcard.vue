@@ -5,23 +5,33 @@ import Flashcard_Card from "@/components/Flashcard_Card.vue";
 export default {
   name: 'Library_Page_Flashcard',
   components: {Flashcard_Search_Bar, Flashcard_Card},
-};
-
-const flashcards = [
-  { id: 1, question: 'What is a network?', answer: 'A network is a collection of computers, servers, mainframes, network devices, and other devices connected to one another to allow the sharing of data.' },
-  { id: 2, question: 'What is a router?' },
-  { id: 3, question: 'What is a switch?' },
-  { id: 4, question: 'What is a hub?' },
-  { id: 5, question: 'What is a firewall?' },
-  { id: 6, question: 'What is a VPN?' },
-  { id: 7, question: 'What is a DNS?' },
-  { id: 8, question: 'What is a DHCP?' },
-  { id: 9, question: 'What is a NAT?' },
-  { id: 10, question: 'What is a subnet?' },
-]
-
-function filteredList() {
-  return flashcards.filter(flashcard => flashcard.question.toLowerCase().includes(input.value.toLowerCase()));
+  data() {
+    return {
+      input: '',
+      flashcards: [
+        {
+          id: 1,
+          question: 'What is a network?',
+          answer: 'A network is a collection of computers, servers, mainframes, network devices, and other devices connected to one another to allow the sharing of data.',
+          category: 'Networking'
+        }, {
+          id: 2,
+          question: 'What is a router?',
+          answer: 'A router is a networking device that forwards data packets between computer networks.',
+          category: 'Networking'
+        }, {
+          id: 3,
+          question: 'What is a switch?',
+          answer: 'A switch is a device that connects devices together on a computer network by using packet switching to receive, process, and forward data to the destination device.',
+          category: 'Networking'
+        }, {
+          id: 4,
+          question: 'What is a firewall?',
+          answer: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.',
+          category: 'Networking'
+        }]
+    }
+  }
 }
 </script>
 
