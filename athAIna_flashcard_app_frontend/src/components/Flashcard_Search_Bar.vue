@@ -11,7 +11,7 @@ export default {
 
 <template>
   <div class="">
-  <input type="text" v-model="input" class="border border-AthMagenta border-2 rounded-lg p-2" placeholder="Search flashcards">
+  <input type="text" v-model="input" class="border-2 border-AthMagenta rounded-lg p-2" placeholder="Search flashcards">
   </div>
 </template>
 
