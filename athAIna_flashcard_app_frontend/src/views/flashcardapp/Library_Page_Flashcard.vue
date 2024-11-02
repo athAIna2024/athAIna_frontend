@@ -59,7 +59,7 @@ export default {
   <div class="border-athAIna-red border-2 rounded-lg grid grid-cols-3">
     <ul>
       <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
-        <router-link :to="{ name: 'flashcard-detail', params: { id: flashcard.id } }">
+        <router-link :to="{ name: 'flashcard_card', params: { id: flashcard.id } }">
           <Flashcard_Card />
         </router-link>
       </li>
