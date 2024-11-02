@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div class="">
-    Search bar for flashcards
+  <input type="text" v-model="input" class="border border-AthMagenta border-2 rounded-lg p-2" placeholder="Search flashcards">
   </div>
 </template>
 
