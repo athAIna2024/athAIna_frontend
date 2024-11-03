@@ -1,6 +1,7 @@
 <script>
 import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
+import { ref } from 'vue';
 
 export default {
   name: 'Library_Page_Flashcard',
@@ -37,35 +38,30 @@ export default {
       return this.flashcards.filter(flashcard => {
         return flashcard.question.toLowerCase().includes(this.input.toLowerCase());
       });
+    },
+    review_ModeClicked(id) {
+      this.$router.push('/review/' + id);
     }
   }
 };
 </script>
 
 <template>
-
-
-  <div class="">
-    Grid Library of Flashcards
-  </div>
   <div class="flex flex-row justify-between">
-    <h1 class="text-AthMagenta p-10"> Networking </h1>
+    <h1 class="text-athAIna-red p-10"> Networking </h1>
     <div class="p-10">
-      <Flashcard_Search_Bar />
+      <Flashcard_Search_Bar v-model="input" />
       <button class="mx-10">Add flashcard</button>
       <button class="mx-10">Add flashcard</button>
     </div>
   </div>
   <div class="border-athAIna-red border-2 rounded-lg grid grid-cols-3">
-<!--    <ul>
       <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
-        <router-link :to="{ name: 'flashcard_card', params: { id: flashcard.id } }">
-          <Flashcard_Card />
+        <router-link to="/review" class="text-athAIna-red">
+          <Flashcard_Card :flashcard="flashcard" @click.native="review_ModeClicked(flashcard.id)" />
         </router-link>
       </li>
-    </ul>-->
-    <Flashcard_Card />
-    <div class="item error" v-if="input&&!filteredList().length">
+    <div class="item error" v-if="input && !filteredList().length">
       <p>No results found!</p>
     </div>
   </div>
