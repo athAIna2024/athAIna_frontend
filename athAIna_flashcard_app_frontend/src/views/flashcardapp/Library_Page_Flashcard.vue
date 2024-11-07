@@ -1,10 +1,14 @@
 <script>
 import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
-import { ref } from 'vue';
-
+import create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
 export default {
   name: 'Library_Page_Flashcard',
+  computed: {
+    create_Flashcard_Manually() {
+      return create_Flashcard_Manually
+    }
+  },
   components: {Flashcard_Search_Bar, Flashcard_Card},
   data() {
     return {
@@ -30,7 +34,11 @@ export default {
           question: 'What is a firewall?',
           answer: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.',
           category: 'Networking'
-        }]
+        }],
+      modals: {
+      showModal1: false,
+      showModal2: false
+      }
     };
   },
   methods: {
@@ -41,6 +49,9 @@ export default {
     },
     review_ModeClicked(id) {
       this.$router.push('/review/' + id);
+    },
+    toggleModal(modalName) {
+      this.modals[modalName] = !this.modals[modalName];
     }
   }
 };
@@ -49,21 +60,39 @@ export default {
 <template>
   <div class="flex flex-row justify-between">
     <h1 class="text-athAIna-red p-10"> Networking </h1>
-    <div class="p-10">
+    <div class="p-10 flex flex-row">
       <Flashcard_Search_Bar v-model="input" />
-      <button class="mx-10">Add flashcard</button>
-      <button class="mx-10">Add flashcard</button>
+      <button class="mx-10" @click="toggleModal('learningMode')"> Learning Mode </button>
+        <div v-if="modals.learningMode" class="fixed top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
+          <button>
+            <router-link to="review_mode"> Review Mode </router-link>
+          </button>
+          <button>
+            <router-link to="test_mode"> Test Mode </router-link>
+          </button>
+        </div>
+      <button class="mx-10" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
+          <div v-if="modals.addFlashcard" class="fixed top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
+            <button>
+              <router-link to="create_flashcard_manually"> Create Flashcard Manually </router-link>
+            </button>
+            <button>
+              <router-link to="generate_flashcard_with_AI"> Create Flashcard from AI </router-link>
+            </button>
+          </div>
     </div>
   </div>
-  <div class="border-athAIna-red border-2 rounded-lg grid grid-cols-3">
+
+  <div class="p-4 text-athAIna-lg">Flashcards: {{filteredList().length}}</div>
+  <div class="athAIna-border rounded-lg grid grid-cols-3">
       <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
-        <router-link to="/review" class="text-athAIna-red">
+        <router-link :to="'/review' + flashcard.id" class="text-athAIna-red">
           <Flashcard_Card :flashcard="flashcard" @click.native="review_ModeClicked(flashcard.id)" />
         </router-link>
       </li>
-    <div class="item error" v-if="input && !filteredList().length">
-      <p>No results found!</p>
-    </div>
+      <div class="item error" v-if="input && !filteredList().length">
+        <p>No results found!</p>
+      </div>
   </div>
 
 </template>

@@ -29,11 +29,19 @@
         @apply py-2.5;
         @apply rounded-full;
         @apply w-32;
-
     }
 
     .btn:hover {
         @apply transition-all duration-300;
         @apply opacity-80;
+    }
+
+    .athAIna-border-outer {
+        @apply w-full rounded-md bg-gradient-to-r from-athAIna-yellow to-athAIna-red p-1;
+    }
+
+    .athAIna-border-inner {
+        @apply h-full w-full;
+        @apply bg-athAIna-white;
     }
 }
