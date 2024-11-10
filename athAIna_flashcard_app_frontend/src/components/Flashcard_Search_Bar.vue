@@ -11,9 +11,12 @@ export default {
 </script>
 
 <template>
-  <div>
-    <input type="text" :value="modelValue" @input="updateValue" class="border-2 border-athAIna-red rounded-lg p-2" placeholder="Search flashcards">
+  <div class="athAIna-border-outer p-[3px]">
+    <div class="athAIna-border-inner">
+      <input type="text" :value="modelValue" @input="updateValue" class="rounded-lg p-4 w-96" placeholder="Search flashcards">
+    </div>
   </div>
+
 </template>
 
 <style scoped>

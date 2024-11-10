@@ -4,6 +4,8 @@ export default {
 };
 </script>
 
+
+/* text depends on the flashcard id*/
 <template>
   <div class="">
     Review Mode Flashcard Layout

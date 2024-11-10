@@ -37,11 +37,11 @@
     }
 
     .athAIna-border-outer {
-        @apply w-full rounded-md bg-gradient-to-r from-athAIna-yellow to-athAIna-red p-1;
+        @apply w-full rounded-2xl bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
     }
 
     .athAIna-border-inner {
-        @apply h-full w-full;
+        @apply h-full w-full rounded-2xl;
         @apply bg-athAIna-white;
     }
 }

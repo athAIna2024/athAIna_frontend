@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div class="athAIna-border-outer">
-    <form class="text-athAIna-lg text-center athAIna-border-inner rounded-lg p-10" action="/flashcards" method="post">
+    <form class="text-athAIna-lg text-center athAIna-border-inner rounded-lg p-5" action="/flashcards" method="post">
       <div class="athAIna-border-outer">
       <div class="athAIna-border-inner p-10">
       <label for="question">Question:</label>
