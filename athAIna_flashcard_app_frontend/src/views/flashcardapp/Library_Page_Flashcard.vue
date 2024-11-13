@@ -2,7 +2,6 @@
 import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
-import { EventBus } from "@/eventBus.js";
 
 export default {
   name: 'Library_Page_Flashcard',
