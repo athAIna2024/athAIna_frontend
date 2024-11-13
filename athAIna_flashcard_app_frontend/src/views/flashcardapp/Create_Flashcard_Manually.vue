@@ -28,8 +28,10 @@ export default {
         <input type="text" class="athAIna-border p-10" id="answer" name="answer"><br><br>
         </div>
       </div>
-      <div class="flex justify-end m-4">  
-        <button class="btn-alt mt-10 mx-2"> Cancel </button>
+      <div class="flex justify-end m-4">
+        <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
+          <button class="athAIna-border-inner rounded-full"> Cancel </button>
+        </div>
         <button class="btn mt-10 mx-2"> Submit </button>
       </div>
     </form>

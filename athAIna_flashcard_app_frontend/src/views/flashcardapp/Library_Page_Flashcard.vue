@@ -2,7 +2,6 @@
 import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
-import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import { EventBus } from "@/eventBus.js";
 
 export default {
@@ -10,9 +9,6 @@ export default {
   computed: {
     create_Flashcard_Manually() {
       return create_Flashcard_Manually
-    },
-    Delete_Flashcard() {
-      return Delete_Flashcard
     }
   },
   components: {Flashcard_Search_Bar, Flashcard_Card},
@@ -63,7 +59,6 @@ export default {
 
 <template>
 
-  <Delete_Flashcard />
   <div class="athAIna-border-outer p-1">
   <div class="athAIna-border-inner">
   <div class="text-athAIna-lg text-center flex flex-row justify-between items-center">
@@ -71,8 +66,6 @@ export default {
     <div v-if="modals.deleteModal">-->
     <!--
     </div>-->
-
-    <Delete_Flashcard />
 
     <h1 class="text-athAIna-red p-10 flex"> Networking </h1>
     <div class="p-10 flex flex-row">
