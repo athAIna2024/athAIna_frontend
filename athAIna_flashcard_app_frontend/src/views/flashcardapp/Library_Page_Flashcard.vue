@@ -54,9 +54,6 @@ export default {
         return flashcard.question.toLowerCase().includes(this.input.toLowerCase());
       });
     },
-    review_ModeClicked(id) {
-      this.$router.push('/review/' + id);
-    },
     toggleModal(modalName) {
       this.modals[modalName] = !this.modals[modalName];
     }
@@ -69,13 +66,15 @@ export default {
   <Delete_Flashcard />
   <div class="athAIna-border-outer p-1">
   <div class="athAIna-border-inner">
-  <div class="text-athAIna-lg text-center flex flex-row justify-between">
+  <div class="text-athAIna-lg text-center flex flex-row justify-between items-center">
 <!--
     <div v-if="modals.deleteModal">-->
     <!--
     </div>-->
 
-    <h1 class="text-athAIna-red p-10"> Networking </h1>
+    <Delete_Flashcard />
+
+    <h1 class="text-athAIna-red p-10 flex"> Networking </h1>
     <div class="p-10 flex flex-row">
       <Flashcard_Search_Bar v-model="input" />
       <button class="mx-10" @click="toggleModal('learningMode')"> Learning Mode </button>
@@ -99,10 +98,14 @@ export default {
     </div>
   </div>
 
-  <div class="p-4 text-athAIna-lg">Flashcards: {{filteredList().length}}</div>
-  <div class="rounded-lg grid grid-cols-3 p-10">
+  <div class="p-10 text-athAIna-lg flex flex-row items-center m-2">Flashcards:  
+  <div class="border-athAIna-violet border-2 rounded-full p-2 m-2">
+  {{filteredList().length}}
+  </div>
+  </div>
+  <div class="rounded-lg grid grid-cols-3 p-10 gap-x-6">
       <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
-          <Flashcard_Card :flashcard="flashcard" @click.native="review_ModeClicked(flashcard.id)" />
+          <Flashcard_Card :flashcard="flashcard" />
       </li>
       <div class="item error" v-if="input && !filteredList().length">
         <p>No results found!</p>
