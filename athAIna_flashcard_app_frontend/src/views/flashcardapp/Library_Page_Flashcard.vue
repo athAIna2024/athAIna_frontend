@@ -6,9 +6,6 @@ import create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Man
 export default {
   name: 'Library_Page_Flashcard',
   computed: {
-    create_Flashcard_Manually() {
-      return create_Flashcard_Manually
-    }
   },
   components: {Flashcard_Search_Bar, Flashcard_Card},
   data() {

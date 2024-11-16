@@ -5,29 +5,34 @@ export default {
 </script>
 
 <template>
-  <div class="text-athAIna-lg text-athAIna-violet m-10"> 
-    <span> Edit Flashcards for "Category" </span>
+  <div class="text-athAIna-lg text-athAIna-violet m-10">
+    <span> Edit Flashcard </span>
   </div>
   <div class="athAIna-border-outer p-1">
     <form class="text-athAIna-lg text-center athAIna-border-inner p-5" action="/flashcards" method="post">
-      <div class="athAIna-border-outer p-1">
-        <div class="athAIna-border-inner p-10">
+      <div class="border-athAIna-violet border-2 rounded-lg m-2 text-left p-10">
         <label for="question">Question:</label>
-        <input type="text" class="athAIna-border p-10" id="question" name="question"><br><br>
-          <div class="athAIna-border-outer p-1">
-            <div class="athAIna-border-inner">
-              image
-            </div>
+        <div class="athAIna-border-outer p-1 mb-10">
+          <input type="text" class="athAIna-border-inner h-32 p-2" id="question" name="question">
+
+        </div>
+
+        <div class="athAIna-border-outer p-1">
+          <div class="athAIna-border-inner text-center h-20 content-center">
+            <div>Image</div>
           </div>
         </div>
       </div>
 
-      <div class="athAIna-border-outer p-1">
-        <div class="athAIna-border-inner">
+      <div class="athAIna-border-outer p-0.5 my-10"></div>
+
+      <div class="border-athAIna-violet border-2 rounded-lg m-2 text-left p-10">
         <label for="answer">Answer: </label>
-        <input type="text" class="athAIna-border p-10" id="answer" name="answer"><br><br>
+        <div class="athAIna-border-outer p-1 mb-10">
+          <input type="text" class="athAIna-border-inner h-20 p-2" id="answer" name="answer">
         </div>
       </div>
+
       <div class="flex justify-end m-4">
         <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
           <button class="athAIna-border-inner rounded-full"> Cancel </button>
