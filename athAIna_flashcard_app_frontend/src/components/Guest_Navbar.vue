@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template>
-  <div class="w-full flex flex-row justify-between items-center p-5 pl-10 pr-10 z-50 sticky font-poppins font-light shadow-md">
+  <div class="w-full flex flex-row justify-between items-center p-8 pl-12 pr-12 z-50 sticky font-poppins font-light shadow-md">
     <div class="flex flex-row justify-between items-center space-x-20">
       <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
       <div>Features</div>
