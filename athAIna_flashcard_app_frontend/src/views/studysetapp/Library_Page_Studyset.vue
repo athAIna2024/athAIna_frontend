@@ -1,3 +1,55 @@
+<script>
+import Studyset_Search_Bar from '@/components/Studyset_Search_Bar.vue';
+import Studyset_Card from "@/components/Studyset_Card.vue";
+import Subject_Selector from "@/components/Subject_Selector.vue";
+import Footer_Navbar from "@/components/Footer_Navbar.vue";
+import Pagination from "@/components/Pagination.vue";
+import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
+
+export default {
+  name: 'Library_Page_Studyset',
+  components: {
+    Create_Studyset,
+    Footer_Navbar,
+    Subject_Selector,
+    Studyset_Search_Bar,
+    Studyset_Card,
+    Pagination,
+  },
+
+  data() {
+    return {
+      items: [
+        "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6",
+        "Item 7", "Item 8", "Item 9", "Item 10", "Item 11"
+      ],
+      currentPage: 1,
+      isModalVisible: false,
+    }
+  },
+
+  computed: {
+    currentItems() {
+      const startIndex = (this.currentPage - 1) * 6; // Calculate the starting index
+      return this.items.slice(startIndex, startIndex + 6); // Slice the items array to show only 6 items
+    }
+  },
+
+  methods: {
+    openModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
+  },
+
+  mounted() {
+    document.title = `Library – athAIna`
+  }
+}
+</script>
+
 <template>
   <div class="mt-16 ml-12 mr-12">
     <div class="flex flex-row justify-between content-center">
@@ -36,55 +88,6 @@
 
   <Footer_Navbar />
 </template>
-
-<script>
-import Studyset_Search_Bar from '@/components/Studyset_Search_Bar.vue';
-import Studyset_Card from "@/components/Studyset_Card.vue";
-import Subject_Selector from "@/components/Subject_Selector.vue";
-import Footer_Navbar from "@/components/Footer_Navbar.vue";
-import Pagination from "@/components/Pagination.vue";
-import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
-
-export default {
-  name: 'Library_Page_Studyset',
-  components: {
-    Create_Studyset,
-    Footer_Navbar,
-    Subject_Selector,
-    Studyset_Search_Bar,
-    Studyset_Card,
-    Pagination,
-  },
-
-  data() {
-    return {
-      items: [
-        "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6",
-        "Item 7", "Item 8", "Item 9", "Item 10", "Item 11"
-      ],
-      currentPage: 1,
-      isModalVisible: false,
-    }
-  },
-  computed: {
-    currentItems() {
-      const startIndex = (this.currentPage - 1) * 6; // Calculate the starting index
-      return this.items.slice(startIndex, startIndex + 6); // Slice the items array to show only 6 items
-    }
-  },
-  methods: {
-    openModal() {
-      this.isModalVisible = true;
-    },
-    closeModal() {
-      this.isModalVisible = false;
-    },
-  },
-  mounted() {
-    document.title = `Library – athAIna`
-  }
-}
-</script>
 
 <style scoped>
 </style>
