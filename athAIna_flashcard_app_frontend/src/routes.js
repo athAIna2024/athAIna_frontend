@@ -25,7 +25,7 @@ import Create_Studyset from '@/views/studysetapp/Create_Studyset.vue';
 // Library page includes the search and select studyset
 import Library_Page_Studyset from "@/views/studysetapp/Library_Page_Studyset.vue";
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
-import Delete_studyset from "@/views/studysetapp/Delete_studyset.vue";
+import Delete_studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue";
 
