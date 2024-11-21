@@ -2,6 +2,7 @@
 
 import Guest_Navbar from '@/components/Guest_Navbar.vue';
 import Learner_Navbar from "@/components/Learner_Navbar.vue";
+import Footer_Navbar from "@/components/Footer_Navbar.vue";
 
 </script>
 
@@ -16,6 +17,10 @@ import Learner_Navbar from "@/components/Learner_Navbar.vue";
     <router-view />
 
   </main>
+
+  <footer>
+    <Footer_Navbar />
+  </footer>
 </template>
 
 <style scoped>
