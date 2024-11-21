@@ -10,11 +10,9 @@ export default {
 };
 </script>
 
-<template>
-  <div class="athAIna-border-outer p-[3px]">
-    <div class="athAIna-border-inner">
-      <input type="text" :value="modelValue" @input="updateValue" class="rounded-lg p-4 w-96" placeholder="Search flashcards">
-    </div>
+  <template>
+    <div class="athAIna-border-outer p-1 rounded-full">
+      <input type="text" :value="modelValue" @input="updateValue" class="athAIna-border-inner p-4 focus:outline-none rounded-full" placeholder="Search flashcards">
   </div>
 
 </template>

@@ -2,18 +2,10 @@
 import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
-import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
-import { EventBus } from "@/eventBus.js";
 
 export default {
   name: 'Library_Page_Flashcard',
   computed: {
-    create_Flashcard_Manually() {
-      return create_Flashcard_Manually
-    },
-    Delete_Flashcard() {
-      return Delete_Flashcard
-    }
   },
   components: {Flashcard_Search_Bar, Flashcard_Card},
   data() {
@@ -54,9 +46,6 @@ export default {
         return flashcard.question.toLowerCase().includes(this.input.toLowerCase());
       });
     },
-    review_ModeClicked(id) {
-      this.$router.push('/review/' + id);
-    },
     toggleModal(modalName) {
       this.modals[modalName] = !this.modals[modalName];
     }
@@ -66,16 +55,15 @@ export default {
 
 <template>
 
-  <Delete_Flashcard />
   <div class="athAIna-border-outer p-1">
   <div class="athAIna-border-inner">
-  <div class="text-athAIna-lg text-center flex flex-row justify-between">
+  <div class="text-athAIna-lg text-center flex flex-row justify-between items-center">
 <!--
     <div v-if="modals.deleteModal">-->
     <!--
     </div>-->
 
-    <h1 class="text-athAIna-red p-10"> Networking </h1>
+    <h1 class="text-athAIna-red p-10 flex"> Networking </h1>
     <div class="p-10 flex flex-row">
       <Flashcard_Search_Bar v-model="input" />
       <button class="mx-10" @click="toggleModal('learningMode')"> Learning Mode </button>
@@ -99,10 +87,14 @@ export default {
     </div>
   </div>
 
-  <div class="p-4 text-athAIna-lg">Flashcards: {{filteredList().length}}</div>
-  <div class="rounded-lg grid grid-cols-3 p-10">
+  <div class="p-10 text-athAIna-lg flex flex-row items-center m-2">Flashcards:  
+  <div class="border-athAIna-violet border-2 rounded-full p-2 m-2">
+  {{filteredList().length}}
+  </div>
+  </div>
+  <div class="rounded-lg grid grid-cols-3 p-10 gap-x-6">
       <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
-          <Flashcard_Card :flashcard="flashcard" @click.native="review_ModeClicked(flashcard.id)" />
+          <Flashcard_Card :flashcard="flashcard" />
       </li>
       <div class="item error" v-if="input && !filteredList().length">
         <p>No results found!</p>

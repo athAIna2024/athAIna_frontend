@@ -34,6 +34,16 @@
         @apply w-32;
     }
 
+    .btn-alt {
+        @apply border-2 border-athAIna-red;
+        @apply text-athAIna-red;
+        @apply font-bold;
+
+        @apply py-2.5;
+        @apply rounded-full;
+        @apply w-32;
+    }
+
     .btn:hover {
         @apply transition-all duration-300;
         @apply opacity-80;
@@ -41,11 +51,11 @@
     }
 
     .athAIna-border-outer {
-        @apply w-full rounded-2xl bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
+        @apply w-full rounded-2xl bg-gradient-to-br from-athAIna-yellow to-athAIna-red;
     }
 
     .athAIna-border-inner {
-        @apply h-full w-full rounded-2xl;
+        @apply h-full w-full rounded-xl;
         @apply bg-athAIna-white;
     }
 }
