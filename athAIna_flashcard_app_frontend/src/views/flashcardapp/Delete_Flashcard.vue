@@ -5,13 +5,17 @@ export default {
 </script>
 
 <template>
-  <div class="">
-    Delete Flashcard Base Modal
-    Delete triggered by trash bin button then redirected to this base modal
-    No need to create another component named Delete_Modal this is already the modal but we are only specific
-    so that we know what feature we are working on. If you want to add more components, just create a new component file.
-    Refer to 4.7 Create flashcards manually in Figma
-  </div>
+        <div class="athAIna-border-outer">
+            <div class="athAIna-border-inner border-4 rounded-lg m-4 p-6 py-16 w-96">
+                <h1 class="">Are you sure you want to delete this flashcard?</h1>
+                <div class="athAIna-border-outer">
+                    <div class="athAIna-border-inner border-t-2 border-0 mt-8 flex justify-end">
+                        <button class="p-2">Yes</button>
+                        <button class="p-2">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </template>
 
 <style scoped>

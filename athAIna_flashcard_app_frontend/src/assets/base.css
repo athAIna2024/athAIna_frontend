@@ -39,4 +39,13 @@
         @apply opacity-80;
         @apply text-[16px];
     }
+
+    .athAIna-border-outer {
+        @apply w-full rounded-2xl bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
+    }
+
+    .athAIna-border-inner {
+        @apply h-full w-full rounded-2xl;
+        @apply bg-athAIna-white;
+    }
 }
