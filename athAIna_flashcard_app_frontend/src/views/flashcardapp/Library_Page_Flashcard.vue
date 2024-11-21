@@ -1,13 +1,14 @@
 <script>
 import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
-import create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
+import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
+import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 
 export default {
   name: 'Library_Page_Flashcard',
   computed: {
   },
-  components: {Flashcard_Search_Bar, Flashcard_Card},
+  components: {Delete_Flashcard, AI_Flashcard, Flashcard_Search_Bar, Flashcard_Card},
   data() {
     return {
       input: '',
@@ -37,7 +38,8 @@ export default {
         deleteModal: false,
       showModal1: false,
       showModal2: false,
-      }
+      },
+      isAIFlashcardVisible: false
     };
   },
   methods: {
@@ -48,7 +50,13 @@ export default {
     },
     toggleModal(modalName) {
       this.modals[modalName] = !this.modals[modalName];
-    }
+    },
+    openAI_Flashcard() {
+      this.isAIFlashcardVisible = true;
+    },
+    closeAI_Flashcard() {
+      this.isAIFlashcardVisible = false;
+    },
   }
 };
 </script>
@@ -58,36 +66,32 @@ export default {
   <div class="athAIna-border-outer p-1">
   <div class="athAIna-border-inner">
   <div class="text-athAIna-lg text-center flex flex-row justify-between items-center">
-<!--
-    <div v-if="modals.deleteModal">-->
-    <!--
-    </div>-->
 
     <h1 class="text-athAIna-red p-10 flex"> Networking </h1>
-    <div class="p-10 flex flex-row">
+    <div class="p-10 flex flex-row relative">
       <Flashcard_Search_Bar v-model="input" />
-      <button class="mx-10" @click="toggleModal('learningMode')"> Learning Mode </button>
-        <div v-if="modals.learningMode" class="fixed top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
+      <button class="mx-10 btn w-96" @click="toggleModal('learningMode')"> Learning Mode </button>
+        <div v-if="modals.learningMode" class="absolute top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
           <button>
-            <router-link to="review_mode"> Review Mode </router-link>
+            <router-link to="review/1"> Review Mode </router-link>
           </button>
           <button>
-            <router-link to="test_mode"> Test Mode </router-link>
+            <router-link to="test"> Test Mode </router-link>
           </button>
         </div>
-      <button class="mx-10" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
-          <div v-if="modals.addFlashcard" class="fixed top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
+      <button class="btn w-96" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
+          <div v-if="modals.addFlashcard" class="absolute top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
             <button>
               <router-link to="create_flashcard_manually"> Create Flashcard Manually </router-link>
             </button>
-            <button>
-              <router-link to="generate_flashcard_with_AI"> Create Flashcard from AI </router-link>
+            <button @click="openAI_Flashcard">
+              Create Flashcard from AI
             </button>
           </div>
     </div>
   </div>
 
-  <div class="p-10 text-athAIna-lg flex flex-row items-center m-2">Flashcards:  
+  <div class="px-10 text-athAIna-lg flex flex-row items-center m-2"> Flashcards:
   <div class="border-athAIna-violet border-2 rounded-full p-2 m-2">
   {{filteredList().length}}
   </div>
@@ -102,6 +106,9 @@ export default {
   </div>
   </div>
   </div>
+
+
+  <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
 
 </template>
 

@@ -1,6 +1,7 @@
 <script>
 import Update_Flashcard from "@/views/flashcardapp/Update_Flashcard.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
+import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 
 export default {
   name: 'Flashcard_Card',
@@ -11,6 +12,7 @@ export default {
     }
   },
   components: {
+    AI_Flashcard,
     Update_Flashcard,
     Delete_Flashcard
   },
@@ -18,6 +20,7 @@ export default {
     return {
       isUpdateModalVisible: false,
       isDeleteModalVisible: false,
+      isAIFlashcardVisible: false,
     }
   },
   methods: {
@@ -33,6 +36,12 @@ export default {
     closeDeleteModal() {
       this.isDeleteModalVisible = false;
     },
+    openAI_Flashcard() {
+      this.isAIFlashcardVisible = true;
+    },
+    closeAI_Flashcard() {
+      this.isAIFlashcardVisible = false;
+    },
   }
 };
 </script>
@@ -42,7 +51,7 @@ export default {
     <div class="athAIna-border-inner">
       <div class="rounded-lg p-6 py-16 w-96 h-48" @click="goFlashCard()">
         <router-link :to="'/review/' + flashcard.id" class="text-athAIna-red">
-          <h1 class="">{{ flashcard.question }}</h1>
+          <h1 class="text-athAIna-violet text-athAIna-lg">{{ flashcard.question }}</h1>
         </router-link>  
         <div class="athAIna-border-outer p-[1.5px]">
           <div class="athAIna-border-inner">
