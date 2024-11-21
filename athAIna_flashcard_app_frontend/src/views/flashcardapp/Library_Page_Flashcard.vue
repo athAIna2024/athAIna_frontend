@@ -3,12 +3,13 @@ import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
+import Pagination from "@/components/Pagination.vue";
 
 export default {
   name: 'Library_Page_Flashcard',
   computed: {
   },
-  components: {Delete_Flashcard, AI_Flashcard, Flashcard_Search_Bar, Flashcard_Card},
+  components: {Delete_Flashcard, AI_Flashcard, Flashcard_Search_Bar, Flashcard_Card, Pagination},
   data() {
     return {
       input: '',
@@ -33,7 +34,18 @@ export default {
           question: 'What is a firewall?',
           answer: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.',
           category: 'Networking'
-        }],
+        }, {
+          id: 5,
+          question: 'What is a hub?',
+          answer: 'A hub is a common connection point for devices in a network. Hubs are commonly used to connect segments of a LAN.',
+          category: 'Networking'
+        }, {
+          id: 6,
+          question: 'What is a modem?',
+          answer: 'A modem is a device that modulates an analog carrier signal to encode digital information, and also demodulates such a carrier signal to decode the transmitted information.',
+          category: 'Networking'
+        }
+      ],
       modals: {
         deleteModal: false,
       showModal1: false,
@@ -103,10 +115,17 @@ export default {
       <div class="item error" v-if="input && !filteredList().length">
         <p>No results found!</p>
       </div>
-  </div>
+
+    <Pagination
+        :total-items="filteredList().length"
+        :items-per-page="6"
+        :current-page="currentPage"
+        @update:currentPage="currentPage = $event"
+    />
   </div>
   </div>
 
+  </div>
 
   <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
 
