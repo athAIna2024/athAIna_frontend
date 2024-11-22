@@ -2,21 +2,91 @@
 import Studyset_Search_Bar from '@/components/Studyset_Search_Bar.vue';
 import Studyset_Card from "@/components/Studyset_Card.vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
+import Footer_Navbar from "@/components/Footer_Navbar.vue";
+import Pagination from "@/components/Pagination.vue";
+import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
+
 export default {
   name: 'Library_Page_Studyset',
-  components: {Subject_Selector, Studyset_Search_Bar, Studyset_Card},
-};
+  components: {
+    Create_Studyset,
+    Footer_Navbar,
+    Subject_Selector,
+    Studyset_Search_Bar,
+    Studyset_Card,
+    Pagination,
+  },
+
+  data() {
+    return {
+      items: [
+        "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6",
+        "Item 7", "Item 8", "Item 9", "Item 10", "Item 11"
+      ],
+      currentPage: 1,
+      isModalVisible: false,
+    }
+  },
+
+  computed: {
+    currentItems() {
+      const startIndex = (this.currentPage - 1) * 6; // Calculate the starting index
+      return this.items.slice(startIndex, startIndex + 6); // Slice the items array to show only 6 items
+    }
+  },
+
+  methods: {
+    openModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
+  },
+
+  mounted() {
+    document.title = `Library – athAIna`
+  }
+}
 </script>
 
 <template>
-  <div class="">
-    Grid Library of Study sets
-    Refer to Figma 4.9 View Study Sets
+  <div class="mt-16 ml-12 mr-12">
+    <div class="flex flex-row justify-between content-center">
+      <Studyset_Search_Bar />
+      <Subject_Selector />
+      <div @click="openModal" class="btn hover:cursor-pointer w-[250px] font-medium">
+        Create Studyset
+      </div>
+    </div>
+
+    <div class="mt-[30px]">
+      <div class="text-[16px] font-medium"> Select a Study Set to View </div>
+      <div class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"></div>
+    </div>
+
+    <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-for="(item, index) in currentItems" :key="index">
+        <Studyset_Card />
+      </div>
+    </div>
+
+    <Pagination
+        :total-items="items.length"
+        :items-per-page="6"
+        :current-page="currentPage"
+        @update:currentPage="currentPage = $event"
+    />
   </div>
 
-  <Studyset_Search_Bar />
-  <Studyset_Card />
-  <Subject_Selector />
+  <Create_Studyset
+      :isVisible="isModalVisible"
+      title="Create Studyset – athAIna"
+      @close="closeModal">
+
+  </Create_Studyset>
+
+  <Footer_Navbar />
 </template>
 
 <style scoped>

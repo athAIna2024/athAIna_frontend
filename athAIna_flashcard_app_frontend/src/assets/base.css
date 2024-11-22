@@ -12,8 +12,7 @@
     body {
         @apply text-athAIna-base;
         @apply text-athAIna-violet;
-
-        @apply max-w-screen-xl;
+        /*@apply max-w-screen-xl;*/
         @apply mx-auto;
     }
 
@@ -25,7 +24,11 @@
         @apply bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
         @apply text-athAIna-white;
         @apply font-bold;
-
+        @apply h-[40px];
+        @apply flex;
+        @apply items-center;
+        @apply justify-center;
+        @apply leading-tight;
         @apply py-2.5;
         @apply rounded-full;
         @apply w-32;
@@ -44,6 +47,7 @@
     .btn:hover {
         @apply transition-all duration-300;
         @apply opacity-80;
+        @apply text-[16px];
     }
 
     .athAIna-border-outer {

@@ -16,6 +16,8 @@ export default {
       'athAIna-yellow': '#FEE140',
       'athAIna-violet': '#914273',
       'athAIna-white': '#FFFFFF',
+      'athAIna-orange': '#DC6B19',
+      'athAIna-black': '#000000'
     },
     extend: {
       fontSize: {
