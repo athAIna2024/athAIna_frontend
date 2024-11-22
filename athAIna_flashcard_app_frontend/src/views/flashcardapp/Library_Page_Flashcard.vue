@@ -115,14 +115,15 @@ export default {
       <div class="item error" v-if="input && !filteredList().length">
         <p>No results found!</p>
       </div>
-
-    <Pagination
-        :total-items="filteredList().length"
-        :items-per-page="6"
-        :current-page="currentPage"
-        @update:currentPage="currentPage = $event"
-    />
   </div>
+    <div class="flex justify-center">
+      <Pagination
+          :total-items="filteredList().length"
+          :items-per-page="6"
+          :current-page="currentPage"
+          @update:currentPage="currentPage = $event"
+      />
+    </div>
   </div>
 
   </div>

@@ -58,12 +58,4 @@
         @apply h-full w-full rounded-xl;
         @apply bg-athAIna-white;
     }
-    .athAIna-border-outer {
-        @apply w-full rounded-2xl bg-gradient-to-br from-athAIna-yellow to-athAIna-red;
-    }
-
-    .athAIna-border-inner {
-        @apply h-full w-full rounded-xl;
-        @apply bg-athAIna-white;
-    }
 }

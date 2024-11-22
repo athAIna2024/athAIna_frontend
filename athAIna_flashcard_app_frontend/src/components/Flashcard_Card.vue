@@ -47,16 +47,13 @@ export default {
 </script>
 
 <template>
-  <div class="athAIna-border-outer p-1 m-4">
+  <div class="athAIna-border-outer p-1">
     <div class="athAIna-border-inner">
-      <div class="rounded-lg p-6 py-16 w-96 h-48" @click="goFlashCard()">
+      <div class="rounded-lg p-6 py-16 w-full h-48" @click="goFlashCard()">
         <router-link :to="'/review/' + flashcard.id" class="text-athAIna-red">
           <h1 class="text-athAIna-violet text-athAIna-lg">{{ flashcard.question }}</h1>
         </router-link>  
-        <div class="athAIna-border-outer p-[1.5px]">
-          <div class="athAIna-border-inner">
-
-          </div>
+        <div class="athAIna-border-outer p-[1.5px] w-full">
         </div>
               <div class="flex justify-end text-athAIna-red">
                 <router-link :to="'/update_flashcard/' + flashcard.id">
