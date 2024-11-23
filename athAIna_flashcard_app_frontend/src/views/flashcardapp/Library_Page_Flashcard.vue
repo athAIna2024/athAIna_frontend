@@ -75,58 +75,60 @@ export default {
 
 <template>
 
-  <div class="athAIna-border-outer p-1">
-  <div class="athAIna-border-inner">
-  <div class="text-athAIna-lg text-center flex flex-row justify-between items-center">
-
-    <h1 class="text-athAIna-red p-10 flex"> Networking </h1>
-    <div class="p-10 flex flex-row relative">
-      <Flashcard_Search_Bar v-model="input" />
-      <button class="mx-10 btn w-96" @click="toggleModal('learningMode')"> Learning Mode </button>
-        <div v-if="modals.learningMode" class="absolute top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
-          <button>
-            <router-link to="review/1"> Review Mode </router-link>
-          </button>
-          <button>
-            <router-link to="test"> Test Mode </router-link>
-          </button>
-        </div>
-      <button class="btn w-96" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
-          <div v-if="modals.addFlashcard" class="absolute top-auto bottom-0 border-athAIna-red border-2 rounded-lg bg-athAIna-white flex flex-col p-10">
-            <button>
-              <router-link to="create_flashcard_manually"> Create Flashcard Manually </router-link>
+    <div class="flex flex-col mx-12 my-16">
+      <div class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center">
+        <h1 class="text-athAIna-violet font-semibold flex"> Networking </h1>
+        <div class="flex flex-row justify-between space-x-6 items-center">
+          <Flashcard_Search_Bar v-model="input" />
+          <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
+            <div v-if="modals.learningMode" class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
+              <button class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
+                <router-link to="review/1"> Review Mode </router-link>
+              </button>
+              <button class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
+                <router-link to="test"> Test Mode </router-link>
+              </button>
+            </div>
+          <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
+          <div v-if="modals.addFlashcard" class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
+            <button class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
+              <router-link to="create_flashcard_manually"> Create Manually </router-link>
             </button>
-            <button @click="openAI_Flashcard">
-              Create Flashcard from AI
+            <button @click="openAI_Flashcard" class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
+              Generate with AI
             </button>
           </div>
-    </div>
-  </div>
-
-  <div class="px-10 text-athAIna-lg flex flex-row items-center m-2"> Flashcards:
-  <div class="border-athAIna-violet border-2 rounded-full p-2 m-2">
-  {{filteredList().length}}
-  </div>
-  </div>
-  <div class="rounded-lg grid grid-cols-3 p-10 gap-x-6">
-      <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
-          <Flashcard_Card :flashcard="flashcard" />
-      </li>
-      <div class="item error" v-if="input && !filteredList().length">
-        <p>No results found!</p>
+        </div>
       </div>
-  </div>
-    <div class="flex justify-center">
-      <Pagination
-          :total-items="filteredList().length"
-          :items-per-page="6"
-          :current-page="currentPage"
-          @update:currentPage="currentPage = $event"
-      />
-    </div>
-  </div>
 
-  </div>
+      <div class="mb-12 mt-5">
+        <div class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"></div>
+      </div>
+
+      <div class="text-[18px] font-semibold flex flex-row items-center"> Flashcards
+        <div class="border-athAIna-violet border-2 rounded-full px-3 py-0 m-2">
+          {{filteredList().length}}
+        </div>
+      </div>
+
+      <div class="rounded-lg grid grid-cols-3 gap-[55px] mt-10 mb-12">
+        <li class="list-none" v-for="flashcard in filteredList()" :key="flashcard.id">
+            <Flashcard_Card :flashcard="flashcard" />
+        </li>
+        <div class="item error" v-if="input && !filteredList().length">
+          <p>No results found!</p>
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <Pagination
+            :total-items="filteredList().length"
+            :items-per-page="6"
+            :current-page="currentPage"
+            @update:currentPage="currentPage = $event"
+        />
+      </div>
+    </div>
 
   <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
 
