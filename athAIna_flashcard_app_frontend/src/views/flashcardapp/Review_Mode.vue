@@ -19,11 +19,9 @@ export default {
 </script>
 
 <template>
-  <div class="">
-    Review Mode
-    Refer to 4.3 View flashcards via review mode
-  </div>
+  <div class="p-10">
   <Review_Mode_Flashcard />
+  </div>
 </template>
 
 <style scoped>
