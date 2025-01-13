@@ -85,8 +85,6 @@ export default {
       @close="closeModal">
 
   </Create_Studyset>
-
-  <Footer_Navbar />
 </template>
 
 <style scoped>
