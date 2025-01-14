@@ -1,5 +1,5 @@
 <script>
-import Flashcard_Search_Bar from "@/components/Flashcard_Search_Bar.vue";
+import Flashcard_Search_Bar from "@/components/Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
