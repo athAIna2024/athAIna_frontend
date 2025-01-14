@@ -11,8 +11,8 @@ const authStore = useAuthStore();
   <header>
     <!-- IN PROGRESS: Put logic here if the user is authenticated and is a learner or a guest-->
     <!-- Conditionally render Navbar based on authentication status -->
-    <Guest_Navbar v-if="!isLoggedIn" />
-    <Learner_Navbar v-if="isLoggedIn" /> <!-- FIXME: Switched for testing only. Re-switch again once done. -->
+    <Guest_Navbar v-if="isLoggedIn" />
+    <Learner_Navbar v-if="!isLoggedIn" /> <!-- FIXME: Switched for testing only. Re-switch again once done. -->
   </header>
 
   <main>
