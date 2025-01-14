@@ -1,37 +1,48 @@
 <script>
-import Studyset_Search_Bar from '@/components/Studyset_Search_Bar.vue';
+import Search_Bar from '@/components/Search_Bar.vue';
 import Studyset_Card from "@/components/Studyset_Card.vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Footer_Navbar from "@/components/Footer_Navbar.vue";
 import Pagination from "@/components/Pagination.vue";
 import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
+import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 
 export default {
   name: 'Library_Page_Studyset',
   components: {
+    Floating_Dropdown,
     Create_Studyset,
     Footer_Navbar,
     Subject_Selector,
-    Studyset_Search_Bar,
+    Search_Bar,
     Studyset_Card,
     Pagination,
   },
 
   data() {
     return {
+      input: '',
       items: [
         "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6",
         "Item 7", "Item 8", "Item 9", "Item 10", "Item 11"
       ],
+      dropdownOptions: [
+          "Arts", "Business", "Geography", "Engineering", "Health & Medicine",
+          "History", "Law & Politics", "Languages & Cultures", "Mathematics",
+          "Philosophy", "Science", "Social Sciences", "Technology", "Writing & Literature"
+      ],
       currentPage: 1,
       isModalVisible: false,
+      modals: {
+        subjectSelectModal: false,
+      },
     }
   },
 
   computed: {
     currentItems() {
-      const startIndex = (this.currentPage - 1) * 6; // Calculate the starting index
-      return this.items.slice(startIndex, startIndex + 6); // Slice the items array to show only 6 items
+      const startIndex = (this.currentPage - 1) * 6;
+      return this.items.slice(startIndex, startIndex + 6);
     }
   },
 
@@ -42,6 +53,14 @@ export default {
     closeModal() {
       this.isModalVisible = false;
     },
+    filteredList() {
+      return this.flashcards.filter(flashcard => {
+        return flashcard.question.toLowerCase().includes(this.input.toLowerCase());
+      });
+    },
+    toggleModal(modalName) {
+      this.modals[modalName] = !this.modals[modalName];
+    }
   },
 
   mounted() {
@@ -51,11 +70,18 @@ export default {
 </script>
 
 <template>
-  <div class="mt-16 ml-12 mr-12">
-    <div class="flex flex-row justify-between content-center">
-      <Studyset_Search_Bar />
-      <Subject_Selector />
-      <div @click="openModal" class="btn hover:cursor-pointer w-[250px] font-medium">
+  <div class="my-16 ml-12 mr-12">
+    <div class="flex flex-row justify-between space-x-[50px] content-center">
+      <Search_Bar v-model="input" class="w-[700px]"/>
+      <Subject_Selector @click="toggleModal('subjectSelectModal')" class="relative w-[350px]"/>
+      <Floating_Dropdown v-if="modals.subjectSelectModal"
+        :items="dropdownOptions"
+        top="230px"
+        right="360px"
+        height="max-content"
+        width="350px">
+      </Floating_Dropdown>
+      <div @click="openModal" class="btn hover:cursor-pointer w-[250px] font-semibold">
         Create Studyset
       </div>
     </div>
@@ -86,7 +112,6 @@ export default {
 
   </Create_Studyset>
 
-  <Footer_Navbar />
 </template>
 
 <style scoped>
