@@ -35,7 +35,7 @@ export default {
         </div>
 
         <div class="justify-end flex flex-end my-10">
-          <span class="underline">Forgot Password?</span>
+          <span class="underline"> <router-link to="/forgot_password">Forgot Password?</router-link></span>
         </div>
 
         
