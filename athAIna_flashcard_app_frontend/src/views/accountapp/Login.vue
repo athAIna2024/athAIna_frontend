@@ -44,7 +44,8 @@ export default {
         </div>
 
         <div class="text-center"> 
-          Don't have an account? <span class="font-semibold underline"> Sign up </span>
+          Don't have an account? <span class="font-semibold underline"> 
+            <RouterLink to="/signup"> Sign Up </RouterLink> </span>
         </div>
        </div>
         

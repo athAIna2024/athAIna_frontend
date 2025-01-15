@@ -1,6 +1,21 @@
 <script>
+import OTP from './OTP.vue';
 export default {
   name: 'Forgot_Password',
+  components: { OTP },
+  data() {
+    return {
+      isOTPVisible: false,
+    };
+  },
+  methods: {
+    openOTP() {
+      this.isOTPVisible = true;
+    },
+    closeOTP() {
+      this.isOTPVisible = false;
+    },
+  },
 };
 </script>
 
@@ -23,10 +38,14 @@ export default {
       </div>
        
        <div class="flex m-10 justify-center">
-         <button class="btn w-full"> Change My Password </button>
+         <button class="btn w-full" @click="openOTP"> 
+           Change My Password
+          </button>
        </div>
       </div>
      </div>  
+
+    <OTP :is-visible="isOTPVisible" @close="closeOTP" />
 </template>
 
 <style scoped>

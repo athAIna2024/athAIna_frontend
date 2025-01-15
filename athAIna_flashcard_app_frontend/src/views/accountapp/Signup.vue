@@ -42,11 +42,14 @@ export default {
         </div>
         
         <div class="flex m-10 justify-center">
-          <button class="btn w-full"> Sign Up </button>
+          <button class="btn w-full"> 
+            Sign Up
+          </button>
         </div>
 
         <div class="text-center"> 
-          Already have an account? <span class="font-semibold underline"> Log In </span>
+          Already have an account? <span class="font-semibold underline"> 
+            <RouterLink to="/login"> Login </RouterLink> </span>
         </div>
        </div>
       </div>  

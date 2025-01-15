@@ -50,8 +50,9 @@ export default {
         deleteModal: false,
       showModal1: false,
       showModal2: false,
+      showModal3: false,
       },
-      isAIFlashcardVisible: false
+      isAIFlashcardVisible: false,
     };
   },
   methods: {
@@ -85,8 +86,8 @@ export default {
               <button class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
                 <router-link to="review/1"> Review Mode </router-link>
               </button>
-              <button class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
-                <router-link to="test"> Test Mode </router-link>
+              <button class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white" @click="toggleModal('TestQuestions')">
+                Test Mode
               </button>
             </div>
           <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
@@ -130,7 +131,29 @@ export default {
       </div>
     </div>
 
-  <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
+  <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />  
+  <div v-if="modals.TestQuestions" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40">
+    <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
+      <div class="athAIna-border-inner p-4 text-center">
+        <div class="flex justify-start pl-4 text-athAIna-lg">
+          <button @click="close"> < </button>
+        </div>
+        <div class="flex justify-center flex-col">
+        <h1 class="mt-8 text-athAIna-lg font-semibold"> Set Number of Questions </h1>
+        <div class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-3/4 ">
+          <div class="relative flex flex-row items-center">
+              <input type="text" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
+          </div>
+       </div>
+        <div class="mb-8 flex justify-center">
+          <button @click="nextStep" class="btn w-48"> 
+            <router-link to="test"> Take a Test </router-link>
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
 
 </template>
 
