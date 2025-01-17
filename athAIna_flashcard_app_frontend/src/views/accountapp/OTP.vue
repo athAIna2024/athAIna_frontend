@@ -40,37 +40,9 @@ export default {
       }
     },
     computed: {
-    stepText() {
-      switch (this.step) {
-      case 1:
-        return "Upload Files to Generate";
-      case 2:
-        return "File ready";
-      case 3:
-        return "File submitted";
-      default:
-        return "Upload Files to Generate";
-      }
-    },
-      detail() {
-        if (this.step === 2) {
-          return "note.docx";
-        } else {
-          return "";
-        }
-      },
-      buttonText() {
-        switch (this.step) {
-          case 1:
-            return "Upload";
-          case 2:
-            return "Submit";
-          case 3:
-            return "";
-          default:
-            return "Upload Files to Generate";
-        }
-      },
+    stepText() {},
+      detail() {},
+      buttonText() {},
     }
   }
 </script>
