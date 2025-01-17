@@ -49,6 +49,15 @@ export default {
         </div>
        </div>
         
+    <div v-if="locked" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40">
+    <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
+      <h1 class="m-8 text-white text-center text-2xl font-semibold"> LOCKED OUT </h1>
+      <div class="athAIna-border-inner mt-4 rounded-t-none p-4 text-center">
+        <h1 class="m-8 text-2xl text-emerald-400 font-semibold"> Time remaining: 1 hour </h1>
+        <p class="m-8 text-athAIna-md"> Try logging in again later </p>
+      </div>
+    </div>
+  </div>
   </div>
   </div>
 </template>

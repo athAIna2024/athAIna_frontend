@@ -48,7 +48,11 @@ export default {
       <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
       <div>Features</div>
       <div>FAQS</div>
-      <div>Contact us</div>
+      <div>
+        <router-link to="contact_us">
+          Contact us
+        </router-link>
+      </div>
       <div>Demo</div>
     </div>
 
