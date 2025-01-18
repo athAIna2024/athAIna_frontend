@@ -3,6 +3,7 @@ import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import { defineProps } from 'vue';
+
 const props = defineProps({
   studySet: {
     type: Object,
@@ -10,21 +11,22 @@ const props = defineProps({
   }
 });
 
+
 </script>
 
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
       <router-link to="/library_of_flashcards">
-        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ props.studySet.title }} </div>
+        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ studySet.title }} </div>
       </router-link>
-      <div class="text-[16px] text-athAIna-orange"> {{ props.studySet.subjects }} </div>
+      <div class="text-[16px] text-athAIna-orange"> {{ studySet.title }} </div>
       <div class="text-[14px] mt-[12px]">
-        {{ props.studySet.description}}
+        {{ studySet.title }}
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
-          <span class="font-bold">100</span> flashcards
+          <span class="font-bold"> AXIOS OF LIST OF FLASHCARDS </span> flashcards
         </div>
         <div class="flex flex-row">
           <svg @click="openUpdateModal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="hover:cursor-pointer size-6">
@@ -37,7 +39,7 @@ const props = defineProps({
       </div>
     </div>
   </div>
-
+<!-- 
   <Update_Studyset
       :isVisible="isUpdateModalVisible"
       title="Update Studyset – athAIna"
@@ -48,7 +50,7 @@ const props = defineProps({
     :isVisible="isDeleteModalVisible"
     title="Delete Studyset – athAIna"
     @close="closeDeleteModal">
-  </Delete_Studyset>
+  </Delete_Studyset> -->
 
 </template>
 
