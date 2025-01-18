@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template>
-   <div class="min-h-screen">
+   <div class="min-h-screen mb-10">
       <div class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
       <div class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
       <div class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10">
@@ -20,6 +20,7 @@ export default {
               </svg>
               <input type="text" placeholder="Email" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
           </div>
+          <span class="text-athAIna-red text-sm" v-if="invalidEmail">Invalid Email</span>
        </div>
 
        <div class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full">
@@ -30,6 +31,7 @@ export default {
           </svg>
               <input type="text" placeholder="Password" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
           </div>
+          <span class="text-athAIna-red text-sm" v-if="missingpassreq">Password requirements: more than 8 alphanumeric characters, at least one number, must not be the same as name</span>
        </div>
        
        <div class="m-2 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full">
@@ -40,6 +42,7 @@ export default {
           </svg>
           <input type="text" placeholder="Confirm Password" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
         </div>
+        <span class="text-athAIna-red text-sm" v-if="passwordMismatch">Password not matching</span>
         
         <div class="flex m-10 justify-center">
           <button class="btn w-full"> 

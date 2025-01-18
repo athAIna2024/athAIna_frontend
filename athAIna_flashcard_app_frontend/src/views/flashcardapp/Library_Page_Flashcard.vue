@@ -48,9 +48,6 @@ export default {
       ],
       modals: {
         deleteModal: false,
-      showModal1: false,
-      showModal2: false,
-      showModal3: false,
       },
       isAIFlashcardVisible: false,
     };

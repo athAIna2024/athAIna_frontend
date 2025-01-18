@@ -5,11 +5,11 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-row justify-center">
-  <div class="mt-40 mr-40 pr-40 flex justify-center">
-      <div class="absolute rotate-[12deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
-      <div class="absolute rotate-[6deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
-      <div class="absolute  w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex">
+  <div class="flex flex-row justify-between">
+  <div class="mt-40 ml-60 pr-40 flex justify-center">
+      <div class="absolute rotate-[12deg] shadow-md w-[375px] h-[500px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
+      <div class="absolute rotate-[6deg] shadow-md w-[375px] h-[500px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
+      <div class="absolute  w-[375px] h-[500px] rounded-lg border-4 bg-athAIna-white flex">
         <span class="absolute p-8 bottom-1 font-semibold"> What is love? </span>
       </div>  
     </div>
@@ -23,6 +23,7 @@ export default {
               </svg>
               <input type="text" placeholder="Email" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
           </div>
+          <span class="text-athAIna-red" v-if="EmailInvalid">Invalid Email</span>
        </div>
        
        <div class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-[700px]">

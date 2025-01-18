@@ -16,11 +16,11 @@ export default {
 };
 </script>
 
-<template>
-  <div class="athAIna-border-outer p-1">
+<template>  
     <div v-if="question" class="athAIna-border-inner p-5">
+      <router-link to="library_of_flashcards"> < </router-link>
       Test Mode Flashcard
-      <div class="athAIna-border-outer p-1 m-4">
+      <div class="athAIna-border-outer p-1 my-4">
         <div class="athAIna-border-inner">
           <h1 class="text-athAIna-red p-10 h-64">
             What is a network?
@@ -41,8 +41,14 @@ export default {
     </div>
 
     <div v-if="answer" class="athAIna-border-inner p-5">
-      Test Mode Flashcard
-      <div class="athAIna-border-outer p-1 m-4">
+      <div class="flex flex-row justify-between">
+        <div>
+          <router-link to="library_of_flashcards"> < </router-link>
+          Test Mode Flashcard
+        </div>
+        <span> 1/10 </span>
+      </div>
+      <div class="athAIna-border-outer p-1 my-4">
         <div class="athAIna-border-inner">
           <h1 class="text-athAIna-red p-10 h-16">
             What is a network?
@@ -78,7 +84,6 @@ export default {
         </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
