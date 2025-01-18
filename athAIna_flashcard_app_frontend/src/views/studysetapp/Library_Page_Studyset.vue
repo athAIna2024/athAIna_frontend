@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import Search_Bar from '@/components/Search_Bar.vue';
 import Studyset_Card from "@/components/Studyset_Card.vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
@@ -7,66 +7,26 @@ import Pagination from "@/components/Pagination.vue";
 import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 
-export default {
-  name: 'Library_Page_Studyset',
-  components: {
-    Floating_Dropdown,
-    Create_Studyset,
-    Footer_Navbar,
-    Subject_Selector,
-    Search_Bar,
-    Studyset_Card,
-    Pagination,
-  },
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+import axios from 'axios';
 
-  data() {
-    return {
-      input: '',
-      items: [
-        "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6",
-        "Item 7", "Item 8", "Item 9", "Item 10", "Item 11"
-      ],
-      dropdownOptions: [
-          "Arts", "Business", "Geography", "Engineering", "Health & Medicine",
-          "History", "Law & Politics", "Languages & Cultures", "Mathematics",
-          "Philosophy", "Science", "Social Sciences", "Technology", "Writing & Literature"
-      ],
-      currentPage: 1,
-      isModalVisible: false,
-      modals: {
-        subjectSelectModal: false,
-      },
-    }
-  },
+const url = 'http://localhost:8009/studyset/list/';
+const studySet_result = ref([]);
 
-  computed: {
-    currentItems() {
-      const startIndex = (this.currentPage - 1) * 6;
-      return this.items.slice(startIndex, startIndex + 6);
-    }
-  },
-
-  methods: {
-    openModal() {
-      this.isModalVisible = true;
-    },
-    closeModal() {
-      this.isModalVisible = false;
-    },
-    filteredList() {
-      return this.flashcards.filter(flashcard => {
-        return flashcard.question.toLowerCase().includes(this.input.toLowerCase());
-      });
-    },
-    toggleModal(modalName) {
-      this.modals[modalName] = !this.modals[modalName];
-    }
-  },
-
-  mounted() {
-    document.title = `Library – athAIna`
+const fetchStudySet = async () => {
+  try {
+    const response = await axios.get(url);
+    studySet.value = response.data;
+  } catch (error) {
+    console.error(error);
   }
-}
+};
+
+onMounted(() => {
+  fetchStudySet();
+});
+
 </script>
 
 <template>
@@ -93,7 +53,7 @@ export default {
 
     <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="(item, index) in currentItems" :key="index">
-        <Studyset_Card />
+        <Studyset_Card :studySet="studySet_result"/>
       </div>
     </div>
 

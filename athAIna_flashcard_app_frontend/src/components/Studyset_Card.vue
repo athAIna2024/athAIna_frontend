@@ -2,47 +2,25 @@
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
-export default {
-  name: 'Studyset_Card',
-  components: {
-    Update_Studyset,
-    Delete_Studyset
-  },
-
-  data() {
-    return {
-      isUpdateModalVisible: false,
-      isDeleteModalVisible: false
-    }
-  },
-
-  methods: {
-    openUpdateModal() {
-      this.isUpdateModalVisible = true;
-    },
-    closeUpdateModal() {
-      this.isUpdateModalVisible = false;
-    },
-    openDeleteModal() {
-      this.isDeleteModalVisible = true;
-    },
-    closeDeleteModal() {
-      this.isDeleteModalVisible = false;
-    }
+import { defineProps } from 'vue';
+const props = defineProps({
+  studySet: {
+    type: Object,
+    required: true
   }
-};
+});
+
 </script>
 
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
       <router-link to="/library_of_flashcards">
-        <div class="text-[20px] font-semibold hover:cursor-pointer"> Networking </div>
+        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ props.studySet.title }} </div>
       </router-link>
-      <div class="text-[16px] text-athAIna-orange"> Technology </div>
+      <div class="text-[16px] text-athAIna-orange"> {{ props.studySet.subjects }} </div>
       <div class="text-[14px] mt-[12px]">
-        This course introduces the architecture, structure, functions,
-        components, and models of the Internet and other computer networks.
+        {{ props.studySet.description}}
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
