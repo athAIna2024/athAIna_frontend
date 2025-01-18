@@ -38,7 +38,7 @@ export default {
 </script>
 
 <template>
-  <div class="pagination flex justify-center mt-4 mb-6">
+  <div class="pagination flex justify-center">
     <!-- Previous Button -->
     <button
         @click="goToPage(currentPage - 1)"

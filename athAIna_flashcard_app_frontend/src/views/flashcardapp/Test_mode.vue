@@ -10,8 +10,6 @@ export default {
 
 <template>
   <div class="">
-    Test Mode
-    Refer to 4.4 View flashcards via Test mode
   </div>
   <Test_Mode_Flashcard />
 </template>

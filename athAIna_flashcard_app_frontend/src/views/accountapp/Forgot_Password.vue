@@ -1,14 +1,51 @@
 <script>
+import OTP from './OTP.vue';
 export default {
   name: 'Forgot_Password',
+  components: { OTP },
+  data() {
+    return {
+      isOTPVisible: false,
+    };
+  },
+  methods: {
+    openOTP() {
+      this.isOTPVisible = true;
+    },
+    closeOTP() {
+      this.isOTPVisible = false;
+    },
+  },
 };
 </script>
 
 <template>
-  <div class="">
-    Forgot Password
-    Refer to 5.7 Forget password in Figma
-  </div>
+  <div class="min-h-screen">
+     <div class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
+     <div class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
+     <div class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10">
+       <div class="w-full flex flex-row justify-center items-center">
+         <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
+       </div>
+       <h1 class="text-athAIna-violet font-semibold w-full text-center"> Email Verification </h1>
+       <div class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full">
+         <div class="relative flex flex-row items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+              </svg>
+             <input type="text" placeholder="Enter Email Address" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
+         </div>
+      </div>
+       
+       <div class="flex m-10 justify-center">
+         <button class="btn w-full" @click="openOTP"> 
+           Change My Password
+          </button>
+       </div>
+      </div>
+     </div>  
+
+    <OTP :is-visible="isOTPVisible" @close="closeOTP" />
 </template>
 
 <style scoped>

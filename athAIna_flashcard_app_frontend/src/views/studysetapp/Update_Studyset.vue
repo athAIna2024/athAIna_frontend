@@ -45,7 +45,7 @@ export default {
 
         <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
           <p> Study Set Name </p>
-          <input type="text" placeholder="Name" class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"/>
+          <input type="text" placeholder="Name" class="flex justify-start border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-athAIna-orange text-[14px] p-[5px] pl-[14px]"/>
         </div>
 
         <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
@@ -59,7 +59,7 @@ export default {
 
         <div class="flex flex-col justify-between gap-2 mb-[50px] text-[16px] font-medium">
           <p> Description </p>
-          <input type="text" placeholder="Type Description (Optional)" class="focus:outline-none text-athAIna-orange border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px] h-[82px]"/>
+          <textarea placeholder="Type Description (Optional)" class="focus:outline-none text-athAIna-orange border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[14px] pl-[14px] h-[82px]"/>
         </div>
 
         <div class="flex justify-end mb-[20px]">

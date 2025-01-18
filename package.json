@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "mitt": "^3.0.1"
+    "mitt": "^3.0.1",
+    "pinia": "^2.2.6"
   }
 }
