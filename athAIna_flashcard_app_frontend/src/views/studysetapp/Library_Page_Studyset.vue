@@ -10,11 +10,11 @@ import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { computed } from "vue";
-import axios from "axios";
+import axios from '@/axios'; // Import the configured Axios instance
 
 // refactor backend 
 const user = ref(null);
-const url = "http://localhost:8000/studyset/library_studysets/?user_id=1";
+const url = "/studyset/";
 const studySet_result = ref([]);
 const input = ref("");
 const modals = ref({ subjectSelectModal: false });
@@ -41,18 +41,19 @@ const fetchStudySet = async () => {
   try {
     const response = await axios.get(url);
 
-    if (response.data && Array.isArray(response.data.results)) {
-      studySet_result.value = response.data.results; // Ensure this is populated correctly
-      console.log(studySet_result.value)
-      console.log(studySet_result.value[0].subjects);
+    if (response.data && Array.isArray(response.data.data)) {
+      studySet_result.value = response.data.data; // Ensure this is populated correctly
+      console.log(studySet_result.value) // REMOVE AFTER TESTING
+      console.log(studySet_result.value[0].subjects); // REMOVE AFTER TESTING
     } else {
       console.error("API response is not an array");
     }
-  
+
   } catch (error) {
     console.error(error);
   }
 };
+
 
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
@@ -69,7 +70,6 @@ const closeModal = () => {
 const currentItems = computed(() => {
   const startIndex = (currentPage.value - 1) * 6;
   const items = studySet_result.value.slice(startIndex, startIndex + 6);
-  console.log('Current items:', items); // Log the current items
   return items;
 });
 
@@ -112,33 +112,38 @@ onMounted(() => {
       ></div>
     </div>
 
-    <div
-      class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-    >
-      <div v-for="(item, index) in currentItems" :key="index">
-    
-        {{  item.title }}
-        {{  item.subjects }}
-        {{  item.description }}
-
-        <Studyset_Card :studySet="item" />
-      </div>
+    <div v-if="currentItems.length === 0" class="mt-[60px] text-[20px] font-semibold">
+      No study sets found
     </div>
 
-    <Pagination
-      :total-items="studySet_result.value ? studySet_result.value.length : 0" 
-      :items-per-page="6"
-      :current-page="currentPage"
-      @update:currentPage="currentPage = $event"
-    />
-  </div>
 
-  <Create_Studyset
-    :isVisible="isModalVisible"
-    title="Create Studyset – athAIna"
-    @close="closeModal"
-  >
-  </Create_Studyset>
+    <div v-else>
+      <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="(item, index) in currentItems" :key="index">
+          <Studyset_Card
+            :title="item.title"
+            :description="item.description"
+            :subjects="item.subjects"
+          />
+        </div>
+      </div>
+
+      <Pagination
+          :total-items="studySet_result.value ? studySet_result.value.length : 0"
+          :items-per-page="6"
+          :current-page="currentPage"
+          @update:currentPage="currentPage = $event"
+      />
+    </div>
+
+    <Create_Studyset
+        :isVisible="isModalVisible"
+        title="Create Studyset – athAIna"
+        @close="closeModal"
+    >
+    </Create_Studyset>
+    </div>
+
 </template>
 
 <style scoped></style>

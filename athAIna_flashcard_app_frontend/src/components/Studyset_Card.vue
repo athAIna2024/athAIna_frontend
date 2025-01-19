@@ -1,16 +1,23 @@
-<script>
+<script setup>
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import { defineProps } from 'vue';
 
 const props = defineProps({
-  studySet: {
-    type: Object,
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  subjects: {
+    type: String,
     required: true
   }
 });
-
 
 </script>
 
@@ -18,11 +25,11 @@ const props = defineProps({
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
       <router-link to="/library_of_flashcards">
-        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ studySet.title }} </div>
+        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
-      <div class="text-[16px] text-athAIna-orange"> {{ studySet.title }} </div>
+      <div class="text-[16px] text-athAIna-orange"> {{ subjects }} </div>
       <div class="text-[14px] mt-[12px]">
-        {{ studySet.title }}
+        {{ description }}
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
@@ -39,7 +46,7 @@ const props = defineProps({
       </div>
     </div>
   </div>
-<!-- 
+<!--
   <Update_Studyset
       :isVisible="isUpdateModalVisible"
       title="Update Studyset – athAIna"
