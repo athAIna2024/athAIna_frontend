@@ -40,7 +40,7 @@ const saveStudySet = async () => {
       learner_instance: Number(learnerId.value), // Ensure this is an integer
       title: title.value,
       description: description.value,
-      subjects: subject.value // Ensure this matches the field name in your serializer
+      subject: subject.value // Ensure this matches the field name in your serializer
     });
 
     console.log(response.data);
@@ -109,7 +109,7 @@ const saveStudySet = async () => {
           </div>
 
 
-          <div class="flex flex-col justify-between gap-2 mb-[5px] text-[16px] font-medium">
+          <div class="flex flex-col justify-between gap-2 mb-[25px] text-[16px] font-medium">
             <p> Description </p>
             <textarea
                 placeholder="Type Description (Optional)"
