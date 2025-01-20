@@ -3,6 +3,7 @@ import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import { defineProps } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   title: {
@@ -16,8 +17,31 @@ const props = defineProps({
   subjects: {
     type: String,
     required: true
+  },
+  flashcardCount: {
+    type: Number,
+    required: true
   }
 });
+
+const isUpdateModalVisible = ref(false);
+const isDeleteModalVisible = ref(false);
+
+const openUpdateModal = () => {
+  isUpdateModalVisible.value = true;
+};
+
+const closeUpdateModal = () => {
+  isUpdateModalVisible.value = false;
+};
+
+const openDeleteModal = () => {
+  isDeleteModalVisible.value = true;
+};
+
+const closeDeleteModal = () => {
+  isDeleteModalVisible.value = false;
+};
 
 </script>
 
@@ -33,7 +57,7 @@ const props = defineProps({
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
-          <span class="font-bold"> AXIOS OF LIST OF FLASHCARDS </span> flashcards
+          <span class="font-bold"> {{ flashcardCount }} </span> flashcards
         </div>
         <div class="flex flex-row">
           <svg @click="openUpdateModal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="hover:cursor-pointer size-6">
@@ -46,7 +70,6 @@ const props = defineProps({
       </div>
     </div>
   </div>
-<!--
   <Update_Studyset
       :isVisible="isUpdateModalVisible"
       title="Update Studyset – athAIna"
@@ -57,7 +80,7 @@ const props = defineProps({
     :isVisible="isDeleteModalVisible"
     title="Delete Studyset – athAIna"
     @close="closeDeleteModal">
-  </Delete_Studyset> -->
+  </Delete_Studyset>
 
 </template>
 

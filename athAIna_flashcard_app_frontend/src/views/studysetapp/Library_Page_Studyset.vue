@@ -13,11 +13,11 @@ import { computed } from "vue";
 import axios from '@/axios'; // Import the configured Axios instance
 
 // refactor backend 
-const user = ref(null);
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
 
 const studySet_result = ref([]);
+const flashcardCounts = ref({});
 const input = ref("");
 const modals = ref({ subjectSelectModal: false });
 const dropdownOptions = ref({
@@ -39,22 +39,6 @@ const dropdownOptions = ref({
 const currentPage = ref(1);
 const isModalVisible = ref(false);
 
-const fetchStudySet = async () => {
-  try {
-    const response = await axios.get(studyset_url);
-
-    if (response.data && Array.isArray(response.data.data)) {
-      studySet_result.value = response.data.data; // Ensure this is populated correctly
-
-    } else {
-      console.error("API response is not an array");
-    }
-
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
@@ -68,17 +52,54 @@ const closeModal = () => {
   isModalVisible.value = false;
 };
  
-const currentItems = computed(() => {
+const currentStudySets = computed(() => {
   const startIndex = (currentPage.value - 1) * 6;
-  const items = studySet_result.value.slice(startIndex, startIndex + 6);
-  return items;
+  return studySet_result.value.slice(startIndex, startIndex + 6);
 });
 
 const getSubjectName = (abbreviation) => {
   return dropdownOptions.value[abbreviation] || abbreviation;
 };
 
+console.log(flashcardCounts.value);
+const fetchFlashcardCount = async (studysetId) => {
+  try {
+    const response = await axios.get(flashcard_url, {
+      params: { studyset_id: studysetId }
+    });
 
+    if (response.data && Array.isArray(response.data.data)) {
+      flashcardCounts.value[studysetId] = response.data.data.length;
+    } else {
+      console.error("API response is not an array");
+      flashcardCounts.value[studysetId] = 0;
+    }
+
+  } catch (error) {
+    console.error(error);
+    flashcardCounts.value[studysetId] = 0;
+  }
+};
+
+const fetchStudySet = async () => {
+  try {
+    const response = await axios.get(studyset_url);
+
+    if (response.data && Array.isArray(response.data.data)) {
+      studySet_result.value = response.data.data;
+
+      // Fetch flashcard counts for each study set concurrently
+      const flashcardCountPromises = studySet_result.value.map(studyset => fetchFlashcardCount(studyset.id));
+      await Promise.all(flashcardCountPromises);
+
+    } else {
+      console.error("API response is not an array");
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 onMounted(() => {
   fetchStudySet();
   document.title = "Studysets";
@@ -117,18 +138,19 @@ onMounted(() => {
       ></div>
     </div>
 
-    <div v-if="currentItems.length === 0" class="mt-[60px] text-[20px] font-semibold">
+    <div v-if="currentStudySets.length === 0" class="mt-[60px] text-[20px] font-semibold">
       No study sets found
     </div>
 
 
     <div v-else>
       <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="(item, index) in currentItems" :key="index">
+        <div v-for="(s, index) in currentStudySets" :key="index">
           <Studyset_Card
-            :title="item.title"
-            :description="item.description"
-            :subjects="getSubjectName(item.subjects)"
+            :title="s.title"
+            :description="s.description"
+            :subjects="getSubjectName(s.subjects)"
+            :flashcardCount="flashcardCounts[s.id] || 0"
           />
         </div>
       </div>
