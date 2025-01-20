@@ -18,6 +18,7 @@ const flashcard_url = "/flashcard/";
 
 const studySet_result = ref([]);
 const flashcardCounts = ref({});
+const userId = ref(1);  // For testing purposes, REMOVE IT AND USE THE USER ID
 const input = ref("");
 const modals = ref({ subjectSelectModal: false });
 const dropdownOptions = ref({
@@ -83,7 +84,10 @@ const fetchFlashcardCount = async (studysetId) => {
 
 const fetchStudySet = async () => {
   try {
-    const response = await axios.get(studyset_url);
+
+    const response = await axios.get('/studyset/', {
+      params: { user_id: userId }
+    });
 
     if (response.data && Array.isArray(response.data.data)) {
       studySet_result.value = response.data.data;
@@ -163,13 +167,12 @@ onMounted(() => {
       />
     </div>
 
-<!--    Resolve the issue of emits in the Create_Studyset component-->
-<!--    <Create_Studyset-->
-<!--        :isVisible="isModalVisible"-->
-<!--        title="Create Studyset – athAIna"-->
-<!--        @close="closeModal"-->
-<!--    >-->
-<!--    </Create_Studyset>-->
+    <Create_Studyset
+        :isVisible="isModalVisible"
+        title="Create Studyset – athAIna"
+        @close="closeModal"
+    >
+    </Create_Studyset>
     </div>
 
 </template>
