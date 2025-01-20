@@ -18,7 +18,12 @@ const flashcard_url = "/flashcard/";
 const userId = ref(1);
 
 const studySet_result = ref([]);
+const studySetCounts = ref(0);
 const flashcardCounts = ref({});
+
+const currentPage = ref(1);
+const itemsPerPage = 6;
+
 const input = ref("");
 const modals = ref({ subjectSelectModal: false });
 const dropdownOptions = ref({
@@ -37,7 +42,9 @@ const dropdownOptions = ref({
   TECH: "Technology",
   WRIT_LIT: "Writing and Literature"
 });
-const currentPage = ref(1);
+
+
+
 const isModalVisible = ref(false);
 
 
@@ -52,17 +59,18 @@ const openModal = () => {
 const closeModal = () => {
   isModalVisible.value = false;
 };
- 
+
+
 const currentStudySets = computed(() => {
-  const startIndex = (currentPage.value - 1) * 6;
-  return studySet_result.value.slice(startIndex, startIndex + 6);
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return studySet_result.value.slice(startIndex, endIndex);
 });
 
 const getSubjectName = (abbreviation) => {
   return dropdownOptions.value[abbreviation] || abbreviation;
 };
 
-console.log(flashcardCounts.value);
 const fetchFlashcardCount = async (studysetId) => {
   try {
     const response = await axios.get(flashcard_url, {
@@ -91,7 +99,7 @@ const fetchStudySet = async () => {
 
     if (response.data && Array.isArray(response.data.data)) {
       studySet_result.value = response.data.data;
-
+      studySetCounts.value = response.data.data.length;
       // Fetch flashcard counts for each study set concurrently
       const flashcardCountPromises = studySet_result.value.map(studyset => fetchFlashcardCount(studyset.id));
       await Promise.all(flashcardCountPromises);
@@ -160,11 +168,12 @@ onMounted(() => {
       </div>
 
       <Pagination
-          :total-items="studySet_result.value ? studySet_result.value.length : 0"
-          :items-per-page="6"
+          :total-items="studySetCounts"
+          :items-per-page="itemsPerPage"
           :current-page="currentPage"
           @update:currentPage="currentPage = $event"
       />
+
     </div>
 
     <Create_Studyset
