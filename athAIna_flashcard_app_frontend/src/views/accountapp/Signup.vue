@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import axios from "axios";
 
 const email = ref("");
@@ -7,9 +7,25 @@ const password = ref("");
 const password2 = ref("");
 const error = ref("");
 
+const errors = reactive({
+  email: "",
+  password: "",
+  password2: "",
+  general: "",
+});
+
 const createUser = async () => {
+  // Clear previous errors
+  Object.keys(errors).forEach((key) => {
+    if (Array.isArray(errors[key])) {
+      errors[key] = [];
+    } else {
+      errors[key] = "";
+    }
+  });
+
   if (password.value !== password2.value) {
-    error.value = "Passwords do not match";
+    error.value = serializer.errors;
     return;
   }
 
@@ -24,7 +40,19 @@ const createUser = async () => {
     );
     console.log(response.data);
   } catch (err) {
-    error.value = err.response.data.detail;
+    if (err.response && err.response.data) {
+      // Handle field-specific errors
+      if (err.response.data.email) errors.email = err.response.data.email;
+      if (err.response.data.password)
+        errors.password = err.response.data.password;
+      if (err.response.data.password2)
+        errors.password2 = err.response.data.password2;
+
+      // Handle non-field errors
+      if (err.response.data.non_field_errors) {
+        errors.general = err.response.data.non_field_errors[0];
+      }
+    }
   }
 };
 </script>
@@ -71,6 +99,12 @@ const createUser = async () => {
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
+        <div
+          v-if="errors.email[0]"
+          class="text-athAIna-red text-xs mt-1 ml-4"
+        >
+          {{ errors.email[0] }}
+        </div>
       </div>
 
       <div
@@ -102,6 +136,12 @@ const createUser = async () => {
             placeholder="Password"
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
+        </div>
+        <div
+          v-if="errors.password[0]"
+          class="text-athAIna-red text-xs mt-1 ml-4"
+        >
+          {{ errors.password[0] }}
         </div>
       </div>
 
@@ -135,6 +175,12 @@ const createUser = async () => {
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
+        <div
+          v-if="errors.password2[0]"
+          class="text-athAIna-red text-xs mt-1 ml-4"
+        >
+          {{ errors.password2[0] }}
+        </div>
 
         <!-- Display error message if any -->
         <div v-if="error" class="text-athAIna-red text-center mt-2">
@@ -143,7 +189,7 @@ const createUser = async () => {
 
         <div class="flex m-10 justify-center">
           <button @click="createUser" class="btn w-full">Sign Up</button>
-          <p v-if="error" class="text-red-500">{{ error }}</p>
+          <p v-if="error" class="text-red-500">{{ errors.general }}</p>
         </div>
 
         <div class="text-center">
