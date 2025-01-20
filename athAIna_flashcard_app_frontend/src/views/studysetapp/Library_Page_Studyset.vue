@@ -14,37 +14,38 @@ import axios from '@/axios'; // Import the configured Axios instance
 
 // refactor backend 
 const user = ref(null);
-const url = "/studyset/";
+const studyset_url = "/studyset/";
+const flashcard_url = "/flashcard/";
+
 const studySet_result = ref([]);
 const input = ref("");
 const modals = ref({ subjectSelectModal: false });
-const dropdownOptions = ref([
-  "Arts",
-  "Business",
-  "Geography",
-  "Engineering",
-  "Health & Medicine",
-  "History",
-  "Law & Politics",
-  "Languages & Cultures",
-  "Mathematics",
-  "Philosophy",
-  "Science",
-  "Social Sciences",
-  "Technology",
-  "Writing & Literature",
-]);
+const dropdownOptions = ref({
+  ARTS: "Arts",
+  BUS: "Business",
+  GEO: "Geography",
+  ENGR: "Engineering",
+  HEALTH_MED: "Health and Medicine",
+  HIST: "History",
+  LAW_POL: "Law and Politics",
+  LANG_CULT: "Languages and Cultures",
+  MATH: "Mathematics",
+  PHIL: "Philosophy",
+  SCI: "Science",
+  SOC_SCI: "Social Sciences",
+  TECH: "Technology",
+  WRIT_LIT: "Writing and Literature"
+});
 const currentPage = ref(1);
 const isModalVisible = ref(false);
 
 const fetchStudySet = async () => {
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(studyset_url);
 
     if (response.data && Array.isArray(response.data.data)) {
       studySet_result.value = response.data.data; // Ensure this is populated correctly
-      console.log(studySet_result.value) // REMOVE AFTER TESTING
-      console.log(studySet_result.value[0].subjects); // REMOVE AFTER TESTING
+
     } else {
       console.error("API response is not an array");
     }
@@ -72,6 +73,10 @@ const currentItems = computed(() => {
   const items = studySet_result.value.slice(startIndex, startIndex + 6);
   return items;
 });
+
+const getSubjectName = (abbreviation) => {
+  return dropdownOptions.value[abbreviation] || abbreviation;
+};
 
 
 onMounted(() => {
@@ -123,7 +128,7 @@ onMounted(() => {
           <Studyset_Card
             :title="item.title"
             :description="item.description"
-            :subjects="item.subjects"
+            :subjects="getSubjectName(item.subjects)"
           />
         </div>
       </div>
@@ -136,12 +141,13 @@ onMounted(() => {
       />
     </div>
 
-    <Create_Studyset
-        :isVisible="isModalVisible"
-        title="Create Studyset – athAIna"
-        @close="closeModal"
-    >
-    </Create_Studyset>
+<!--    Resolve the issue of emits in the Create_Studyset component-->
+<!--    <Create_Studyset-->
+<!--        :isVisible="isModalVisible"-->
+<!--        title="Create Studyset – athAIna"-->
+<!--        @close="closeModal"-->
+<!--    >-->
+<!--    </Create_Studyset>-->
     </div>
 
 </template>
