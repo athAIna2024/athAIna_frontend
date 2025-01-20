@@ -46,10 +46,14 @@ const saveStudySet = async () => {
     console.log(response.data);
     // Handle successful response
   } catch (error) {
-    if (error.response && error.response.data) {
-      field_errors.value = error.response.data;
+
+    if (error.response.data.status === 400) {
+      field_errors.value = Object.fromEntries(
+          Object.entries(error.response.data.errors).map(([key, value]) => [key, value[0]])
+      );
+      console.log(field_errors.value);
     } else {
-      console.error(error);
+      field_errors.value['feedback'] = "An error occurred. Please try again later.";
     }
   }
 };
@@ -78,9 +82,10 @@ const saveStudySet = async () => {
                 class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"
                 v-model="title"
             />
-          </div>
-          <div v-if="field_errors.title" class="text-red-500 text-[14px] font-medium mb-[10px]">
-            {{ field_errors.title }}
+            <div v-if="field_errors.title" class="text-athAIna-red text-[14px] font-medium">
+              {{ field_errors.title }}
+            </div>
+
           </div>
 
           <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
@@ -98,25 +103,30 @@ const saveStudySet = async () => {
                 class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"
                 v-model="subject" />
 
-          </div>
-          <div v-if="field_errors.subject" class="text-red-500 text-[14px] font-medium mb-[10px]">
-            {{ field_errors.subject }}
+            <div v-if="field_errors.subject" class="text-athAIna-red text-[14px] font-medium">
+              {{ field_errors.subject }}
+            </div>
           </div>
 
-          <div class="flex flex-col justify-between gap-2 mb-[50px] text-[16px] font-medium">
+
+          <div class="flex flex-col justify-between gap-2 mb-[5px] text-[16px] font-medium">
             <p> Description </p>
             <textarea
                 placeholder="Type Description (Optional)"
                 class="focus:outline-none text-athAIna-orange border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[14px] pl-[14px] h-[82px]"
                 v-model="description"
             />
-          </div>
-          <div v-if="field_errors.description" class="text-red-500 text-[14px] font-medium mb-[10px]">
-            {{ field_errors.description }}
+            <div v-if="field_errors.description" class="text-athAIna-red text-[14px] font-medium">
+              {{ field_errors.description }}
+            </div>
           </div>
 
-          <div v-if="field_errors.message" class="text-red-500 text-[14px] font-medium mb-[10px]">
+          <div v-if="field_errors.message" class="text-athAIna-red text-[14px] font-medium">
             {{ field_errors.message }}
+          </div>
+
+          <div v-if="field_errors.feedback" class="text-athAIna-red text-[14px] font-medium">
+            {{ field_errors.feedback }}
           </div>
 
           <div class="flex justify-end mb-[20px]">
