@@ -15,10 +15,10 @@ import axios from '@/axios'; // Import the configured Axios instance
 // refactor backend 
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
+const userId = ref(1);
 
 const studySet_result = ref([]);
 const flashcardCounts = ref({});
-const userId = ref(1);  // For testing purposes, REMOVE IT AND USE THE USER ID
 const input = ref("");
 const modals = ref({ subjectSelectModal: false });
 const dropdownOptions = ref({
@@ -86,7 +86,7 @@ const fetchStudySet = async () => {
   try {
 
     const response = await axios.get('/studyset/', {
-      params: { user_id: userId }
+      params: { user_id: Number(userId.value) }
     });
 
     if (response.data && Array.isArray(response.data.data)) {
