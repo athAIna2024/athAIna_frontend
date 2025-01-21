@@ -203,12 +203,16 @@ onMounted(() => {
     <div v-else>
       <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="(s, index) in currentStudySets" :key="index">
+
           <Studyset_Card
             :title="s.title"
             :description="s.description"
             :subject="getSubjectName(s.subject)"
             :flashcardCount="flashcardCounts[s.id] || 0"
+            :studySetId="Number(s.id)"
           />
+
+          {{ Number(s.id) }}
         </div>
       </div>
 

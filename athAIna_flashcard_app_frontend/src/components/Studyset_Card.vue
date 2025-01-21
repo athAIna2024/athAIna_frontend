@@ -4,6 +4,7 @@ import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import { defineProps } from 'vue';
 import { ref } from 'vue';
+import axios from "@/axios.js";
 
 const props = defineProps({
   title: {
@@ -14,11 +15,15 @@ const props = defineProps({
     type: String,
     required: true
   },
-  subjects: {
+  subject: {
     type: String,
     required: true
   },
   flashcardCount: {
+    type: Number,
+    required: true
+  },
+  studySetId: {
     type: Number,
     required: true
   }
@@ -43,6 +48,9 @@ const closeDeleteModal = () => {
   isDeleteModalVisible.value = false;
 };
 
+
+
+
 </script>
 
 <template>
@@ -51,7 +59,7 @@ const closeDeleteModal = () => {
       <router-link to="/library_of_flashcards">
         <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
-      <div class="text-[16px] text-athAIna-orange"> {{ subjects }} </div>
+      <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px]">
         {{ description }}
       </div>
@@ -70,17 +78,19 @@ const closeDeleteModal = () => {
       </div>
     </div>
   </div>
+
   <Update_Studyset
       :isVisible="isUpdateModalVisible"
+      :studySetId="studySetId"
       title="Update Studyset – athAIna"
-      @close="closeUpdateModal">
-  </Update_Studyset>
+      @close="closeUpdateModal"
+  />
 
   <Delete_Studyset
     :isVisible="isDeleteModalVisible"
     title="Delete Studyset – athAIna"
-    @close="closeDeleteModal">
-  </Delete_Studyset>
+    @close="closeDeleteModal"
+  />
 
 </template>
 
