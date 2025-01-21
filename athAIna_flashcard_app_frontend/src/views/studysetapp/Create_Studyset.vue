@@ -5,6 +5,7 @@ import axios from '@/axios';
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
 const isSuccessful = ref(false);
+const message = ref("");
 const title = ref("");
 const description = ref("");
 const subject = ref("");
@@ -44,18 +45,30 @@ const saveStudySet = async () => {
     });
 
     isSuccessful.value = response.data.successful;
+    message.value = response.data.message;
+
+    if (isSuccessful.value) {
+      close();
+    }
+
+    // Debugging
+    console.log(isSuccessful.value);
+    console.log(message.value);
+
     // Handle successful response
   } catch (error) {
-    isSuccessful.value = error.response.data.successful;
 
     if (error.response.status === 400) {
+      isSuccessful.value = error.response.data.successful;
+      message.value = error.response.data.message;
 
       field_errors.value = Object.fromEntries(
           Object.entries(error.response.data.errors).map(([key, value]) => [key, value[0]])
       );
     }
     else {
-      field_errors.value['message'] = "An error occurred. Please try again later.";
+      isSuccessful.value = false;
+      message.value = "An error occurred. Please try again later.";
     }
   }
 };
@@ -123,13 +136,9 @@ const saveStudySet = async () => {
             </div>
           </div>
 
-          <div v-if="!isSuccessful" class="text-athAIna-red text-[14px] font-medium">
-            {{ field_errors.message }}
-          </div>
-
-          <div v-else>
-            <div class="text-athAIna-green text-[14px] font-medium">
-              Study Set created successfully
+          <div v-if="!isSuccessful">
+            <div class="text-athAIna-red text-[14px] font-medium">
+              {{ message }}
             </div>
           </div>
 
