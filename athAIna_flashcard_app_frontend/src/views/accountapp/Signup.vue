@@ -6,6 +6,7 @@ const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const error = ref("");
+const isSuccessful = ref(false);
 
 const errors = reactive({
   email: "",
@@ -39,8 +40,11 @@ const createUser = async () => {
       }
     );
     console.log(response.data);
+    isSuccessful.value = response.data.successful;
   } catch (err) {
-    if (err.response && err.response.data) {
+    console.log(err.response.data);
+    if (err.response.status === 400) {
+      isSuccessful.value = false;
       // Handle field-specific errors
       if (err.response.data.email) errors.email = err.response.data.email;
       if (err.response.data.password)
@@ -99,10 +103,7 @@ const createUser = async () => {
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
-        <div
-          v-if="errors.email[0]"
-          class="text-athAIna-red text-xs mt-1 ml-4"
-        >
+        <div v-if="errors.email[0]" class="text-athAIna-red text-xs mt-1 ml-4">
           {{ errors.email[0] }}
         </div>
       </div>
