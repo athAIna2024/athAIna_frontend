@@ -4,7 +4,7 @@ import axios from '@/axios';
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
-
+const isSuccessful = ref(false);
 const title = ref("");
 const description = ref("");
 const subject = ref("");
@@ -43,17 +43,19 @@ const saveStudySet = async () => {
       subject: subject.value // Ensure this matches the field name in your serializer
     });
 
-    console.log(response.data);
+    isSuccessful.value = true;
     // Handle successful response
   } catch (error) {
+    isSuccessful.value = false;
 
-    if (error.response.data.status === 400) {
+    if (error.response.status === 400) {
+
       field_errors.value = Object.fromEntries(
           Object.entries(error.response.data.errors).map(([key, value]) => [key, value[0]])
       );
-      console.log(field_errors.value);
-    } else {
-      field_errors.value['feedback'] = "An error occurred. Please try again later.";
+    }
+    else {
+      field_errors.value['message'] = "An error occurred. Please try again later.";
     }
   }
 };
@@ -121,14 +123,19 @@ const saveStudySet = async () => {
             </div>
           </div>
 
-          <div v-if="field_errors.message" class="text-athAIna-red text-[14px] font-medium">
+          <div v-if="!isSuccessful" class="text-athAIna-red text-[14px] font-medium">
             {{ field_errors.message }}
           </div>
 
-          <div v-if="field_errors.feedback" class="text-athAIna-red text-[14px] font-medium">
-            {{ field_errors.feedback }}
+          <div v-else>
+            <div class="text-athAIna-green text-[14px] font-medium">
+              Study Set created successfully
+            </div>
           </div>
 
+          <div>
+
+          </div>
           <div class="flex justify-end mb-[20px]">
             <button type="submit" class="btn font-medium w-[200px]"> Create Study Set </button>
           </div>
