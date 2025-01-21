@@ -61,6 +61,7 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalVisible.value = false;
+  fetchStudySet();
 };
 
 
