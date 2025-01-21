@@ -17,6 +17,11 @@ const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
 const userId = ref(1);
 
+const isSuccessful_studyset = ref(false);
+const message_studyset = ref("");
+const isSuccessful_flashcard = ref(false);
+const message_flashcard = ref("");
+
 const studySet_result = ref([]);
 const studySetCounts = ref(0);
 const flashcardCounts = ref({});
@@ -44,9 +49,7 @@ const dropdownOptions = ref({
 });
 
 
-
 const isModalVisible = ref(false);
-
 
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
@@ -77,41 +80,83 @@ const fetchFlashcardCount = async (studysetId) => {
       params: { studyset_id: studysetId }
     });
 
+
     if (response.data && Array.isArray(response.data.data)) {
+      isSuccessful_flashcard.value = response.data.successful;
+      message_flashcard.value = response.data.message;
       flashcardCounts.value[studysetId] = response.data.data.length;
+
+      // Debugging
+      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
+      console.log("message_flashcard", message_flashcard.value);
+
     } else {
-      console.error("API response is not an array");
+      isSuccessful_flashcard.value = false;
+      message_flashcard.value = "API response is not an array";
       flashcardCounts.value[studysetId] = 0;
+
+      // Debugging
+      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
+      console.log("message_flashcard", message_flashcard.value);
     }
 
   } catch (error) {
-    console.error(error);
+    if (error.response && error.response.status === 200) {
+      isSuccessful_flashcard.value = error.response.data.successful;
+      message_flashcard.value = error.response.data.message;
+
+      // Debugging
+      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
+      console.log("message_flashcard", message_flashcard.value);
+    } else {
+      isSuccessful_flashcard.value = false;
+      message_flashcard.value = "An error occurred. Please try again later.";
+
+      // Debugging
+      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
+      console.log("message_flashcard", message_flashcard.value);
+
+    }
     flashcardCounts.value[studysetId] = 0;
   }
 };
 
 const fetchStudySet = async () => {
   try {
-
     const response = await axios.get('/studyset/', {
       params: { user_id: Number(userId.value) }
     });
 
     if (response.data && Array.isArray(response.data.data)) {
+      isSuccessful_studyset.value = response.data.successful;
+      message_studyset.value = response.data.message;
       studySet_result.value = response.data.data;
       studySetCounts.value = response.data.data.length;
+
       // Fetch flashcard counts for each study set concurrently
       const flashcardCountPromises = studySet_result.value.map(studyset => fetchFlashcardCount(studyset.id));
       await Promise.all(flashcardCountPromises);
 
     } else {
-      console.error("API response is not an array");
+      isSuccessful_studyset.value = false;
+      message_studyset.value = "API response is not an array";
+      studySet_result.value = [];
+      studySetCounts.value = 0;
     }
 
   } catch (error) {
-    console.error(error);
+    if (error.response && error.response.status === 400) {
+      isSuccessful_studyset.value = error.response.data.successful;
+      message_studyset.value = error.response.data.message;
+    } else {
+      isSuccessful_studyset.value = false;
+      message_studyset.value = "An error occurred. Please try again later.";
+    }
+    studySet_result.value = [];
+    studySetCounts.value = 0;
   }
 };
+
 onMounted(() => {
   fetchStudySet();
   document.title = "Studysets";
@@ -151,7 +196,6 @@ onMounted(() => {
     </div>
 
     <div v-if="currentStudySets.length === 0" class="mt-[60px] text-[20px] font-semibold">
-      No study sets found
     </div>
 
 
@@ -161,7 +205,7 @@ onMounted(() => {
           <Studyset_Card
             :title="s.title"
             :description="s.description"
-            :subjects="getSubjectName(s.subjects)"
+            :subject="getSubjectName(s.subject)"
             :flashcardCount="flashcardCounts[s.id] || 0"
           />
         </div>
@@ -182,6 +226,7 @@ onMounted(() => {
         @close="closeModal"
     >
     </Create_Studyset>
+
     </div>
 
 </template>
