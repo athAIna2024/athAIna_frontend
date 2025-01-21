@@ -43,12 +43,10 @@ watch(() => props.isVisible, (newValue) => {
 
 const fetchStudySetData = async () => {
   try {
-    const response = await axios.get(studyset_url, {
-      params: { id: props.studySetId }
-    });
-    title.value = response.data.data.title;
-    description.value = response.data.data.description;
-    subject.value = response.data.data.subject;
+    const response = await axios.get(`${studyset_url}${props.studySetId}/`);
+    title.value = response.data.title;
+    description.value = response.data.description;
+    subject.value = response.data.subject;
 
     console.log('title:', title.value);
   } catch (error) {
