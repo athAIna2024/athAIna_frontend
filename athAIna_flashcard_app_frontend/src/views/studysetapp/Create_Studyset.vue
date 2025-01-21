@@ -43,10 +43,10 @@ const saveStudySet = async () => {
       subject: subject.value // Ensure this matches the field name in your serializer
     });
 
-    isSuccessful.value = true;
+    isSuccessful.value = response.data.successful;
     // Handle successful response
   } catch (error) {
-    isSuccessful.value = false;
+    isSuccessful.value = error.response.data.successful;
 
     if (error.response.status === 400) {
 
