@@ -62,9 +62,9 @@ export default {
        </div>
       </div>
      </div>  
-     
-    <OTP :is-visible="isOTPVisible" @close="closeOTP" />
    </div>
+   
+   <OTP :is-visible="isOTPVisible" @close="closeOTP" />
 </template>
 
 <style scoped>
