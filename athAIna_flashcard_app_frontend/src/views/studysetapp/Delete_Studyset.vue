@@ -103,7 +103,6 @@ const fetchStudySetTitle = async () => {
 </script>
 
 <template>
-  <form @submit.prevent="deleteStudySet">
     <transition name="modal-fade" mode="out-in">
       <div v-if="props.isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-40">
         <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red p-[4px] rounded-[20px] flex flex-col w-[550px]">
@@ -113,14 +112,15 @@ const fetchStudySetTitle = async () => {
               <div class="flex bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red p-[4px] rounded-[20px]">
                 <button @click="close" class="bg-athAIna-white text-athAIna-violet font-medium w-[210px] rounded-[18px]"> No </button>
               </div>
-              <button @click="openDeleteConfirmationModal" class="btn w-[210px] font-semibold"> Yes </button>
+              <form @submit.prevent="deleteStudySet">
+                <button @click="openDeleteConfirmationModal" class="btn w-[210px] font-semibold"> Yes </button>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </transition>
 
-  </form>
 
   <Delete_Confirmation
       :isVisible="isDeleteConfirmationModalVisible"
