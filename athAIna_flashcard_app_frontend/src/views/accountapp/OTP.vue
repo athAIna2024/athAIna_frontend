@@ -16,6 +16,46 @@ const emit = defineEmits(["close"]);
 
 const step = ref(1);
 
+const otpValue = ref("");
+const displayOTP = ref(["", "", "", "", "", ""]);
+
+const handleOTPChange = (e) => {
+  const value = e.target.value.replace(/[^0-9]/g, (otpValue.value = value));
+  displayOTP.value = [...value.padEnd(6, "")];
+};
+
+const handleBoxInput = (boxIndex, event) => {
+  const input = event.target;
+  const value = input.value.slice(-1);
+  if (!/^[0-9]+$/.test(value)) {
+    input.value = "";
+    return;
+  }
+  displayOTP.value[boxIndex] = value;
+  otpValue.value = displayOTP.value.join("");
+  if (value && boxIndex < 5) {
+    event.target.nextElementSibling.focus();
+    const nextInput = input.parentElement.children[index + 1];
+    if (nextInput) {
+      nextInput.focus();
+    }
+  }
+};
+
+const handleBoxKeydown = (boxIndex, event) => {
+  if (
+    event.key === "Backspace" &&
+    !displayOTP.value[boxIndex] &&
+    boxIndex > 0
+  ) {
+    event.preventDefault();
+    const prevInput = event.target.previousElementSibling;
+    prevInput.focus();
+    displayOTP.value[boxIndex - 1] = "";
+    otpValue.value = displayOTP.value.join("");
+  }
+};
+
 const close = () => {
   emit("close");
   step.value = 1;
@@ -23,6 +63,7 @@ const close = () => {
 
 const nextStep = () => {
   step.value++;
+  console.log(otpValue.value);
 };
 
 const previousStep = () => {
@@ -113,34 +154,52 @@ const buttonText = computed(() => {
         <div class="flex flex-row justify-center items-center">
           <input
             type="text"
-            minlength="1"
-            class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]"
+            v-model="otpValue"
+            class="sr-only"
+            @input="handleOTPChange"
+          />
+          <div class="flex flex-row justify-center items-center gap-2">
+            <input
+              v-for="(digit, boxIndex) in displayOTP"
+              :key="boxIndex"
+              type="text"
+              maxlength="1"
+              v-model="displayOTP[boxIndex]"
+              @input="handleBoxInput(boxIndex, $event)"
+              @keydown="handleBoxKeydown(boxIndex, $event)"
+              class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
+            />
+          </div>
+          <!-- <input
+            type="text"
+            maxlength="1"
+            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
           />
           <input
             type="text"
-            minlength="1"
-            class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]"
+            maxlength="1"
+            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
           />
           <input
             type="text"
-            minlength="1"
-            class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]"
+            maxlength="1"
+            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
           />
           <input
             type="text"
-            minlength="1"
-            class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]"
+            maxlength="1"
+            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
           />
           <input
             type="text"
-            minlength="1"
-            class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]"
+            maxlength="1"
+            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
           />
           <input
             type="text"
-            minlength="1"
-            class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]"
-          />
+            maxlength="1"
+            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
+          /> -->
         </div>
         <div class="m-8 flex justify-center">
           <button @click="nextStep" class="btn w-48">Verify</button>

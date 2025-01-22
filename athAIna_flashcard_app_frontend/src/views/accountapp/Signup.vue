@@ -1,12 +1,23 @@
 <script setup>
 import { reactive, ref } from "vue";
 import axios from "axios";
+import OTP from "@/views/accountapp/OTP.vue";
 
 const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const error = ref("");
 const isSuccessful = ref(false);
+
+const isOTPVisible = ref(false);
+
+const openOTP = () => {
+  isOTPVisible.value = true;
+};
+
+const closeOTP = () => {
+  isOTPVisible.value = false;
+};
 
 const errors = reactive({
   email: "",
@@ -41,6 +52,10 @@ const createUser = async () => {
     );
     console.log(response.data);
     isSuccessful.value = response.data.successful;
+
+    if (isSuccessful.value === true) {
+      openOTP();
+    }
   } catch (err) {
     console.log(err.response.data);
     if (err.response.status === 400) {
@@ -189,7 +204,13 @@ const createUser = async () => {
         </div>
 
         <div class="flex m-10 justify-center">
-          <button @click="createUser" class="btn w-full">Sign Up</button>
+          <button
+            @click="createUser"
+            class="btn w-full"
+            :disabled="isOTPVisible"
+          >
+            Sign Up
+          </button>
           <p v-if="error" class="text-red-500">{{ errors.general }}</p>
         </div>
 
@@ -202,6 +223,8 @@ const createUser = async () => {
       </div>
     </div>
   </div>
+
+  <OTP :is-visible="isOTPVisible" title="OTP Verification" @close="closeOTP" />
 </template>
 
 <style scoped></style>
