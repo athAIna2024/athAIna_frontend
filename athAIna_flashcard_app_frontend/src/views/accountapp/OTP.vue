@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, computed } from "vue";
+import axios from "axios";
 
 const props = defineProps({
   isVisible: {
@@ -10,17 +11,30 @@ const props = defineProps({
     type: String,
     default: "Modal Title",
   },
+  verificationType: {
+    type: String,
+    required: true,
+    validator: (value) =>
+      [("verifyEmail", "forgotPassword", "changePassword")].includes(value)
+  },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "verified"]);
 
 const step = ref(1);
-
+const error = ref("");
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
 
+const API_ENDPOINTS = {
+  verifyEmail: "http://localhost:8000/account/verify-email/",
+  forgotPassword: "http://localhost:8000/account/verify-password-change-otp/",
+  changePassword: "http://localhost:8000/account/verify-change-password-otp/",
+};
+
 const handleOTPChange = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, (otpValue.value = value));
+  otpValue.value = value;
   displayOTP.value = [...value.padEnd(6, "")];
 };
 
@@ -56,11 +70,6 @@ const handleBoxKeydown = (boxIndex, event) => {
   }
 };
 
-const close = () => {
-  emit("close");
-  step.value = 1;
-};
-
 const nextStep = () => {
   step.value++;
   console.log(otpValue.value);
@@ -92,6 +101,43 @@ const detail = computed(() => {
 const buttonText = computed(() => {
   // Add your button text logic here
 });
+
+const verifyOTP = async () => {
+  if (otpValue.value.length !== 6) return;
+
+  try {
+    const response = await axios.post(API_ENDPOINTS[props.verificationType], {
+      otp: otpValue.value
+    });
+    if (response.data.successful) {
+      if (response.data.password_reset_link) {
+        emit("verified", {
+          success: true,
+          message: response.data.message,
+          resetLink: response.data.password_reset_link,
+        });
+        close();
+      } else {
+        emit("verified", {
+          success: true,
+          message: response.data.message,
+        });
+      }
+      console.log(response.data);
+      close();
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || "An error occurred";
+  }
+
+  const close = () => {
+    emit("close");
+    step.value = 1;
+    error.value = "";
+    otpValue.value = "";
+    displayOTP.value = ["", "", "", "", "", ""];
+  };
+};
 // export default {
 //   name: 'OTP.vue',
 //     props: {
@@ -202,7 +248,17 @@ const buttonText = computed(() => {
           /> -->
         </div>
         <div class="m-8 flex justify-center">
-          <button @click="nextStep" class="btn w-48">Verify</button>
+          <button
+            @click="verifyOTP"
+            class="btn w-48"
+            :disabled="otpValue.length !== 6"
+          >
+            Verify
+          </button>
+        </div>
+        <div>
+          <!-- Show error if exists -->
+          <p v-if="error" class="text-athAIna-red text-sm mt-2">{{ error }}</p>
         </div>
       </div>
     </div>

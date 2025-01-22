@@ -1,8 +1,10 @@
 <script setup>
 import { reactive, ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 import OTP from "@/views/accountapp/OTP.vue";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const password2 = ref("");
@@ -17,6 +19,19 @@ const openOTP = () => {
 
 const closeOTP = () => {
   isOTPVisible.value = false;
+};
+
+const handleVerified = ({ success, message }) => {
+  try{
+  if (success) {
+    console.log("Email Verified successfully", message);
+    // router.push("/login");
+  } else {
+    error.value = message;
+  }} catch(err){
+    error.value = "An error occurred";
+    console.error(err);
+  }
 };
 
 const errors = reactive({
@@ -224,7 +239,8 @@ const createUser = async () => {
     </div>
   </div>
 
-  <OTP :is-visible="isOTPVisible" title="OTP Verification" @close="closeOTP" />
+  <OTP :is-visible="isOTPVisible" title="verify email" @close="closeOTP"
+  @verified="handleVerified" verificationType="verifyEmail"" />
 </template>
 
 <style scoped></style>
