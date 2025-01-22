@@ -88,6 +88,7 @@ const closeDeleteModal = () => {
 
   <Delete_Studyset
     :isVisible="isDeleteModalVisible"
+    :studySetId="studySetId"
     title="Delete Studyset – athAIna"
     @close="closeDeleteModal"
   />

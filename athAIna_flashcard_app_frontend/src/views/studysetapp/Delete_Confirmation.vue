@@ -1,31 +1,30 @@
-<script>
-export default {
-  name: "Delete_Confirmation.vue",
-  props: {
-    isVisible: {
-      type: Boolean,
-      required: true,
-    },
-    title: {
-      type: String,
-      default: "Modal Title",
-    },
+<script setup>
+import { watch, defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+  isVisible: {
+    type: Boolean,
+    required: true,
   },
-  methods: {
-    close() {
-      this.$emit("close");
-    }
+  title: {
+    type: String,
+    default: "Modal Title",
   },
-  watch: {
-    isVisible(newValue) {
-      if (newValue) {
-        document.title = `${this.title}`;
-      } else {
-        document.title = `Library – athAIna`
-      }
-    },
+});
+
+const emit = defineEmits(['close']);
+
+const close = () => {
+  emit('close');
+};
+
+watch(() => props.isVisible, (newValue) => {
+  if (newValue) {
+    document.title = `${props.title}`;
+  } else {
+    document.title = `Library – athAIna`;
   }
-}
+});
 </script>
 
 <template>
