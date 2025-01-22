@@ -12,6 +12,7 @@ import { onMounted } from "vue";
 import { computed } from "vue";
 import axios from '@/axios'; // Import the configured Axios instance
 
+
 // refactor backend 
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
@@ -123,6 +124,7 @@ const fetchFlashcardCount = async (studysetId) => {
 };
 
 const fetchStudySet = async () => {
+
   try {
     const response = await axios.get('/studyset/', {
       params: { user_id: Number(userId.value) }
@@ -196,14 +198,14 @@ onMounted(() => {
       ></div>
     </div>
 
-    <div v-if="currentStudySets.length === 0" class="mt-[60px] text-[20px] font-semibold">
+    <div v-if="!isSuccessful_studyset">
+      <div class="text-athAIna-sm font-medium mt-[30px]"> {{ message_studyset }} </div>
     </div>
 
 
-    <div v-else>
+    <div v-if="isSuccessful_studyset">
       <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="(s, index) in currentStudySets" :key="index">
-
           <Studyset_Card
             :title="s.title"
             :description="s.description"
@@ -211,8 +213,6 @@ onMounted(() => {
             :flashcardCount="flashcardCounts[s.id] || 0"
             :studySetId="Number(s.id)"
           />
-
-          {{ Number(s.id) }}
         </div>
       </div>
 
