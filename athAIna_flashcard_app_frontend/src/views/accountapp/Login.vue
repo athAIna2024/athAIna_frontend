@@ -2,11 +2,14 @@
 import { reactive, ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+axios.defaults.withCredentials = true;
 
 const router = useRouter();
 const email = ref("");
 const password = ref("");
 const isSuccessful = ref(false);
+const isLoggedIn = ref(false);
+// const locked = ref(false);
 const errors = reactive({
   email: "",
   password: "",
@@ -14,18 +17,29 @@ const errors = reactive({
 });
 
 const login = async () => {
+  // locked.value = true;
+  // errors.value.general = "";
+
   try {
-    const response = await axios.post("http://localhost:8000/account/login/", {
-      email: email.value,
-      password: password.value,
-    });
+    const response = await axios.post(
+      "http://localhost:8000/account/login/",
+      {
+        email: email.value,
+        password: password.value,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+      }
+    );
     console.log(response.data);
     if (response.data.successful) {
+      console.log("Cookies: ", document.cookie);
       try {
-        await router.push({
-          name: "Library_of_Studysets",
-          replace: true,
-        });
+        await router.push("/library_of_studysets/");
       } catch (error) {
         errors.value.general = "Something went wrong";
       }
@@ -40,6 +54,8 @@ const login = async () => {
     } else {
       errors.general = "An error occurred. Please try again later";
     }
+  } finally {
+    // locked.value = false;
   }
 };
 </script>
@@ -143,7 +159,9 @@ const login = async () => {
         </div>
 
         <div class="flex mb-10 justify-center">
-          <button @click="login" class="btn w-full">Log In</button>
+          <button @click="login" class="btn w-full" :disabled="locked">
+            Log In
+          </button>
         </div>
 
         <div class="text-center">
