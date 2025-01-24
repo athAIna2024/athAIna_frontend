@@ -23,6 +23,7 @@ const message_flashcard = ref("");
 
 const studySet_result = ref([]);
 const studySetCounts = ref(0);
+const studySet_db = ref([]);
 
 const currentPage = ref(1);
 const itemsPerPage = 6;
@@ -59,14 +60,14 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalVisible.value = false;
-  fetchStudySet();
+  fetchStudySetFromDb();
 };
 
 
 const currentStudySets = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return studySet_result.value.slice(startIndex, endIndex);
+  return studySet_db.value.slice(startIndex, endIndex);
 });
 
 const getSubjectName = (abbreviation) => {
@@ -122,6 +123,8 @@ const fetchStudySet = async () => {
           description: String(studyset.description),
           subject: String(studyset.subject),
           flashcard_count: 0,
+          created_at: Date(studyset.created_at),
+          updated_at: Date(studyset.updated_at),
         };
       });
 
@@ -130,7 +133,20 @@ const fetchStudySet = async () => {
       });
       await Promise.all(flashcardCountPromises);
 
-      console.log("studySet_result", studySet_result.value);
+      const serializableStudySets = studySet_result.value.map(studyset => {
+        return {
+          id: studyset.id,
+          title: studyset.title,
+          description: studyset.description,
+          subject: studyset.subject,
+          flashcard_count: studyset.flashcard_count,
+          created_at: studyset.created_at,
+          updated_at: studyset.updated_at
+        };
+      });
+
+      await studySetDb.studysets.bulkPut(serializableStudySets);
+
     } else {
       isSuccessful_studyset.value = false;
       message_studyset.value = "API response is not an array";
@@ -159,8 +175,21 @@ const fetchStudySet = async () => {
 const fetchStudySetFromDb = async () => {
   try {
     fetchStudySet();
+    studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
+
+    if (studySet_db.value.length > 0) {
+      studySetCounts.value = studySet_db.value.length;
+      isSuccessful_studyset.value = true;
+      message_studyset.value = "Study sets fetched successfully";
+
+      console.log(studySet_db.value);
+    } else {
+      isSuccessful_studyset.value = false;
+      message_studyset.value = "No study sets found";
+    }
   } catch (error) {
-    console.error(error);
+    isSuccessful_studyset.value = false;
+    message_studyset.value = "An error occurred. Please try again later.";
   }
 };
 
