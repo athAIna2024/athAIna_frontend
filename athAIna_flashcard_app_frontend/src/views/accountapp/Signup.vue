@@ -1,13 +1,17 @@
 <script setup>
 import { reactive, ref } from "vue";
 import axios from "axios";
-import OTP from "@/views/accountapp/OTP.vue";
+import OTP from "@/views/accountapp/Email_OTP.vue";
+import { useRouter } from "vue-router";
 
 const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const error = ref("");
 const isSuccessful = ref(false);
+
+const router = useRouter();
+
 
 const isOTPVisible = ref(false);
 
@@ -225,22 +229,6 @@ const createUser = async () => {
   </div>
 
   <OTP :is-visible="isOTPVisible" title="OTP Verification" @close="closeOTP" />
-</template>
-
-<style scoped></style>
-
-        <div class="text-center">
-          Already have an account?
-          <span class="font-semibold underline">
-            <RouterLink to="/login"> Login </RouterLink>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <OTP :is-visible="isOTPVisible" title="verify email" @close="closeOTP"
-  @verified="handleVerified" verificationType="verifyEmail"" />
 </template>
 
 <style scoped></style>

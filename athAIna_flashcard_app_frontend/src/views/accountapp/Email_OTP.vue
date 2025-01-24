@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, computed } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 
 const props = defineProps({
@@ -16,6 +17,8 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const step = ref(1);
+const error = ref("");
+const isVerified = ref("false");
 
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
@@ -51,20 +54,56 @@ const handleBoxKeydown = (boxIndex, event) => {
   ) {
     event.preventDefault();
     const prevInput = event.target.previousElementSibling;
-    prevInput.focus();
-    displayOTP.value[boxIndex - 1] = "";
-    otpValue.value = displayOTP.value.join("");
+    if (prevInput) {
+      prevInput.focus();
+      displayOTP.value[boxIndex - 1] = "";
+      otpValue.value = displayOTP.value.join("");
+    }
+  }
+};
+
+const verifyOTP = async () => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/account/verify-email/",
+      {
+        otp: otpValue.value,
+      }
+    );
+
+    console.log(response.data);
+
+    if (response.data.successful) {
+      isVerified.value = true;
+      step.value++;
+      setTimeout(() => {
+        close();
+        router.push("/login");
+      }, 2000);
+    } else {
+      error.value = response.data.error;
+    }
+  } catch (err) {
+    console.log(err.response.data);
+    error.value = err.response?.data?.message || "Invalid OTP code";
+    console.error("OTP verification error", err);
   }
 };
 
 const close = () => {
   emit("close");
   step.value = 1;
+  error.value = "";
+  otpValue.value = "";
+  displayOTP.value = ["", "", "", "", "", ""];
 };
 
 const nextStep = () => {
-  step.value++;
-  console.log(otpValue.value);
+  if (otpValue.value.length === 6) {
+    verifyOTP();
+  } else {
+    error.value = "Please enter a valid OTP code";
+  }
 };
 
 const previousStep = () => {
@@ -77,13 +116,25 @@ watch(step, (newValue) => {
   if (newValue === 3) {
     setTimeout(() => {
       close();
+      try {
+        router.push("/login");
+      } catch (err) {
+        console.error("Error redirecting to login page", err);
+      }
     }, 2000);
   }
 });
 
 // Computed properties
 const stepText = computed(() => {
-  // Add your step text logic here
+  switch (step.value) {
+    case 1:
+      return "OTP Verification";
+    case 2:
+      return "Verification Successful";
+    default:
+      return "";
+  }
 });
 
 const detail = computed(() => {
@@ -93,52 +144,6 @@ const detail = computed(() => {
 const buttonText = computed(() => {
   // Add your button text logic here
 });
-// export default {
-//   name: 'OTP.vue',
-//     props: {
-//       isVisible: {
-//         type: Boolean,
-//         required: true,
-//       },
-//       title: {
-//         type: String,
-//         default: "Modal Title",
-//       },
-//     },
-//   data () {
-//     return {
-//       step: 1,
-//     };
-//   },
-//     methods: {
-//       close() {
-//         this.$emit("close");
-//         this.step = 1;
-//       },
-//       nextStep() {
-//         this.step++;
-//       },
-//       previousStep() {
-//         if (this.step > 1) {
-//           this.step--;
-//         }
-//       },
-//     },
-//     watch: {
-//     step(newValue) {
-//       if (newValue === 3) {
-//         setTimeout(() => {
-//           close();
-//         }, 2000);
-//       }
-//       }
-//     },
-//     computed: {
-//     stepText() {},
-//       detail() {},
-//       buttonText() {},
-//     }
-//   }
 </script>
 
 <template>
@@ -152,6 +157,7 @@ const buttonText = computed(() => {
         <p class="m-8 text-athAIna-md">
           We've sent a One Time Password (OTP) to verify your email.
         </p>
+        <p v-if="error" class="text-athAIna-red text-sm mb-4">{{ error }}</p>
         <div class="flex flex-row justify-center items-center">
           <input
             type="text"
@@ -203,7 +209,13 @@ const buttonText = computed(() => {
           /> -->
         </div>
         <div class="m-8 flex justify-center">
-          <button @click="nextStep" class="btn w-48">Verify</button>
+          <button
+            @click="nextStep"
+            class="btn w-48"
+            :disabled="otpValue.length !== 6"
+          >
+            Verify
+          </button>
         </div>
       </div>
     </div>
