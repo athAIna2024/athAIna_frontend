@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div class="flex flex-row justify-between">
-  <div class="mt-40 ml-60 pr-40 flex justify-center">
+  <div class="mt-40 ml-60 pr-40 flex justify-center w-1/2">
       <div class="absolute rotate-[12deg] shadow-md w-[375px] h-[500px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
       <div class="absolute rotate-[6deg] shadow-md w-[375px] h-[500px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
       <div class="absolute  w-[375px] h-[500px] rounded-lg border-4 bg-athAIna-white flex">
@@ -14,7 +14,7 @@ export default {
       </div>  
     </div>
 
-  <div class="flex flex-col justify-center items-center min-h-screen"> 
+  <div class="flex flex-col justify-center items-center min-h-screen w-full"> 
         <h1 class="text-athAIna-violet font-semibold w-full text-center"> Welcome Back! </h1>
         <div class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-[700px]">
           <div class="relative flex flex-row items-center">
