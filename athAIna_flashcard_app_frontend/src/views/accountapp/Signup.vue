@@ -12,7 +12,6 @@ const isSuccessful = ref(false);
 
 const router = useRouter();
 
-
 const isOTPVisible = ref(false);
 
 const openOTP = () => {
@@ -41,7 +40,7 @@ const createUser = async () => {
   });
 
   if (password.value !== password2.value) {
-    error.value = serializer.errors;
+    errors.general = "Passwords do not match";
     return;
   }
 
@@ -203,8 +202,8 @@ const createUser = async () => {
         </div>
 
         <!-- Display error message if any -->
-        <div v-if="error" class="text-athAIna-red text-center mt-2">
-          {{ error }}
+        <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
+          {{ errors.general }}
         </div>
 
         <div class="flex m-10 justify-center">
@@ -215,7 +214,6 @@ const createUser = async () => {
           >
             Sign Up
           </button>
-          <p v-if="error" class="text-red-500">{{ errors.general }}</p>
         </div>
 
         <div class="text-center">

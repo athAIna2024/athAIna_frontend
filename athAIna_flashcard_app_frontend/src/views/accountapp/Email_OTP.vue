@@ -15,7 +15,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close"]);
-
+const router = useRouter();
 const step = ref(1);
 const error = ref("");
 const isVerified = ref("false");
