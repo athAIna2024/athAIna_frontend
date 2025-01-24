@@ -2,7 +2,6 @@
 import Search_Bar from "@/components/Search_Bar.vue";
 import Studyset_Card from "@/components/Studyset_Card.vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
-import Footer_Navbar from "@/components/Footer_Navbar.vue";
 import Pagination from "@/components/Pagination.vue";
 import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
@@ -11,9 +10,8 @@ import { ref } from "vue";
 import { onMounted } from "vue";
 import { computed } from "vue";
 import axios from '@/axios'; // Import the configured Axios instance
+import studySetDb from "@/views/studysetapp/dexie.js";
 
-
-// refactor backend 
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
 const userId = ref(1);
@@ -25,7 +23,6 @@ const message_flashcard = ref("");
 
 const studySet_result = ref([]);
 const studySetCounts = ref(0);
-const flashcardCounts = ref({});
 
 const currentPage = ref(1);
 const itemsPerPage = 6;
@@ -82,70 +79,66 @@ const fetchFlashcardCount = async (studysetId) => {
       params: { studyset_id: studysetId }
     });
 
-
     if (response.data && Array.isArray(response.data.data)) {
       isSuccessful_flashcard.value = response.data.successful;
       message_flashcard.value = response.data.message;
-      flashcardCounts.value[studysetId] = response.data.data.length;
-
-      // Debugging
-      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
-      console.log("message_flashcard", message_flashcard.value);
+      return response.data.data.length;
 
     } else {
       isSuccessful_flashcard.value = false;
       message_flashcard.value = "API response is not an array";
-      flashcardCounts.value[studysetId] = 0;
+      return 0;
 
-      // Debugging
-      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
-      console.log("message_flashcard", message_flashcard.value);
     }
 
   } catch (error) {
     if (error.response && error.response.status === 200) {
       isSuccessful_flashcard.value = error.response.data.successful;
       message_flashcard.value = error.response.data.message;
-
-      // Debugging
-      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
-      console.log("message_flashcard", message_flashcard.value);
     } else {
       isSuccessful_flashcard.value = false;
       message_flashcard.value = "An error occurred. Please try again later.";
 
-      // Debugging
-      console.log("isSuccessful_flashcard", isSuccessful_flashcard.value);
-      console.log("message_flashcard", message_flashcard.value);
-
     }
-    flashcardCounts.value[studysetId] = 0;
+    return 0;
   }
 };
 
-const fetchStudySet = async () => {
 
+const fetchStudySet = async () => {
   try {
-    const response = await axios.get('/studyset/', {
+    // API Call
+    const response = await axios.get(studyset_url, {
       params: { user_id: Number(userId.value) }
     });
 
     if (response.data && Array.isArray(response.data.data)) {
       isSuccessful_studyset.value = response.data.successful;
       message_studyset.value = response.data.message;
-      studySet_result.value = response.data.data;
-      studySetCounts.value = response.data.data.length;
+      studySet_result.value = response.data.data.map((studyset) => {
+        return {
+          id: Number(studyset.id),
+          title: String(studyset.title),
+          description: String(studyset.description),
+          subject: String(studyset.subject),
+          flashcard_count: 0,
+        };
+      });
 
-      // Fetch flashcard counts for each study set concurrently
-      const flashcardCountPromises = studySet_result.value.map(studyset => fetchFlashcardCount(studyset.id));
+      const flashcardCountPromises = studySet_result.value.map(async (studyset) => {
+        studyset.flashcard_count = await fetchFlashcardCount(studyset.id);
+      });
       await Promise.all(flashcardCountPromises);
 
+      console.log("studySet_result", studySet_result.value);
     } else {
       isSuccessful_studyset.value = false;
       message_studyset.value = "API response is not an array";
       studySet_result.value = [];
       studySetCounts.value = 0;
+
     }
+    return studySet_result;
 
   } catch (error) {
     if (error.response && error.response.status === 400) {
@@ -157,11 +150,23 @@ const fetchStudySet = async () => {
     }
     studySet_result.value = [];
     studySetCounts.value = 0;
+
+    return studySet_result;
   }
 };
 
+
+const fetchStudySetFromDb = async () => {
+  try {
+    fetchStudySet();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
 onMounted(() => {
-  fetchStudySet();
+  fetchStudySetFromDb();
   document.title = "Studysets";
 });
 </script>
@@ -210,8 +215,8 @@ onMounted(() => {
             :title="s.title"
             :description="s.description"
             :subject="getSubjectName(s.subject)"
-            :flashcardCount="flashcardCounts[s.id] || 0"
-            :studySetId="Number(s.id)"
+            :flashcardCount="s.flashcard_count"
+            :studySetId="s.id"
           />
         </div>
       </div>
