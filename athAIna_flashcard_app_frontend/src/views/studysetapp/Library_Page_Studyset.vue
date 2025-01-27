@@ -1,5 +1,5 @@
 <script setup>
-import Search_Bar from "@/components/Search_Bar.vue";
+import Search_Bar_Studyset from "@/components/Search_Bar_Studyset.vue";
 import Studyset_Card from "@/components/Studyset_Card.vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Pagination from "@/components/Pagination.vue";
@@ -199,7 +199,9 @@ onMounted(() => {
 <template>
   <div class="my-16 ml-12 mr-12">
     <div class="flex flex-row justify-between space-x-[50px] content-center">
-      <Search_Bar v-model="input" class="w-[700px]" />
+      <Search_Bar_Studyset
+          v-model="input"
+          class="w-[700px]" />
       <Subject_Selector
         @click="toggleModal('subjectSelectModal')"
         class="relative w-[350px]"
