@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const router = useRouter();
 const email = ref("");
@@ -17,8 +18,10 @@ const login = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
+      Cookies.set("access_token", `Bearer ${response.data.access}`);
+      Cookies.set("refresh_token", `Bearer ${response.data.refresh}`);
+
       router.push("/library_of_studysets");
-      
     } else {
       console.log(response.data.error);
     }
