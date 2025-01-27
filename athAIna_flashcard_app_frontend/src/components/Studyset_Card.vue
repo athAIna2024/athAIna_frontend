@@ -1,52 +1,71 @@
-<script>
+<script setup>
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
-export default {
-  name: 'Studyset_Card',
-  components: {
-    Update_Studyset,
-    Delete_Studyset
-  },
+import { defineProps } from 'vue';
+import { ref } from 'vue';
 
-  data() {
-    return {
-      isUpdateModalVisible: false,
-      isDeleteModalVisible: false
-    }
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
   },
-
-  methods: {
-    openUpdateModal() {
-      this.isUpdateModalVisible = true;
-    },
-    closeUpdateModal() {
-      this.isUpdateModalVisible = false;
-    },
-    openDeleteModal() {
-      this.isDeleteModalVisible = true;
-    },
-    closeDeleteModal() {
-      this.isDeleteModalVisible = false;
-    }
+  description: {
+    type: String,
+    required: true
+  },
+  subject: {
+    type: String,
+    required: true
+  },
+  flashcardCount: {
+    type: Number,
+    required: true
+  },
+  studySetId: {
+    type: Number,
+    required: true
   }
+});
+
+const isUpdateModalVisible = ref(false);
+const isDeleteModalVisible = ref(false);
+
+const openUpdateModal = () => {
+  isUpdateModalVisible.value = true;
 };
+
+const closeUpdateModal = () => {
+  isUpdateModalVisible.value = false;
+};
+
+const openDeleteModal = () => {
+  isDeleteModalVisible.value = true;
+};
+
+const closeDeleteModal = () => {
+  isDeleteModalVisible.value = false;
+};
+
+
+
+
 </script>
 
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
       <router-link to="/library_of_flashcards">
-        <div class="text-[20px] font-semibold hover:cursor-pointer"> Networking </div>
+        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
-      <div class="text-[16px] text-athAIna-orange"> Technology </div>
+      <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px]">
-        This course introduces the architecture, structure, functions,
-        components, and models of the Internet and other computer networks.
+        {{ description }}
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
-          <span class="font-bold">100</span> flashcards
+          <span class="font-bold"> {{ flashcardCount }} </span>
+          <span>{{ flashcardCount > 1 ? ' flashcards' : ' flashcard' }}</span>
         </div>
         <div class="flex flex-row">
           <svg @click="openUpdateModal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="hover:cursor-pointer size-6">
@@ -62,15 +81,17 @@ export default {
 
   <Update_Studyset
       :isVisible="isUpdateModalVisible"
+      :studySetId="studySetId"
       title="Update Studyset – athAIna"
-      @close="closeUpdateModal">
-  </Update_Studyset>
+      @close="closeUpdateModal"
+  />
 
   <Delete_Studyset
     :isVisible="isDeleteModalVisible"
+    :studySetId="studySetId"
     title="Delete Studyset – athAIna"
-    @close="closeDeleteModal">
-  </Delete_Studyset>
+    @close="closeDeleteModal"
+  />
 
 </template>
 
