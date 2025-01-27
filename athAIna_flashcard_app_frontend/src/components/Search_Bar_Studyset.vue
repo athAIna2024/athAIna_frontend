@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import studySetDb from "@/views/studysetapp/dexie.js";
-im
+import { useStudysetStore} from "../../stores/studySetStore.js";
+
+const store = useStudysetStore();
 
 const props = defineProps({
   modelValue: String
@@ -18,7 +20,7 @@ const updateValue = (event) => {
 const handleKeyPress = async (event) => {
   if (event.key === 'Enter') {
     searchResults.value = await searchStudySets(event.target.value);
-    router.push({ name: 'Library_Page_Studyset', query: { results: JSON.stringify(searchResults.value) } });
+    store.setSearchResults(searchResults.value);
   }
 };
 
@@ -40,11 +42,11 @@ const searchStudySets = async (query) => {
       </svg>
       <input type="search" :value="modelValue" @input="updateValue" @keydown="handleKeyPress" placeholder="Search Study Set" class="text-[14px] text-athAIna-orange placeholder-athAIna-orange focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]">
     </div>
-<!--    <div v-if="searchResults.length">-->
-<!--      <ul>-->
-<!--        <li v-for="result in searchResults" :key="result.id">{{ result.title }}</li>-->
-<!--      </ul>-->
-<!--    </div>-->
+    <div v-if="store.searchResults.length">
+      <ul>
+        <li v-for="result in store.searchResults" :key="result.id">{{ result.title }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 

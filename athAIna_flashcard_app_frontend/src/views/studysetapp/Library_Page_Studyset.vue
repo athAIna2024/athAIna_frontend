@@ -12,6 +12,11 @@ import { computed } from "vue";
 import axios from '@/axios'; // Import the configured Axios instance
 import studySetDb from "@/views/studysetapp/dexie.js";
 
+import { useStudysetStore} from "../../../stores/studySetStore.js";
+
+const store = useStudysetStore();
+
+
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
 const userId = ref(1);
@@ -190,10 +195,12 @@ const fetchStudySetFromDb = async () => {
     message_studyset.value = "An error occurred. Please try again later.";
   }
 };
+
 onMounted(() => {
   fetchStudySetFromDb();
-  document.title = "Studysets";
+  document.title = "Study Sets";
 });
+
 </script>
 
 <template>
@@ -237,7 +244,7 @@ onMounted(() => {
 
     <div v-if="isSuccessful_studyset">
       <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="(s, index) in currentStudySets" :key="index">
+        <div v-for="(s, index) in store.searchResults.length ? store.searchResults : currentStudySets" :key="index">
           <Studyset_Card
             :title="s.title"
             :description="s.description"
