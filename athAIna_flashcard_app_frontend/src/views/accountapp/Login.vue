@@ -18,8 +18,8 @@ const login = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
-      Cookies.set("access_token", `Bearer ${response.data.access}`);
-      Cookies.set("refresh_token", `Bearer ${response.data.refresh}`);
+      Cookies.set("access_token", `${response.data.access}`);
+      Cookies.set("refresh_token", `${response.data.refresh}`);
 
       router.push("/library_of_studysets");
     } else {
