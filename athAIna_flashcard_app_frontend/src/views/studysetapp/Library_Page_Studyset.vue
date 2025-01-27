@@ -171,6 +171,7 @@ const fetchStudySet = async () => {
   }
 };
 
+
 const fetchStudySetFromDb = async () => {
   try {
     await fetchStudySet();
@@ -189,7 +190,6 @@ const fetchStudySetFromDb = async () => {
     message_studyset.value = "An error occurred. Please try again later.";
   }
 };
-
 onMounted(() => {
   fetchStudySetFromDb();
   document.title = "Studysets";
@@ -261,6 +261,7 @@ onMounted(() => {
         @close="closeModal"
     >
     </Create_Studyset>
+
 
     </div>
 

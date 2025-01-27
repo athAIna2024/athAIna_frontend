@@ -4,7 +4,6 @@ import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import { defineProps } from 'vue';
 import { ref } from 'vue';
-import axios from "@/axios.js";
 
 const props = defineProps({
   title: {

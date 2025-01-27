@@ -20,13 +20,6 @@ const message_retrieved = ref("");
 const isSuccessful_updated = ref(false);
 const message_updated = ref("");
 
-const studySet = reactive({
-  title: "",
-  description: "",
-  subject: "",
-  updated_at: new Date(),
-});
-
 const props = defineProps({
   isVisible: {
     type: Boolean,
@@ -42,10 +35,11 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'], ['refreshLibrary']);
 const close = () => {
   emit('close');
 };
+
 
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
@@ -100,15 +94,19 @@ const updateStudySet = async () => {
     message_updated.value = request.data.message;
 
     // Update Local Database
-    studySet.title = title.value;
-    studySet.description = description.value;
-    studySet.subject = subject.value;
-    studySet.updated_at = new Date();
+    const updateStudySet = {
+      id: props.studySetId,
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+      updated_at: new Date()
+    };
 
-    await studySetDb.studysets.put(studySet);
+    await studySetDb.studysets.put(updateStudySet);
 
     if (isSuccessful_updated.value) {
       close();
+      location.reload();
     }
 
   } catch (error) {
