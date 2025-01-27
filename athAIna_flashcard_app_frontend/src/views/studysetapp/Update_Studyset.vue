@@ -1,6 +1,10 @@
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { ref } from 'vue';
+import { watch }  from 'vue';
+import { reactive } from 'vue';
+
 import axios from '@/axios';
+import studySetDb from "@/views/studysetapp/dexie.js";
 
 const studyset_url = "/studyset/update/";
 
@@ -31,10 +35,11 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'], ['refreshLibrary']);
 const close = () => {
   emit('close');
 };
+
 
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
@@ -81,15 +86,27 @@ const updateStudySet = async () => {
     const request = await axios.put(`${studyset_url}${props.studySetId}/`, {
       title: title.value,
       description: description.value,
-      subject: subject.value
+      subject: subject.value,
     });
+
 
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
 
+    // Update Local Database
+    const updateStudySet = {
+      id: props.studySetId,
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+      updated_at: new Date()
+    };
+
+    await studySetDb.studysets.put(updateStudySet);
+
     if (isSuccessful_updated.value) {
       close();
-      location.reload(); // Reload the page to fetch the updated data
+      location.reload();
     }
 
   } catch (error) {
@@ -104,10 +121,12 @@ const updateStudySet = async () => {
     }
     else {
       isSuccessful_updated.value = false;
-      message_updated.value = "An error occurred. Please try again later.";
+      message_updated.value = "An error occurred. Please try again later .";
     }
   }
 };
+
+
 </script>
 <template>
   <form @submit.prevent="updateStudySet">

@@ -1,5 +1,6 @@
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { ref } from 'vue';
+import { watch } from 'vue';
 import axios from '@/axios';
 
 const studyset_url = "/studyset/save/";
@@ -50,12 +51,6 @@ const saveStudySet = async () => {
     if (isSuccessful.value) {
       close();
     }
-
-    // Debugging
-    console.log(isSuccessful.value);
-    console.log(message.value);
-
-    // Handle successful response
   } catch (error) {
 
     if (error.response.status === 400) {

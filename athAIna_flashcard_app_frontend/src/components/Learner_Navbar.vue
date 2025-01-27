@@ -49,7 +49,7 @@ export default {
       <div>Features</div>
       <div>FAQS</div>
       <div>
-        <router-link to="contact_us">
+        <router-link to="/contact_us">
           Contact us
         </router-link>
       </div>

@@ -4,7 +4,6 @@ import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import { defineProps } from 'vue';
 import { ref } from 'vue';
-import axios from "@/axios.js";
 
 const props = defineProps({
   title: {
@@ -65,7 +64,8 @@ const closeDeleteModal = () => {
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
-          <span class="font-bold"> {{ flashcardCount }} </span> flashcards
+          <span class="font-bold"> {{ flashcardCount }} </span>
+          <span>{{ flashcardCount > 1 ? ' flashcards' : ' flashcard' }}</span>
         </div>
         <div class="flex flex-row">
           <svg @click="openUpdateModal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="hover:cursor-pointer size-6">
