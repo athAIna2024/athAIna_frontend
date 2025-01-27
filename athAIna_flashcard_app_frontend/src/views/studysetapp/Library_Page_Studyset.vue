@@ -58,9 +58,9 @@ const openModal = () => {
   isModalVisible.value = true;
 };
 
-const closeModal = () => {
+const closeModal = async () => {
+  await fetchStudySetFromDb();
   isModalVisible.value = false;
-  fetchStudySetFromDb();
 };
 
 
@@ -171,18 +171,15 @@ const fetchStudySet = async () => {
   }
 };
 
-
 const fetchStudySetFromDb = async () => {
   try {
-    fetchStudySet();
+    await fetchStudySet();
     studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
 
     if (studySet_db.value.length > 0) {
       studySetCounts.value = studySet_db.value.length;
       isSuccessful_studyset.value = true;
       message_studyset.value = "Study sets fetched successfully";
-
-      console.log(studySet_db.value);
     } else {
       isSuccessful_studyset.value = false;
       message_studyset.value = "No study sets found";
@@ -192,7 +189,6 @@ const fetchStudySetFromDb = async () => {
     message_studyset.value = "An error occurred. Please try again later.";
   }
 };
-
 
 onMounted(() => {
   fetchStudySetFromDb();

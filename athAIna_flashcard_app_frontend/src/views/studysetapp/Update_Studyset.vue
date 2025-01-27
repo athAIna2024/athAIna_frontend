@@ -1,5 +1,8 @@
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { ref } from 'vue';
+import { watch }  from 'vue';
+import { reactive } from 'vue';
+
 import axios from '@/axios';
 
 const studyset_url = "/studyset/update/";
@@ -15,6 +18,13 @@ const message_retrieved = ref("");
 
 const isSuccessful_updated = ref(false);
 const message_updated = ref("");
+
+const studySet = reactive({
+  title: "",
+  description: "",
+  subject: "",
+  updated_at: new Date(),
+});
 
 const props = defineProps({
   isVisible: {
@@ -81,15 +91,23 @@ const updateStudySet = async () => {
     const request = await axios.put(`${studyset_url}${props.studySetId}/`, {
       title: title.value,
       description: description.value,
-      subject: subject.value
+      subject: subject.value,
     });
+
 
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
 
+    // Update Local Database
+    studySet.title = title.value;
+    studySet.description = description.value;
+    studySet.subject = subject.value;
+    studySet.updated_at = new Date();
+
+    await studySetDb.studysets.put(studySet);
+
     if (isSuccessful_updated.value) {
       close();
-      location.reload(); // Reload the page to fetch the updated data
     }
 
   } catch (error) {
@@ -104,10 +122,12 @@ const updateStudySet = async () => {
     }
     else {
       isSuccessful_updated.value = false;
-      message_updated.value = "An error occurred. Please try again later.";
+      message_updated.value = "An error occurred. Please try again later .";
     }
   }
 };
+
+
 </script>
 <template>
   <form @submit.prevent="updateStudySet">
