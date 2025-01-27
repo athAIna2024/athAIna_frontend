@@ -2,7 +2,7 @@
 import { ref, watch, defineProps, defineEmits } from 'vue';
 import Delete_Confirmation from "@/views/studysetapp/Delete_Confirmation.vue";
 import axios from '@/axios';
-
+import studySetDb from "@/views/studysetapp/dexie.js";
 const studyset_url = "/studyset/delete/";
 const studyset_title = ref("");
 const isSuccessful = ref(false);
@@ -67,6 +67,8 @@ const deleteStudySet = async () => {
     message.value = request.data.message;
 
     if (isSuccessful) {
+      await studySetDb.studysets.delete(props.studySetId);
+
       openDeleteConfirmationModal();
       location.reload();
     } else {
