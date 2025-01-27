@@ -1,6 +1,10 @@
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue';
+import { ref } from 'vue';
+import { watch }  from 'vue';
+import { reactive } from 'vue';
+
 import axios from '@/axios';
+import studySetDb from "@/views/studysetapp/dexie.js";
 
 const studyset_url = "/studyset/update/";
 
@@ -9,6 +13,12 @@ const field_errors = ref({});
 const title = ref("");
 const description = ref("");
 const subject = ref("");
+
+const isSuccessful_retrieved = ref(false);
+const message_retrieved = ref("");
+
+const isSuccessful_updated = ref(false);
+const message_updated = ref("");
 
 const props = defineProps({
   isVisible: {
@@ -25,16 +35,15 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'], ['refreshLibrary']);
 const close = () => {
   emit('close');
 };
 
+
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
-    console.log('Modal is visible, studySetId:', props.studySetId); // REMOVE THIS LINE (DEBUGGING)
     fetchStudySetData();
-
     document.title = `${props.title}`;
   } else {
     document.title = `Library – athAIna`;
@@ -44,15 +53,79 @@ watch(() => props.isVisible, (newValue) => {
 const fetchStudySetData = async () => {
   try {
     const response = await axios.get(`${studyset_url}${props.studySetId}/`);
-    title.value = response.data.title;
-    description.value = response.data.description;
-    subject.value = response.data.subject;
 
-    console.log('title:', title.value);
+    if (response.data.title) {
+      title.value = response.data.title;
+      description.value = response.data.description;
+      subject.value = response.data.subject;
+
+      isSuccessful_retrieved.value = response.data.successful;
+      message_retrieved.value = response.data.message;
+
+      // Debugging
+      console.log("title", title.value);
+    } else {
+      isSuccessful_retrieved.value = false;
+      message_retrieved.value = "There is no study set with the provided ID.";
+    }
+
   } catch (error) {
-    console.error(error);
+    if (error.response.status === 404) {
+      isSuccessful_retrieved.value = false;
+      message_retrieved.value = error.response.message;
+
+    } else {
+      isSuccessful_retrieved.value = false;
+      message_retrieved.value = "An error occurred. Please try again later.";
+    }
   }
 };
+
+const updateStudySet = async () => {
+  try {
+    const request = await axios.put(`${studyset_url}${props.studySetId}/`, {
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+    });
+
+
+    isSuccessful_updated.value = request.data.successful;
+    message_updated.value = request.data.message;
+
+    // Update Local Database
+    const updateStudySet = {
+      id: props.studySetId,
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+      updated_at: new Date()
+    };
+
+    await studySetDb.studysets.put(updateStudySet);
+
+    if (isSuccessful_updated.value) {
+      close();
+      location.reload();
+    }
+
+  } catch (error) {
+    if (error.response.status === 400) {
+
+      isSuccessful_updated.value = error.response.data.successful;
+      message_updated.value = error.response.data.message;
+
+      field_errors.value = Object.fromEntries(
+        Object.entries(error.response.data.errors).map(([key, value]) => [key, value[0]])
+      );
+    }
+    else {
+      isSuccessful_updated.value = false;
+      message_updated.value = "An error occurred. Please try again later .";
+    }
+  }
+};
+
 
 </script>
 <template>
@@ -68,8 +141,6 @@ const fetchStudySetData = async () => {
           <div class="flex justify-center mb-[30px]">
             <h2 class="font-semibold text-[20px]">Update Study Set</h2>
           </div>
-
-          ID {{ props.studySetId }}
 
           <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
             <p> Study Set Name </p>
@@ -116,16 +187,14 @@ const fetchStudySetData = async () => {
             </div>
           </div>
 
-          <div v-if="field_errors.message" class="text-athAIna-red text-[14px] font-medium">
-            {{ field_errors.message }}
-          </div>
-
-          <div v-if="field_errors.feedback" class="text-athAIna-red text-[14px] font-medium">
-            {{ field_errors.feedback }}
+          <div v-if="!isSuccessful_updated">
+            <div class="text-athAIna-red text-[14px] font-medium">
+              {{ message_updated }}
+            </div>
           </div>
 
           <div class="flex justify-end mb-[20px]">
-            <button type="submit" class="btn font-medium w-[200px]"> Create Study Set </button>
+            <button type="submit" class="btn font-medium w-[200px]"> Update Study Set </button>
           </div>
         </div>
       </div>
