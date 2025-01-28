@@ -11,6 +11,8 @@ import Logout from "@/views/accountapp/Logout.vue";
 import Signup from "@/views/accountapp/Signup.vue";
 import Change_Password from "@/views/accountapp/Change_Password.vue";
 import Forgot_Password from "@/views/accountapp/Forgot_Password.vue";
+import Forgot_Password_Page from "./views/accountapp/Forgot_Password_Page.vue";
+import Change_Password_Page from "./views/accountapp/Change_Password_Page.vue";
 
 import Create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
 import Generate_Flashcard_with_AI from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
@@ -28,6 +30,8 @@ import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue";
+import Forgot_OTP from "@/views/accountapp/Forgot_OTP.vue";
+import Change_OTP from "./views/accountapp/Change_OTP.vue";
 
 const routes = [
   {
@@ -77,9 +81,29 @@ const routes = [
     component: Change_Password,
   },
   {
+    path: "/change_password_page/:uidb64/:token",
+    name: "Change_Password_Page",
+    component: Change_Password_Page,
+  },
+  {
+    path: "/change_otp/",
+    name: "Change_OTP",
+    component: Change_OTP,
+  },
+  {
     path: "/forgot_password/",
     name: "Forgot_Password",
     component: Forgot_Password,
+  },
+  {
+    path: "/forgot_password_page/:uidb64/:token",
+    name: "Forgot_password_page",
+    component: Forgot_Password_Page,
+  },
+  {
+    path: "/forgot_otp/",
+    name: "Forgot_OTP",
+    component: Forgot_OTP,
   },
   {
     path: "/create_flashcard_manually/",
@@ -125,7 +149,6 @@ const routes = [
     path: "/library_of_studysets/",
     name: "Library_Page_Studyset",
     component: Library_Page_Studyset,
-    meta: { requiresAuth: true },
   },
   {
     path: "/update_studyset/:id",
