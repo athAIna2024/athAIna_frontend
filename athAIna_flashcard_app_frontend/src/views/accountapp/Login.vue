@@ -3,6 +3,9 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useUserStore } from "../../../stores/userStore";
+
+const userStore = useUserStore();
 
 const router = useRouter();
 const email = ref("");
@@ -18,8 +21,15 @@ const login = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
-      Cookies.set("access_token", `${response.data.access}`);
-      Cookies.set("refresh_token", `${response.data.refresh}`);
+      userStore.setUser(response.data.user_id);
+      Cookies.set("access_token", `${response.data.access}`, {
+        secure: true,
+        sameSite: "Strict",
+      });
+      Cookies.set("refresh_token", `${response.data.refresh}`, {
+        secure: true,
+        sameSite: "Strict",
+      });
 
       router.push("/library_of_studysets");
     } else {
