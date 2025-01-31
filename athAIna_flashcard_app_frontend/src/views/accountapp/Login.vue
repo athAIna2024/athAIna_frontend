@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { useUserStore } from "../../../stores/userStore";
 
 const userStore = useUserStore();
+console.log(userStore.getUser());
 
 const router = useRouter();
 const email = ref("");
@@ -25,10 +26,17 @@ const login = async () => {
       Cookies.set("access_token", `${response.data.access}`, {
         secure: true,
         sameSite: "Strict",
+        expires: 1,
       });
       Cookies.set("refresh_token", `${response.data.refresh}`, {
         secure: true,
         sameSite: "Strict",
+        expires: 7,
+      });
+      Cookies.set("Cringe", `nae nae baby`, {
+        secure: true,
+        sameSite: "Strict",
+        expires: 1,
       });
 
       router.push("/library_of_studysets");
@@ -43,7 +51,7 @@ const login = async () => {
 
 <template>
   <div class="flex flex-row justify-center">
-    <div class="mt-40 mr-40 pr-40 flex justify-center">
+    <div class="mt-40 ml-60 pr-40 flex justify-center w-1/2">
       <div
         class="absolute rotate-[12deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
       ></div>
@@ -57,7 +65,7 @@ const login = async () => {
       </div>
     </div>
 
-    <div class="flex flex-col justify-center items-center min-h-screen">
+    <div class="flex flex-col justify-center items-center min-h-screen w-full">
       <h1 class="text-athAIna-violet font-semibold w-full text-center">
         Welcome Back!
       </h1>

@@ -9,13 +9,17 @@ import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { computed } from "vue";
-import axios from '@/axios'; // Import the configured Axios instance
+import axios from "@/axios"; // Import the configured Axios instance
 import studySetDb from "@/views/studysetapp/dexie.js";
 
-import { useStudysetStore} from "../../../stores/studySetStore.js";
+import { useStudysetStore } from "../../../stores/studySetStore.js";
+import { useUserStore } from "../../../stores/userStore.js";
+
+const userStore = useUserStore();
+
+console.log(userStore.getUser());
 
 const store = useStudysetStore();
-
 
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
@@ -49,9 +53,8 @@ const dropdownOptions = ref({
   SCI: "Science",
   SOC_SCI: "Social Sciences",
   TECH: "Technology",
-  WRIT_LIT: "Writing and Literature"
+  WRIT_LIT: "Writing and Literature",
 });
-
 
 const isModalVisible = ref(false);
 
@@ -68,7 +71,6 @@ const closeModal = async () => {
   isModalVisible.value = false;
 };
 
-
 const currentStudySets = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -82,21 +84,18 @@ const getSubjectName = (abbreviation) => {
 const fetchFlashcardCount = async (studysetId) => {
   try {
     const response = await axios.get(flashcard_url, {
-      params: { studyset_id: studysetId }
+      params: { studyset_id: studysetId },
     });
 
     if (response.data && Array.isArray(response.data.data)) {
       isSuccessful_flashcard.value = response.data.successful;
       message_flashcard.value = response.data.message;
       return response.data.data.length;
-
     } else {
       isSuccessful_flashcard.value = false;
       message_flashcard.value = "API response is not an array";
       return 0;
-
     }
-
   } catch (error) {
     if (error.response && error.response.status === 200) {
       isSuccessful_flashcard.value = error.response.data.successful;
@@ -104,18 +103,16 @@ const fetchFlashcardCount = async (studysetId) => {
     } else {
       isSuccessful_flashcard.value = false;
       message_flashcard.value = "An error occurred. Please try again later.";
-
     }
     return 0;
   }
 };
 
-
 const fetchStudySet = async () => {
   try {
     // API Call
     const response = await axios.get(studyset_url, {
-      params: { user_id: Number(userId.value) }
+      params: { user_id: Number(userId.value) },
     });
 
     if (response.data && Array.isArray(response.data.data)) {
@@ -133,12 +130,14 @@ const fetchStudySet = async () => {
         };
       });
 
-      const flashcardCountPromises = studySet_result.value.map(async (studyset) => {
-        studyset.flashcard_count = await fetchFlashcardCount(studyset.id);
-      });
+      const flashcardCountPromises = studySet_result.value.map(
+        async (studyset) => {
+          studyset.flashcard_count = await fetchFlashcardCount(studyset.id);
+        }
+      );
       await Promise.all(flashcardCountPromises);
 
-      const serializableStudySets = studySet_result.value.map(studyset => {
+      const serializableStudySets = studySet_result.value.map((studyset) => {
         return {
           id: studyset.id,
           title: studyset.title,
@@ -146,21 +145,18 @@ const fetchStudySet = async () => {
           subject: studyset.subject,
           flashcard_count: studyset.flashcard_count,
           created_at: studyset.created_at,
-          updated_at: studyset.updated_at
+          updated_at: studyset.updated_at,
         };
       });
 
       await studySetDb.studysets.bulkPut(serializableStudySets);
-
     } else {
       isSuccessful_studyset.value = false;
       message_studyset.value = "API response is not an array";
       studySet_result.value = [];
       studySetCounts.value = 0;
-
     }
     return studySet_result;
-
   } catch (error) {
     if (error.response && error.response.status === 400) {
       isSuccessful_studyset.value = error.response.data.successful;
@@ -176,11 +172,13 @@ const fetchStudySet = async () => {
   }
 };
 
-
 const fetchStudySetFromDb = async () => {
   try {
     await fetchStudySet();
-    studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
+    studySet_db.value = await studySetDb.studysets
+      .orderBy("updated_at")
+      .reverse()
+      .toArray();
 
     if (studySet_db.value.length > 0) {
       studySetCounts.value = studySet_db.value.length;
@@ -200,15 +198,12 @@ onMounted(() => {
   fetchStudySetFromDb();
   document.title = "Study Sets";
 });
-
 </script>
 
 <template>
   <div class="my-16 ml-12 mr-12">
     <div class="flex flex-row justify-between space-x-[50px] content-center">
-      <Search_Bar_Studyset
-          v-model="input"
-          class="w-[700px]" />
+      <Search_Bar_Studyset v-model="input" class="w-[700px]" />
       <Subject_Selector
         @click="toggleModal('subjectSelectModal')"
         class="relative w-[350px]"
@@ -238,13 +233,21 @@ onMounted(() => {
     </div>
 
     <div v-if="!isSuccessful_studyset">
-      <div class="text-athAIna-sm font-medium mt-[30px]"> {{ message_studyset }} </div>
+      <div class="text-athAIna-sm font-medium mt-[30px]">
+        {{ message_studyset }}
+      </div>
     </div>
 
-
     <div v-if="isSuccessful_studyset">
-      <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="(s, index) in store.searchResults.length ? store.searchResults : currentStudySets" :key="index">
+      <div
+        class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+      >
+        <div
+          v-for="(s, index) in store.searchResults.length
+            ? store.searchResults
+            : currentStudySets"
+          :key="index"
+        >
           <Studyset_Card
             :title="s.title"
             :description="s.description"
@@ -256,24 +259,20 @@ onMounted(() => {
       </div>
 
       <Pagination
-          :total-items="studySetCounts"
-          :items-per-page="itemsPerPage"
-          :current-page="currentPage"
-          @update:currentPage="currentPage = $event"
+        :total-items="studySetCounts"
+        :items-per-page="itemsPerPage"
+        :current-page="currentPage"
+        @update:currentPage="currentPage = $event"
       />
-
     </div>
 
     <Create_Studyset
-        :isVisible="isModalVisible"
-        title="Create Studyset – athAIna"
-        @close="closeModal"
+      :isVisible="isModalVisible"
+      title="Create Studyset – athAIna"
+      @close="closeModal"
     >
     </Create_Studyset>
-
-
-    </div>
-
+  </div>
 </template>
 
 <style scoped></style>

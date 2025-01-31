@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 export default {
   name: 'Learner_Navbar',
   data() {
@@ -15,27 +15,41 @@ export default {
     },
   }
 };
-</script>
+</script> -->
 
-<!-- <script setup>
+<script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../stores/userStore";
 
+// Cookies.remove('cringe', { path: "/", domain: "localhost" });
+Cookies.set("cringe", "nae nae baby", {
+  secure: true,
+  sameSite: "Strict",
+  expires: 1,
+});
+
 const userStore = useUserStore();
 const router = useRouter();
 const accessToken = Cookies.get("access_token");
+const refreshTKN = Cookies.get("refresh_token");
+
+const logOutAuth = "Bearer " + accessToken;
+console.log(refreshTKN);
+console.log("access token:", logOutAuth);
 
 const logout = async () => {
   try {
     const response = await axios.post(
       "http://localhost:8000/account/logout/",
-      {},
+      {
+        refresh: refreshTKN,
+      },
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: logOutAuth,
         },
       }
     );
@@ -43,9 +57,21 @@ const logout = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
-      userStore.setUser(null);
+      userStore.clearUser();
+
+      // Log the cookies before removal
+      console.log("Access Token before removal:", Cookies.get("access_token"));
+      console.log(
+        "Refresh Token before removal:",
+        Cookies.get("refresh_token")
+      );
+
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
+
+      // Log the cookies to verify removal
+      console.log("Access Token after removal:", Cookies.get("access_token"));
+      console.log("Refresh Token after removal:", Cookies.get("refresh_token"));
 
       router.push("/login");
     } else {
@@ -56,15 +82,32 @@ const logout = async () => {
   }
 };
 
+function deleteCookie(name, path, domain) {
+  if (getCookie(name)) {
+    document.cookie =
+      name +
+      "=" +
+      (path ? ";path=" + path : "") +
+      (domain ? ";domain=" + domain : "") +
+      ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  }
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 const modals = ref({
   profile: false,
   accSettings: false,
 });
 
 const toggleModal = (modalName) => {
-  modals[modalName] = !modals[modalName];
+  modals.value[modalName] = !modals.value[modalName];
 };
-</script> -->
+</script>
 
 <template>
   <div
@@ -148,7 +191,7 @@ const toggleModal = (modalName) => {
           Account Settings
         </button>
         <button
-          @click="toggleModal('profile')"
+          @click="logout"
           class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
         >
           <router-link to="login"> Log Out </router-link>
