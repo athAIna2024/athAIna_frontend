@@ -31,6 +31,8 @@ const router = useRouter();
 const accessToken = Cookies.get("access_token");
 const refreshTKN = Cookies.get("refresh_token");
 
+console.log(userStore.getUserID());
+
 const logout = async () => {
   try {
     const response = await axios.post(
@@ -52,7 +54,7 @@ const logout = async () => {
     console.log("response message: ", response.message);
 
     if (response.status === 204) {
-      userStore.clearUser();
+      userStore.clearUserID();
 
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");

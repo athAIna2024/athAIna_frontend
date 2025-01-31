@@ -17,7 +17,7 @@ import { useUserStore } from "../../../stores/userStore.js";
 
 const userStore = useUserStore();
 
-console.log(userStore.getUser());
+console.log(userStore.getUserID());
 
 const store = useStudysetStore();
 

@@ -9,7 +9,7 @@ import { useAuthStore } from "../../../stores/authStore";
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
-console.log(userStore.getUser());
+console.log(userStore.getUserID());
 
 const router = useRouter();
 const email = ref("");
@@ -25,7 +25,7 @@ const login = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
-      userStore.setUser(response.data.user_id);
+      userStore.setUserID(response.data.user_id);
       Cookies.set("access_token", `${response.data.access}`, {
         secure: true,
         sameSite: "Strict",

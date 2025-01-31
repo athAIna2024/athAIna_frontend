@@ -5,14 +5,14 @@ export const useUserStore = defineStore("user", {
     userID: null,
   }),
   actions: {
-    setUser(user) {
-      this.user = user;
+    setUserID(user_id) {
+      this.userID = user_id;
     },
-    clearUser() {
-      this.user = null;
+    clearUserID() {
+      this.userID = null;
     },
-    getUser() {
-      return this.user;
+    getUserID() {
+      return this.userID;
     },
   },
 });
