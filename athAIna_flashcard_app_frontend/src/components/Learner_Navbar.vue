@@ -23,8 +23,10 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../stores/userStore";
+import { useAuthStore } from "../../stores/authStore";
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
 const router = useRouter();
 const accessToken = Cookies.get("access_token");
 const refreshTKN = Cookies.get("refresh_token");
@@ -55,6 +57,7 @@ const logout = async () => {
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
 
+      authStore.clearTokens();
       router.push("/login");
     } else {
       console.log(response.error);

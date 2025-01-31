@@ -4,8 +4,11 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../../stores/userStore";
+import { useAuthStore } from "../../../stores/authStore";
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
+
 console.log(userStore.getUser());
 
 const router = useRouter();
@@ -34,7 +37,13 @@ const login = async () => {
         expires: 1209600 / (24 * 60 * 60),
       });
 
-      router.push("/library_of_studysets");
+      authStore.setTokens({
+        access: response.data.access,
+        refresh: response.data.refresh,
+      });
+
+      // router.replace("/library_of_studysets");
+      window.location.href = "/library_of_studysets";
     } else {
       console.log(response.data.error);
     }
