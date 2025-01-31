@@ -24,21 +24,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../stores/userStore";
 
-// Cookies.remove('cringe', { path: "/", domain: "localhost" });
-Cookies.set("cringe", "nae nae baby", {
-  secure: true,
-  sameSite: "Strict",
-  expires: 1,
-});
-
 const userStore = useUserStore();
 const router = useRouter();
 const accessToken = Cookies.get("access_token");
 const refreshTKN = Cookies.get("refresh_token");
-
-const logOutAuth = "Bearer " + accessToken;
-console.log(refreshTKN);
-console.log("access token:", logOutAuth);
 
 const logout = async () => {
   try {
@@ -49,55 +38,31 @@ const logout = async () => {
       },
       {
         headers: {
-          Authorization: logOutAuth,
+          Authorization: "Bearer " + accessToken,
         },
       }
     );
 
-    console.log(response.data);
+    console.log("response: ", response);
+    console.log("response data: ", response.data);
+    console.log("response status: ", response.status);
+    console.log("response error: ", response.error);
+    console.log("response message: ", response.message);
 
-    if (response.data.successful) {
+    if (response.status === 204) {
       userStore.clearUser();
-
-      // Log the cookies before removal
-      console.log("Access Token before removal:", Cookies.get("access_token"));
-      console.log(
-        "Refresh Token before removal:",
-        Cookies.get("refresh_token")
-      );
 
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
 
-      // Log the cookies to verify removal
-      console.log("Access Token after removal:", Cookies.get("access_token"));
-      console.log("Refresh Token after removal:", Cookies.get("refresh_token"));
-
       router.push("/login");
     } else {
-      console.log(response.data.error);
+      console.log(response.error);
     }
   } catch (error) {
     console.log(error);
   }
 };
-
-function deleteCookie(name, path, domain) {
-  if (getCookie(name)) {
-    document.cookie =
-      name +
-      "=" +
-      (path ? ";path=" + path : "") +
-      (domain ? ";domain=" + domain : "") +
-      ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
-  }
-}
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-}
 
 const modals = ref({
   profile: false,
@@ -194,7 +159,7 @@ const toggleModal = (modalName) => {
           @click="logout"
           class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
         >
-          <router-link to="login"> Log Out </router-link>
+          Log Out
         </button>
       </div>
     </div>

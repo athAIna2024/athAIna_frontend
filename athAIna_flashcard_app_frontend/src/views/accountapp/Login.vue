@@ -26,17 +26,12 @@ const login = async () => {
       Cookies.set("access_token", `${response.data.access}`, {
         secure: true,
         sameSite: "Strict",
-        expires: 1,
+        expires: 3600 / (24 * 60 * 60),
       });
       Cookies.set("refresh_token", `${response.data.refresh}`, {
         secure: true,
         sameSite: "Strict",
-        expires: 7,
-      });
-      Cookies.set("Cringe", `nae nae baby`, {
-        secure: true,
-        sameSite: "Strict",
-        expires: 1,
+        expires: 1209600 / (24 * 60 * 60),
       });
 
       router.push("/library_of_studysets");
