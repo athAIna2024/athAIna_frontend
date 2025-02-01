@@ -1,16 +1,22 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 export const useStudysetStore = defineStore('studyset', () => {
     const searchResults = ref([]);
-    const studySetId = ref(null);
+    const studySetId = ref(localStorage.getItem('studySetId') || null);
+
     const setSearchResults = (results) => {
         searchResults.value = results;
     };
+
     const setStudySetId = (id) => {
         studySetId.value = id;
-    }
+    };
 
-    return { searchResults, setSearchResults, setStudySetId, studySetId };
+    // Watch for changes in studySetId and update localStorage
+    watch(studySetId, (newId) => {
+        localStorage.setItem('studySetId', newId);
+    });
+
+    return { searchResults, setSearchResults, studySetId, setStudySetId };
 });
-
