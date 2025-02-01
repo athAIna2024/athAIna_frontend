@@ -8,11 +8,14 @@ import Pagination from "@/components/Pagination.vue";
 
 import axios from '@/axios';
 import { useRoute } from 'vue-router';
+import {useStudysetStore} from "../../../stores/studySetStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
+
+const store = useStudysetStore();
 const route = useRoute();
-const studySetId = route.params.studySetId;
 const studySetTitle = route.params.studySetTitle;
+const studySetId = store.studySetId;
 
 const input = ref('');
 const currentPage = ref(1);
@@ -82,16 +85,14 @@ function closeAI_Flashcard() {
   isAIFlashcardVisible.value = false;
 }
 
-onMounted(async () => {
-  console.log(studySetTitle);
-});
+
 </script>
 
 <template>
 
   <div class="flex flex-col mx-12 my-16">
     <div class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center">
-      <h1 class="text-athAIna-violet font-semibold flex"> {{ studySetTitle }} </h1>
+      <h1 class="text-athAIna-violet font-semibold flex"> {{ studySetId }} {{ studySetTitle }} </h1>
       <div class="flex flex-row justify-between space-x-6 items-center">
         <Flashcard_Search_Bar v-model="input" />
         <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
