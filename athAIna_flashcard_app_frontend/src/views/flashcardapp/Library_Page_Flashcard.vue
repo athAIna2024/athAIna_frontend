@@ -11,11 +11,32 @@ import { useRoute } from 'vue-router';
 import {useStudysetStore} from "../../../stores/studySetStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
-
+const flashcard_url = "/flashcards/";
 const store = useStudysetStore();
 const route = useRoute();
 const studySetTitle = route.params.studySetTitle;
 const studySetId = store.studySetId;
+const isSuccessful = ref(false);
+const message = ref("");
+const flashcard_result = ref([]);
+
+const dropdownOptions = ref({
+  ARTS: "Arts",
+  BUS: "Business",
+  GEO: "Geography",
+  ENGR: "Engineering",
+  HEALTH_MED: "Health and Medicine",
+  HIST: "History",
+  LAW_POL: "Law and Politics",
+  LANG_CULT: "Languages and Cultures",
+  MATH: "Mathematics",
+  PHIL: "Philosophy",
+  SCI: "Science",
+  SOC_SCI: "Social Sciences",
+  TECH: "Technology",
+  WRIT_LIT: "Writing and Literature"
+});
+
 
 const input = ref('');
 const currentPage = ref(1);
@@ -85,7 +106,27 @@ function closeAI_Flashcard() {
   isAIFlashcardVisible.value = false;
 }
 
+const fetchFlashcards = async () => {
+  try {
+    const response = await axios.get(flashcards_url, {
+      params: { studyset_id: Number(studySetId.value) }
+    });
 
+    console.log("Fetch successfully?" , response.data.successful);
+    if (response.data && Array.is(response.data.data)) {
+      isSuccessful.value = response.data.successful;
+      message.value = response.data.message;
+
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+onMounted(() => {
+  fetchFlashcards();
+});
 </script>
 
 <template>
