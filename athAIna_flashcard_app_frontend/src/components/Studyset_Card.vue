@@ -55,7 +55,7 @@ const closeDeleteModal = () => {
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
-      <router-link to="/library_of_flashcards">
+      <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetId: studySetId, studySetTitle: title } }">
         <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
