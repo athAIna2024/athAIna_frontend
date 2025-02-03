@@ -17,12 +17,17 @@ export default {
 </script>
 
 <template>  
-    <div v-if="question" class="athAIna-border-inner p-5">
+    <div class="athAIna-border-inner p-5 text-xl">
+      <div class="flex flex-row justify-between font-semibold text-2xl">
+        <div>
       <router-link to="library_of_flashcards"> < </router-link>
       Test Mode Flashcard
-      <div class="athAIna-border-outer p-1 my-4">
+        </div>
+      <span> 1/10 </span>
+      </div>
+      <div v-if="question" class="athAIna-border-outer p-1 my-4">
         <div class="athAIna-border-inner">
-          <h1 class="text-athAIna-red p-10 h-64">
+          <h1 class="text-athAIna-violet p-10 h-64 font-normal">
             What is a network?
           </h1>
           <div class="p-10 flex flex-row justify-between">
@@ -38,35 +43,26 @@ export default {
           </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="answer" class="athAIna-border-inner p-5">
-      <div class="flex flex-row justify-between">
-        <div>
-          <router-link to="library_of_flashcards"> < </router-link>
-          Test Mode Flashcard
-        </div>
-        <span> 1/10 </span>
-      </div>
-      <div class="athAIna-border-outer p-1 my-4">
+      <div v-if="answer" class="athAIna-border-outer p-1 my-4">
         <div class="athAIna-border-inner">
-          <h1 class="text-athAIna-red p-10 h-16">
+          <h1 class="text-athAIna-violet p-10 h-16">
             What is a network?
           </h1>
-          <h1 class="text-athAIna-red p-10 h-16">
-            Your answer: <span>
+          <h1 class="text-athAIna-violet p-10 h-16">
+            Your answer: <span class="text-athAIna-green p-10 h-16">
             A network is a collection of devices connected to one another to share data. </span>
           </h1>
           <div class="m-10">
             <div class="athAIna-border-outer p-0.5">
             </div>
           </div>
-          <h1 class="text-athAIna-red p-10 h-16">
-            Correct answer: <span>
+          <h1 class="text-athAIna-violet p-10 h-16">
+            Correct answer: <span class="text-athAIna-green p-10 h-16">
             A network is a collection of devices connected to one another to share data. </span>
           </h1>
-          <div class="athAIna-border-inner p-10 flex flex-row justify-end">
-            <button class="btn-alt w-48 mx-5" @click="triggerEvent('result');"> Done </button>
+          <div class="athAIna-border-inner p-10 flex flex-row justify-end align-center">
+            <button class="btn-alt w-48 mx-4" @click="triggerEvent('result');"> Done </button>
             <button class="btn w-48" @click="triggerEvent('answer'); triggerEvent('question');"> Next </button>
           </div>
         </div>

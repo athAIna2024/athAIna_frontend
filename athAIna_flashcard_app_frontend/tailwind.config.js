@@ -15,6 +15,7 @@ export default {
       'athAIna-red': '#DA384C',
       'athAIna-yellow': '#FEE140',
       'athAIna-violet': '#914273',
+      'athAIna-green': '#14AE5C',
       'athAIna-white': '#FFFFFF',
       'athAIna-orange': '#DC6B19',
       'athAIna-black': '#000000'
