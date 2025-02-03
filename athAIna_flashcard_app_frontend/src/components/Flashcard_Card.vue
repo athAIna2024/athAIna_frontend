@@ -84,7 +84,9 @@ export default {
     </div>
   </div>
 
-  <Delete_Flashcard :is-visible="isDeleteModalVisible" @close="closeDeleteModal" />
+  <Delete_Flashcard
+      :is-visible="isDeleteModalVisible"
+      @close="closeDeleteModal" />
 
 </template>
 
