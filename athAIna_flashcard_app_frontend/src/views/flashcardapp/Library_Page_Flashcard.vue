@@ -11,7 +11,7 @@ import { useRoute } from 'vue-router';
 import {useStudysetStore} from "../../../stores/studySetStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
-const flashcard_url = "/flashcards/";
+const flashcard_url = "/flashcard/";
 const store = useStudysetStore();
 const route = useRoute();
 const studySetTitle = route.params.studySetTitle;
@@ -19,6 +19,7 @@ const studySetId = store.studySetId;
 const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_result = ref([]);
+const flashcard_db = ref([]);
 
 const dropdownOptions = ref({
   ARTS: "Arts",
@@ -61,7 +62,7 @@ const flashcards = ref([
   },
   {
     id: 4,
-    question: 'What is a firewall?',
+    question: 'What is a firewall? What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall',
     answer: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.',
     category: 'Networking'
   },
@@ -108,24 +109,90 @@ function closeAI_Flashcard() {
 
 const fetchFlashcards = async () => {
   try {
-    const response = await axios.get(flashcards_url, {
-      params: { studyset_id: Number(studySetId.value) }
+    const response = await axios.get(flashcard_url, {
+      params: { studyset_id: studySetId }
     });
 
-    console.log("Fetch successfully?" , response.data.successful);
-    if (response.data && Array.is(response.data.data)) {
+
+    if (response.data.data) {
       isSuccessful.value = response.data.successful;
       message.value = response.data.message;
+      flashcard_result.value = response.data.data.map(flashcard => {
+        return {
+          id: Number(flashcard.id),
+          question: String(flashcard.question),
+          answer: String(flashcard.answer),
+          image: String(flashcard.image),
+          studyset_id: Number(flashcard.studyset_instance),
+          created_at: Date(flashcard.created_at),
+          updated_at: Date(flashcard.updated_at),
+          is_ai_generated: Boolean(flashcard.is_ai_generated),
+        };
+      });
 
+      console.log("API RESPONSE", response.data.data);
+
+
+      const serializableFlashcards = flashcard_result.value.map(flashcard => {
+        return {
+          id: flashcard.id,
+          question: flashcard.question,
+          answer: flashcard.answer,
+          image: flashcard.image,
+          studyset_id: flashcard.studyset_id,
+          created_at: flashcard.created_at,
+          updated_at: flashcard.updated_at,
+          is_ai_generated: flashcard.is_ai_generated,
+        };
+      });
+
+      await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
+
+    } else {
+      isSuccessful.value = false;
+      message.value = "An error occurred. Please try again later.";
+      flashcard_result.value = [];
     }
 
+    return flashcard_result;
+
   } catch (error) {
-    console.error(error);
+    if (error.response && error.response.status === 400) {
+      isSuccessful.value = error.response.data.successful;
+      message.value = error.response.data.message;
+    } else {
+      isSuccessful.value = false;
+      message.value = "An error occurred. Please try again later.";
+    }
+    flashcard_result.value = [];
+
+    return flashcard_result;
+  }
+}
+
+const fetchFlashcardsFromDb = async () => {
+  try {
+    await fetchFlashcards();
+    flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
+    console.log("DEXIE RESPONSE", flashcard_db);
+
+    if (flashcard_db.value.length > 0) {
+      isSuccessful.value = true;
+      message.value = "Flashcards fetched successfully";
+    }
+    else {
+      isSuccessful.value = false;
+      message.value = "No flashcards found";
+    }
+  } catch (error) {
+    isSuccessful.value = false;
+    message.value = "An error occurred. Please try again later.";
   }
 }
 
 onMounted(() => {
-  fetchFlashcards();
+  fetchFlashcardsFromDb();
+  document.title = "Flashcards";
 });
 </script>
 
@@ -133,7 +200,7 @@ onMounted(() => {
 
   <div class="flex flex-col mx-12 my-16">
     <div class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center">
-      <h1 class="text-athAIna-violet font-semibold flex"> {{ studySetId }} {{ studySetTitle }} </h1>
+      <h1 class="text-athAIna-violet font-semibold flex"> {{ studySetTitle }} </h1>
       <div class="flex flex-row justify-between space-x-6 items-center">
         <Flashcard_Search_Bar v-model="input" />
         <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
@@ -157,17 +224,21 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="mb-12 mt-5">
-      <div class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"></div>
+    <div class="mt-4 mb-6">
+      <div class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]">
+      </div>
     </div>
 
-    <div class="text-[18px] font-semibold flex flex-row items-center"> Flashcards
-      <div class="border-athAIna-violet border-2 rounded-full px-3 py-0 m-2">
+    <div class="flex flex-row gap-2">
+      <div class="text-[18px] font-semibold flex flex-row items-center">
+        Flashcards
+      </div>
+      <div class="border-athAIna-violet border-2 rounded-full px-3 py-0">
         {{filteredList.length}}
       </div>
     </div>
 
-    <div class="rounded-lg grid grid-cols-3 gap-[55px] mt-10 mb-12">
+    <div class="rounded-lg grid grid-cols-3 gap-12 mt-10 mb-12">
       <li class="list-none" v-for="flashcard in filteredList" :key="flashcard.id">
         <Flashcard_Card :flashcard="flashcard" />
       </li>
