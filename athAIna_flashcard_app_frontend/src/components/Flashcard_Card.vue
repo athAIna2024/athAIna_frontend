@@ -1,73 +1,72 @@
-<script>
+<script setup>
+import { ref } from 'vue';
 import Update_Flashcard from "@/views/flashcardapp/Update_Flashcard.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 
-export default {
-  name: 'Flashcard_Card',
-  props: {
-    flashcard: {
-      type: Object,
-      required: true
-    }
+const props = defineProps({
+  flashcardId: {
+    type: Number,
+    required: true,
   },
-  components: {
-    AI_Flashcard,
-    Update_Flashcard,
-    Delete_Flashcard
+  question: {
+    type: String,
+    required: true,
   },
-  data() {
-    return {
-      isUpdateModalVisible: false,
-      isDeleteModalVisible: false,
-      isAIFlashcardVisible: false,
-    }
+  answer: {
+    type: String,
+    required: true,
   },
-  methods: {
-    openUpdateModal() {
-      this.isUpdateModalVisible = true;
-    },
-    closeUpdateModal() {
-      this.isUpdateModalVisible = false;
-    },
-    openDeleteModal() {
-      this.isDeleteModalVisible = true;
-    },
-    closeDeleteModal() {
-      this.isDeleteModalVisible = false;
-    },
-    openAI_Flashcard() {
-      this.isAIFlashcardVisible = true;
-    },
-    closeAI_Flashcard() {
-      this.isAIFlashcardVisible = false;
-    },
-  }
+})
+
+const isUpdateModalVisible = ref(false);
+const isDeleteModalVisible = ref(false);
+const isAIFlashcardVisible = ref(false);
+
+const openUpdateModal = () => {
+  isUpdateModalVisible.value = true;
+};
+
+const closeUpdateModal = () => {
+  isUpdateModalVisible.value = false;
+};
+
+const openDeleteModal = () => {
+  isDeleteModalVisible.value = true;
+};
+
+const closeDeleteModal = () => {
+  isDeleteModalVisible.value = false;
+};
+
+const openAI_Flashcard = () => {
+  isAIFlashcardVisible.value = true;
+};
+
+const closeAI_Flashcard = () => {
+  isAIFlashcardVisible.value = false;
 };
 </script>
-
 <template>
   <div class="athAIna-border-outer p-1 shadow-md">
     <div class="athAIna-border-inner">
       <div class="p-[15px]">
         <div class="flex flex-col">
           <div class="flex items-center text-center justify-center text-athAIna-violet text-athAIna-base mb-5 h-20 py-14">
-            <router-link :to="'/review/' + flashcard.id">
-              <div v-if="flashcard.question.length > 100">
-                {{ flashcard.question.substring(0, 100) + '...' }}
+            <router-link :to="'/review/' + flashcardId">
+              <div v-if="question.length > 100">
+                {{ question.substring(0, 100) + '...' }}
               </div>
               <div v-else>
-                {{ flashcard.question }}
+                {{ question }}
               </div>
-
-              <!-- FIXME: Add logic for excessive text length. -->
             </router-link>
           </div>
 
           <hr class="bg-athAIna-violet h-0.5 my-2" />
 
           <div class="flex flex-row justify-end">
-            <router-link :to="'/update_flashcard/' + flashcard.id">
+            <router-link :to="'/update_flashcard/' + flashcardId">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
               </svg>

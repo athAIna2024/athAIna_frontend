@@ -1,5 +1,8 @@
 <script setup>
-import {ref, computed, onMounted} from 'vue';
+import {ref} from 'vue';
+import {computed} from "vue";
+import {onMounted} from "vue";
+import {watch} from "vue";
 import Flashcard_Search_Bar from "@/components/Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
@@ -20,6 +23,8 @@ const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_result = ref([]);
 const flashcard_db = ref([]);
+const flashcardCounts = ref(0);
+const itemsPerPage = 6;
 
 const dropdownOptions = ref({
   ARTS: "Arts",
@@ -89,11 +94,6 @@ const modals = ref({
 
 const isAIFlashcardVisible = ref(false);
 
-const filteredList = computed(() => {
-  return flashcards.value.filter(flashcard => {
-    return flashcard.question.toLowerCase().includes(input.value.toLowerCase());
-  });
-});
 
 function toggleModal(modalName) {
   modals.value[modalName] = !modals.value[modalName];
@@ -148,6 +148,8 @@ const fetchFlashcards = async () => {
 
       await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
 
+      flashcardCounts.value = Number(flashcard_result.value.length);
+
     } else {
       isSuccessful.value = false;
       message.value = "An error occurred. Please try again later.";
@@ -189,6 +191,16 @@ const fetchFlashcardsFromDb = async () => {
     message.value = "An error occurred. Please try again later.";
   }
 }
+
+const filteredFlashcards = computed(() => {
+  return flashcard_db.value.filter(flashcard => flashcard.studyset_id === Number(studySetId));
+});
+
+const currentFlashcards = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return filteredFlashcards.value.slice(startIndex, endIndex);
+});
 
 onMounted(() => {
   fetchFlashcardsFromDb();
@@ -234,23 +246,27 @@ onMounted(() => {
         Flashcards
       </div>
       <div class="border-athAIna-violet border-2 rounded-full px-3 py-0">
-        {{filteredList.length}}
+        {{ flashcardCounts }}
       </div>
     </div>
 
-    <div class="rounded-lg grid grid-cols-3 gap-12 mt-10 mb-12">
-      <li class="list-none" v-for="flashcard in filteredList" :key="flashcard.id">
-        <Flashcard_Card :flashcard="flashcard" />
+    <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
+      <li class="list-none" v-for="flashcard in currentFlashcards" :key="flashcard.id">
+          <Flashcard_Card
+              :flashcardId="flashcard.id"
+              :question="flashcard.question"
+              :answer="flashcard.answer"
+          />
       </li>
-      <div class="item error" v-if="input && !filteredList.length">
-        <p>No results found!</p>
+      <div class="item error" v-if="!isSuccessful">
+        <p>Please create a flashcard to review</p>
       </div>
     </div>
 
     <div class="flex justify-center">
       <Pagination
-          :total-items="filteredList.length"
-          :items-per-page="6"
+          :total-items="flashcardCounts"
+          :items-per-page="itemsPerPage"
           :current-page="currentPage"
           @update:currentPage="currentPage = $event"
       />

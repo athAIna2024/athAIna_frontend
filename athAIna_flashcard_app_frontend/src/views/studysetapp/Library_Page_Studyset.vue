@@ -243,7 +243,7 @@ onMounted(() => {
 
 
     <div v-if="isSuccessful_studyset">
-      <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid mt-[60px] mb-[60px] gap-14 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="(s, index) in store.searchResults.length ? store.searchResults : currentStudySets" :key="index">
           <Studyset_Card
             :title="s.title"
