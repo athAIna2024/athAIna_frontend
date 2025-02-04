@@ -114,9 +114,8 @@ const fetchFlashcards = async () => {
     });
 
 
-    if (response.data.data) {
-      isSuccessful.value = response.data.successful;
-      message.value = response.data.message;
+    if (response.data.data.length > 0) {
+
       flashcard_result.value = response.data.data.map(flashcard => {
         return {
           id: Number(flashcard.id),
@@ -151,11 +150,11 @@ const fetchFlashcards = async () => {
       flashcardCounts.value = Number(flashcard_result.value.length);
 
     } else {
-      isSuccessful.value = false;
-      message.value = "An error occurred. Please try again later.";
       flashcard_result.value = [];
     }
 
+    isSuccessful.value = response.data.successful;
+    message.value = response.data.message;
     return flashcard_result;
 
   } catch (error) {
@@ -177,15 +176,7 @@ const fetchFlashcardsFromDb = async () => {
     await fetchFlashcards();
     flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
     console.log("DEXIE RESPONSE", flashcard_db);
-
-    if (flashcard_db.value.length > 0) {
-      isSuccessful.value = true;
-      message.value = "Flashcards fetched successfully";
-    }
-    else {
-      isSuccessful.value = false;
-      message.value = "No flashcards found";
-    }
+    isSuccessful.value = true;
   } catch (error) {
     isSuccessful.value = false;
     message.value = "An error occurred. Please try again later.";
@@ -259,7 +250,10 @@ onMounted(() => {
           />
       </li>
       <div class="item error" v-if="!isSuccessful">
-        <p>Please create a flashcard to review</p>
+        <p>{{ message }}</p>
+      </div>
+      <div class="item error" v-if="flashcardCounts === 0">
+        <p>{{ message }}</p>
       </div>
     </div>
 
