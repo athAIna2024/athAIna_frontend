@@ -1,23 +1,26 @@
+<!-- FIXME: Throw uploaded file value to File_Ready.vue -->
 <script setup>
-import {defineProps, defineEmits, ref, watch, inject} from "vue";
+import {defineProps, defineEmits, ref, watch, inject, provide} from "vue";
 // import Success_Message from "@/components/Success_Message.vue";
 import Error_Message from "@/components/Error_Message.vue";
 
 // Reactive state variables
 const modalState = ref(""); // 'error'
-// const successMessage = ref("");
 const errorMessage = ref("");
-// const uploadedFile = ref(null);
-const uploadedFile = inject("uploadedFile");
+// const successMessage = ref("");
 const isFileUploaded = ref(false);
 
 // Props
 const props = defineProps({
   isVisible: Boolean,
+  uploadedFile: {
+    type: Object,
+    required: true,
+  },
 });
 
 // Emits
-const emit = defineEmits(["next", "error", "success"]);
+const emit = defineEmits(["next", "error", "success", "update:uploadedFile"]);
 
 // Methods
 const showErrorModal = (message) => {
@@ -33,24 +36,23 @@ const showErrorModal = (message) => {
 const handleFileUpload = (event) => {
   if (!event.target.files.length) {
     console.log("Error. No file selected.");
-    showErrorModal("No file selected. Please upload a file.");
   } else {
-    // emit("success", "File uploaded successfully!"); // FIXME: Wonder why this doesn't work.
-    uploadedFile.value = event.target.files[0];
+    console.log("Before update:", event.target.files[0]);
+    emit("update:uploadedFile", event.target.files[0]);
+    console.log("After update:", event.target.files[0]);
     isFileUploaded.value = true;
     console.log("Successful File Upload!") // For debugging only
-    console.log("Uploaded file:", uploadedFile.value);; // For debugging only
     emit("next");
     // showSuccessModal("File uploaded successfully!");
   }
 };
 
 // Watch for when success modal closes
-watch(modalState, (newValue) => {
-  if (newValue === "" && isFileUploaded.value) {
-    emit("next"); // Proceed only after success modal closes
-  }
-});
+// watch(modalState, (newValue) => {
+//   if (newValue === "" && isFileUploaded.value) {
+//     emit("next"); // Proceed only after success modal closes
+//   }
+// });
 </script>
 
 <template>
