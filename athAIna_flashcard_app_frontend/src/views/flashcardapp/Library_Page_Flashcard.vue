@@ -17,7 +17,7 @@ import flashcardsDB from "@/views/flashcardapp/dexie.js";
 const flashcard_url = "/flashcard/";
 const store = useStudysetStore();
 const route = useRoute();
-const studySetTitle = route.params.studySetTitle;
+const studySetTitle = store.studySetTitle;
 const studySetId = store.studySetId;
 const isSuccessful = ref(false);
 const message = ref("");
@@ -222,7 +222,7 @@ onMounted(() => {
               <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
               <div v-if="modals.addFlashcard" class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
                 <button class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
-                  <router-link :to="{name: 'Create_Flashcard_Manually' }"> Create Manually </router-link>
+                  <router-link :to="{name: 'Create_Flashcard_Manually'}"> Create Manually </router-link>
                 </button>
                 <button @click="openAI_Flashcard" class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
                   Generate with AI

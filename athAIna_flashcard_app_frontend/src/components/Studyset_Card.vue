@@ -50,13 +50,14 @@ const closeDeleteModal = () => {
 
 const openStudySet = () => {
   store.setStudySetId(props.studySetId);
+  store.setStudySetTitle(props.title);
 };
 </script>
 
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
-      <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: title } }">
+      <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: title, studySetId: studySetId } }">
         <div @click="openStudySet" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>

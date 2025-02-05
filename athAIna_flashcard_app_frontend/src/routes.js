@@ -93,7 +93,7 @@ const routes = [
         component: Generate_Flashcard_with_AI,
     },
     {
-        path: '/:studySetTitle/flashcards',
+        path: '/:studySetId/:studySetTitle/flashcards',
         name: 'Library_Page_Flashcard',
         component: Library_Page_Flashcard,
     },

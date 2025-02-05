@@ -1,47 +1,38 @@
-<script>
-export default {
-  name: 'Create_Flashcard_Manually',
-};
+<script setup>
+
+import {useRoute} from "vue-router";
+import { useStudysetStore} from "../../../stores/studySetStore.js";
+
+const route = useRoute();
+const store = useStudysetStore();
+const studySetName = store.studySetTitle;
+
 </script>
 
 <template>
-    <form class="text-athAIna-lg text-center athAIna-border-inner p-5" action="/flashcards" method="post">
-      <div class="border-athAIna-violet border-2 rounded-lg m-2 text-left p-10">
-        <label for="question">Question:</label>
-        <div class="athAIna-border-outer p-1 mb-10">
-        <input type="text" class="athAIna-border-inner h-64 p-2" id="question" name="question">
+  <div class="text-athAIna-violet text-athAIna-lg font-semibold mx-4">
+    <div class="flex flex-row space-x-6 my-2 mx-8 items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+      <div>
+        Create flashcard for "<span>{{ studySetName}}</span>"
+      </div>
+    </div>
 
-        </div>
+  </div>
+  <form>
+    <div class="m-4">
 
-        <div class="athAIna-border-outer p-1">
-          <div class="athAIna-border-inner text-center h-20 content-center">
-            <div>+ Image</div>
+      <div class="athAIna-border-outer p-1 shadow-xl">
+        <div class="athAIna-border-inner py-4">
+          <div>
+
           </div>
         </div>
       </div>
-
-      <div class="athAIna-border-outer p-0.5 my-10"></div>
-
-      <div class="border-athAIna-violet border-2 rounded-lg m-2 text-left p-10">
-        <label for="answer">Answer: </label>
-        <div class="athAIna-border-outer p-1 mb-10">
-          <input type="text" class="athAIna-border-inner h-64 p-2" id="answer" name="answer">
-        </div>
-      </div>
-
-      <div class="flex justify-end mb-4">
-
-        <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
-
-          <router-link to="/library_of_flashcards">
-          <button class="athAIna-border-inner rounded-full"> Cancel </button>
-          </router-link>
-        </div>
-        <router-link to="/library_of_flashcards">
-        <button class="btn mt-10 mx-2"> Submit </button>
-        </router-link>
-      </div>
-    </form>
+    </div>
+  </form>
 </template>
 
 <style scoped>

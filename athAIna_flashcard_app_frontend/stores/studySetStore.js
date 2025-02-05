@@ -1,9 +1,14 @@
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
+// If local storage is used, we cannot have multiple tabs open with different data
+// If we use route, there is a security risk of users accessing data they should not have access to
 export const useStudysetStore = defineStore('studyset', () => {
+    const route = useRoute();
     const searchResults = ref([]);
-    const studySetId = ref(localStorage.getItem('studySetId') || null);
+    const studySetId = ref(route.params.studySetId || null);
+    const studySetTitle = ref(route.params.studySetTitle ? decodeURIComponent(route.params.studySetTitle) : null);
 
     const setSearchResults = (results) => {
         searchResults.value = results;
@@ -13,10 +18,18 @@ export const useStudysetStore = defineStore('studyset', () => {
         studySetId.value = id;
     };
 
-    // Watch for changes in studySetId and update localStorage
-    watch(studySetId, (newId) => {
-        localStorage.setItem('studySetId', newId);
+    const setStudySetTitle = (title) => {
+        studySetTitle.value = title;
+    };
+
+    // Watch for changes in route params and update the store
+    watch(() => route.params.studySetId, (newId) => {
+        studySetId.value = newId;
     });
 
-    return { searchResults, setSearchResults, studySetId, setStudySetId };
+    watch(() => route.params.studySetTitle, (newTitle) => {
+        studySetTitle.value = newTitle ? decodeURIComponent(newTitle) : null;
+    });
+
+    return { searchResults, setSearchResults, studySetId, setStudySetId, studySetTitle, setStudySetTitle };
 });
