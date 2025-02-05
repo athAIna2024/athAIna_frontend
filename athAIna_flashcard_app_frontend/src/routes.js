@@ -83,7 +83,7 @@ const routes = [
         component: Forgot_Password,
     },
     {
-        path: '/create_flashcard_manually/',
+        path: '/:studySetTitle/flashcards/save',
         name: 'Create_Flashcard_Manually',
         component: Create_Flashcard_Manually,
     },
