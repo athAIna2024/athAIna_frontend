@@ -179,8 +179,12 @@ const fetchStudySet = async () => {
 
 const fetchStudySetFromDb = async () => {
   try {
-    await fetchStudySet();
-    studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
+    studySet_db.value = await studySetDb.studysets.toArray();
+
+    if (studySet_db.value.length === 0) {
+      await fetchStudySet();
+      studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
+    }
 
     if (studySet_db.value.length > 0) {
       studySetCounts.value = studySet_db.value.length;
