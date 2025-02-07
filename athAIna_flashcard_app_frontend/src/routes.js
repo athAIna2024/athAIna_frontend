@@ -83,7 +83,7 @@ const routes = [
         component: Forgot_Password,
     },
     {
-        path: '/:studySetTitle/flashcards/save',
+        path: '/:studySetTitle/:studySetId/flashcards/save',
         name: 'Create_Flashcard_Manually',
         component: Create_Flashcard_Manually,
     },
@@ -93,7 +93,7 @@ const routes = [
         component: Generate_Flashcard_with_AI,
     },
     {
-        path: '/:studySetId/:studySetTitle/flashcards',
+        path: '/:studySetTitle/:studySetId/flashcards',
         name: 'Library_Page_Flashcard',
         component: Library_Page_Flashcard,
     },
