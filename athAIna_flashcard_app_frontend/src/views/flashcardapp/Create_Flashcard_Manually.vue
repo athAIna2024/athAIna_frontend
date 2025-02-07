@@ -45,9 +45,6 @@ const saveFlashcard = async () => {
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
-    if (isSuccessful.value) {
-      close();
-    }
   } catch (error) {
     if (error.response.status === 400) {
       isSuccessful.value = error.response.data.successful;
@@ -87,16 +84,17 @@ const saveFlashcard = async () => {
               <div class="flex flex-col gap-4">
 
                 <span class="text-athAIna-base text-athAIna-violet ml-1">Question</span>
-                <div class="athAIna-border-outer p-1 mb-4">
-                  <div class="athAIna-border-inner py-1">
-                    <textarea
-                        class="w-full rounded-lg p-4 border-0 text-athAIna-base text-athAIna-violet placeholder-athAIna-orange focus:outline-none"
-                        rows="5"
-                        placeholder="Write your question here."
-                        v-model="question"
-                    ></textarea>
+                  <div class="athAIna-border-outer p-1 mb-4">
+                    <div class="athAIna-border-inner py-1">
+                      <textarea
+                          class="w-full rounded-lg p-4 border-0 text-athAIna-base text-athAIna-violet placeholder-athAIna-orange focus:outline-none"
+                          rows="5"
+                          placeholder="Write your question here."
+                          v-model="question"
+                      ></textarea>
+                    </div>
                   </div>
-                </div>
+                  <div v-if="field_errors.question" class="text-athAIna-red text-athAIna-base">{{ field_errors.question }}</div>
 
                 <label for="image-upload">
 
@@ -123,6 +121,8 @@ const saveFlashcard = async () => {
                     </div>
                   </div>
                 </label>
+                <div v-if="field_errors.image" class="text-athAIna-red text-athAIna-base">{{ field_errors.image }}</div>
+
               </div>
 
             </div>
@@ -145,6 +145,8 @@ const saveFlashcard = async () => {
                     ></textarea>
                   </div>
                 </div>
+                <div v-if="field_errors.answer" class="text-athAIna-red text-athAIna-base">{{ field_errors.answer }}</div>
+
               </div>
 
             </div>

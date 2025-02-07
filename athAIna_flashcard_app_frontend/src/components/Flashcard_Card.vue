@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { computed} from "vue";
 import Update_Flashcard from "@/views/flashcardapp/Update_Flashcard.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
@@ -16,6 +17,10 @@ const props = defineProps({
   answer: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
+    required: false,
   },
 })
 
@@ -46,6 +51,9 @@ const openAI_Flashcard = () => {
 const closeAI_Flashcard = () => {
   isAIFlashcardVisible.value = false;
 };
+const isValidImage = computed(() => {
+  return props.image && props.image.trim() !== '' && props.image.startsWith('http');
+});
 </script>
 <template>
   <div class="athAIna-border-outer p-1 shadow-md">
@@ -53,6 +61,11 @@ const closeAI_Flashcard = () => {
       <div class="p-[15px]">
         <div class="flex flex-col">
           <div class="flex items-center text-center justify-center text-athAIna-violet text-athAIna-base mb-5 h-20 py-14">
+<!--            REMOVE IMAGE (JUST FOR DEBUGGING PURPOSES)-->
+            <div v-if="isValidImage">
+              <img :src="props.image" class="w-20 h-20 rounded-full" alt="Flashcard Image" />
+            </div>
+
             <router-link :to="'/review/' + flashcardId">
               <div v-if="question.length > 100">
                 {{ question.substring(0, 100) + '...' }}

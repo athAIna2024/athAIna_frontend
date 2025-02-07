@@ -251,6 +251,7 @@ onMounted(() => {
                   :flashcardId="flashcard.id"
                   :question="flashcard.question"
                   :answer="flashcard.answer"
+                  :image="flashcard.image"
               />
             </li>
             <div class="item error" v-if="!isSuccessful">
