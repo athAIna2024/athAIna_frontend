@@ -108,12 +108,12 @@ const routes = [
         component: Test_mode,
     },
     {
-        path: '/update_flashcard/:id',
+        path: '/update_flashcard/:flashcardId',
         name: 'Update_Flashcard',
         component: Update_Flashcard,
     },
     {
-        path: '/delete_flashcard/:id',
+        path: '/delete_flashcard/:flashcardId',
         name: 'Delete_Flashcard',
         component: Delete_Flashcard,
     },
@@ -128,12 +128,12 @@ const routes = [
         component: Library_Page_Studyset
     },
     {
-        path: '/update_studyset/:id',
+        path: '/update_studyset/',
         name: 'Update_Studyset',
         component: Update_Studyset,
     },
     {
-        path: '/delete_studyset/:id',
+        path: '/delete_studyset/',
         name: 'Delete_Studyset',
         component: Delete_studyset,
     },
