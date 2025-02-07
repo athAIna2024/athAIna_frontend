@@ -1,94 +1,66 @@
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import axios from "@/axios";
+import { useAuthStore } from "../../../stores/authStore";
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 
 const oldPassword = ref("");
 const newPassword = ref("");
-const confirmNewPassword = ref(""); // Changed from confirmPassword to match serializer
+const confirmPassword = ref("");
 const error = ref(null);
 const success = ref(null);
 const isSubmitting = ref(false);
 
-// Get the uidb64 and token from route params
-const { uidb64, token } = route.params;
+// Get token and uidb64 from URL parameters
+const token = route.params.token;
+const uidb64 = route.params.uidb64;
+console.log("uidb64:", uidb64);
+console.log("token:", token);
 
-const changePassword = async () => {
+// Modify the resetPassword function in Forgot_Password_Page.vue
+const updatePassword = async () => {
   error.value = null;
   success.value = null;
   isSubmitting.value = true;
 
-  // Validation checks
-  if (!oldPassword.value || !newPassword.value || !confirmNewPassword.value) {
-    error.value = "All fields are required";
-    isSubmitting.value = false;
-    return;
-  }
-
-  if (newPassword.value !== confirmNewPassword.value) {
-    error.value = "New passwords do not match";
-    isSubmitting.value = false;
-    return;
-  }
-
   try {
+    const access_token = authStore.getAccessToken();
+    console.log("Access Token:", access_token);
+    if (!access_token) {
+      error.value = "Not authenticated. Please log in.";
+      return; // Stop the function if no token
+    }
+
     const response = await axios.patch(
-      `/account/change-password/${uidb64}/${token}/`,
+      `http://localhost:8000/account/change-password/${uidb64}/${token}/`,
       {
-        old_password: oldPassword.value,
-        new_password: newPassword.value,
-        confirm_new_password: confirmNewPassword.value, // Changed to match serializer
+        old_Password: oldPassword.value,
+        new_Password: newPassword.value,
+        confirm_new_password: confirmPassword.value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer` + access_token, // Use the access token in the header
+        },
       }
     );
 
-    if (response.data.successful) {
-      success.value = response.data.message;
-      // Clear the form
-      oldPassword.value = "";
-      newPassword.value = "";
-      confirmNewPassword.value = "";
+    success.value = "Password has been reset successfully";
 
-      // Redirect to login after successful password change
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
-    } else {
-      error.value = response.data.message;
-    }
+    // Redirect to login page after successful password reset
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000);
   } catch (err) {
-    console.error("Change password error:", err);
     error.value =
-      err.response?.data?.message ||
       err.response?.data?.error ||
-      "An error occurred while changing your password";
-  } finally {
-    isSubmitting.value = false;
+      "An error occurred while resetting your password";
   }
 };
-
-// Password requirements validation
-const passwordRequirements = ref([
-  { text: "At least 8 characters", met: false },
-  { text: "At least one number", met: false },
-  { text: "At least one uppercase letter", met: false },
-  { text: "At least one special character", met: false },
-  { text: "Cannot be entirely numeric", met: true },
-]);
-
-const checkPasswordRequirements = (password) => {
-  passwordRequirements.value[0].met = password.length >= 8;
-  passwordRequirements.value[1].met = /\d/.test(password);
-  passwordRequirements.value[2].met = /[A-Z]/.test(password);
-  passwordRequirements.value[3].met = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  passwordRequirements.value[4].met = !/^\d+$/.test(password);
-};
-
-watch(newPassword, (value) => {
-  checkPasswordRequirements(value);
-});
 </script>
 <template>
   <div class="min-h-screen">
@@ -107,35 +79,6 @@ watch(newPassword, (value) => {
       <h1 class="text-athAIna-violet font-semibold w-full text-center">
         Change Password
       </h1>
-
-      <!-- Error/Success Messages -->
-      <div v-if="error" class="text-athAIna-red text-center mt-2">
-        {{ error }}
-      </div>
-      <div v-if="success" class="text-athAIna-violet text-center mt-2">
-        {{ success }}
-      </div>
-
-      <!-- Password Requirements -->
-      <div class="mb-4 text-sm">
-        <p class="font-semibold mb-2 text-athAIna-violet text-center">
-          Password Requirements:
-        </p>
-        <ul class="list-none space-y-1">
-          <li
-            v-for="(req, index) in passwordRequirements"
-            :key="index"
-            :class="{
-              'text-green-500': req.met,
-              'text-athAIna-red': !req.met,
-            }"
-            class="flex items-center justify-center"
-          >
-            <span class="mr-2">{{ req.met ? "✓" : "×" }}</span>
-            {{ req.text }}
-          </li>
-        </ul>
-      </div>
 
       <!-- Old Password Field -->
       <div
@@ -226,7 +169,7 @@ watch(newPassword, (value) => {
 
       <div class="flex m-10 justify-center">
         <button
-          @click="changePassword"
+          @click="updatePassword"
           class="btn w-full"
           :disabled="isSubmitting"
         >
