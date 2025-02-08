@@ -9,7 +9,12 @@ export default {
   name: 'Library_Page_Flashcard',
   computed: {
   },
-  components: {Delete_Flashcard, AI_Flashcard, Flashcard_Search_Bar, Flashcard_Card, Pagination},
+  components: {
+    Flashcard_Search_Bar,
+    Delete_Flashcard,
+    AI_Flashcard,
+    Flashcard_Card,
+    Pagination},
   data() {
     return {
       input: '',
@@ -48,9 +53,9 @@ export default {
       ],
       modals: {
         deleteModal: false,
-      showModal1: false,
-      showModal2: false,
-      showModal3: false,
+        showModal1: false,
+        showModal2: false,
+        showModal3: false,
       },
       isAIFlashcardVisible: false,
     };
@@ -66,6 +71,7 @@ export default {
     },
     openAI_Flashcard() {
       this.isAIFlashcardVisible = true;
+      this.modals.addFlashcard = false;
     },
     closeAI_Flashcard() {
       this.isAIFlashcardVisible = false;
@@ -75,7 +81,6 @@ export default {
 </script>
 
 <template>
-
     <div class="flex flex-col mx-12 my-16">
       <div class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center">
         <h1 class="text-athAIna-violet font-semibold flex"> Networking </h1>
