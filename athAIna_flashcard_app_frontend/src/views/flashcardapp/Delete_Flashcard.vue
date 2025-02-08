@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { watch } from "vue";
 import axios from '@/axios';
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import studySetDb from "@/views/studysetapp/dexie.js";
 import Delete_Confirmation from "@/views/flashcardapp/Delete_Confirmation.vue";
 
 const flashcard_url = "/flashcard/delete/";
@@ -23,6 +24,7 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+
 });
 
 const emit = defineEmits(['close']);
@@ -68,9 +70,13 @@ const deleteFlashcard = async () => {
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
+
+    const studySetId = request.data.data.studyset_instance;
+    console.log("studySetIdDELETE", studySetId);
+    await flashcardsDB.flashcards.delete(props.flashcardId);
+    await studySetDb.studysets.update(studySetId, { flashcard_count: studySetDb.studysets.get(studySetId).flashcard_count - 1 });
+
     if (isSuccessful) {
-      await flashcardsDB.flashcards.delete(props.flashcardId);
-      close();
       location.reload();
     }
   } catch (error) {

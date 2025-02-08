@@ -5,6 +5,8 @@ import { useStudysetStore} from "../../../stores/studySetStore.js";
 import { ref } from 'vue';
 import axios from '@/axios';
 import Library_Page_Flashcard from "@/views/flashcardapp/Library_Page_Flashcard.vue";
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import studySetDb from "@/views/studysetapp/dexie.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -49,6 +51,26 @@ const saveFlashcard = async () => {
 
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
+
+    console.log("ID", request.data.data.id);
+    console.log("Studyset Instance", request.data.data.studyset_instance);
+
+    const createFlashcard = {
+      id: request.data.data.id,
+      question: question.value,
+      answer: answer.value,
+      image: image.value,
+      created_at: new Date(),
+      updated_at: new Date(),
+      studyset_instance: request.data.data.studyset_instance,
+    };
+
+    await flashcardsDB.flashcards.add(createFlashcard);
+    await studySetDb.studysets.update(studySetId, { flashcard_count: studySetDb.studysets.get(studySetId).flashcard_count + 1 });
+
+    if (isSuccessful.value) {
+      navigateToLibraryPage();
+    }
 
   } catch (error) {
     if (error.response.status === 400) {
