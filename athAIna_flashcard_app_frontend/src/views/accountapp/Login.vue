@@ -17,10 +17,16 @@ const password = ref("");
 
 const login = async () => {
   try {
-    const response = await axios.post("http://localhost:8000/account/login/", {
-      email: email.value,
-      password: password.value,
-    });
+    const response = await axios.post(
+      "http://localhost:8000/account/login/",
+      {
+        email: email.value,
+        password: password.value,
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
     console.log(response.data);
 
@@ -43,7 +49,8 @@ const login = async () => {
       });
 
       // router.replace("/library_of_studysets");
-      window.location.href = "/library_of_studysets";
+      // window.location.href = "/library_of_studysets";
+      router.push("/library_of_studysets");
     } else {
       console.log(response.data.error);
     }
