@@ -54,10 +54,6 @@ const saveFlashcard = async () => {
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
-    console.log("ID", request.data.data.id);
-    console.log("Studyset Instance", request.data.data.studyset_instance);
-    console.log("STATUS", request.status);
-
     const createFlashcard = {
       id: request.data.data.id,
       question: question.value,
@@ -73,13 +69,11 @@ const saveFlashcard = async () => {
     const studySet = await studySetDb.studysets.get(studySetId);
     await studySetDb.studysets.update(studySetId, {flashcard_count: studySet.flashcard_count + 1});
 
-    if (isSuccessful.value) {
-      navigateToLibraryPage();
-    }
+
 
   } catch (error) {
 
-    if (error.response.status === 400) {
+    if (error.status === 400) {
       isSuccessful.value = error.response.data.successful;
       message.value = error.response.data.message;
 
