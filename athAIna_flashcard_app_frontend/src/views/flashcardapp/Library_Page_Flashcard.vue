@@ -147,8 +147,6 @@ const fetchFlashcards = async () => {
 
       await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
 
-      flashcardCounts.value = Number(flashcard_result.value.length);
-
     } else {
       flashcard_result.value = [];
     }
@@ -182,7 +180,6 @@ const fetchFlashcardsFromDb = async () => {
       flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
     }
 
-    flashcardCounts.value = flashcard_db.value.length;
     isSuccessful.value = true;
     message.value = "Flashcards retrieved successfully.";
 
@@ -193,7 +190,9 @@ const fetchFlashcardsFromDb = async () => {
 }
 
 const filteredFlashcards = computed(() => {
-  return flashcard_db.value.filter(flashcard => flashcard.studyset_id === Number(studySetId));
+  const filteredFlashcards = flashcard_db.value.filter(flashcard => flashcard.studyset_id === Number(studySetId));
+  flashcardCounts.value = filteredFlashcards.length;
+  return filteredFlashcards
 });
 
 const currentFlashcards = computed(() => {
