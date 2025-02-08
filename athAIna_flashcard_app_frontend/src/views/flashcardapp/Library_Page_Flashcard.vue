@@ -10,13 +10,13 @@ import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import Pagination from "@/components/Pagination.vue";
 
 import axios from '@/axios';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import {useStudysetStore} from "../../../stores/studySetStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const flashcard_url = "/flashcard/";
 const store = useStudysetStore();
-const route = useRoute();
+const router = useRouter();
 const studySetTitle = store.studySetTitle;
 const studySetId = store.studySetId;
 const isSuccessful = ref(false);
@@ -171,6 +171,8 @@ const fetchFlashcards = async () => {
   }
 }
 
+
+// INTEGRATE DEXIE DATABASE logic that will only populate
 const fetchFlashcardsFromDb = async () => {
   try {
     await fetchFlashcards();
@@ -197,6 +199,10 @@ onMounted(() => {
   fetchFlashcardsFromDb();
   document.title = "Flashcards";
 });
+
+const navigateToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Studyset' });
+};
 </script>
 
 <template>
@@ -207,7 +213,17 @@ onMounted(() => {
 
         <div class="flex flex-col m-10">
           <div class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center">
-            <h1 class="text-athAIna-violet font-semibold flex"> {{ studySetTitle }} </h1>
+
+
+            <div class="flex flex-row space-x-6 items-center">
+              <button @click="navigateToLibraryPage">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+              </button>
+              <h1 class="text-athAIna-violet font-semibold flex"> {{ studySetTitle }} </h1>
+            </div>
+
             <div class="flex flex-row justify-between space-x-6 items-center">
               <Flashcard_Search_Bar v-model="input" />
               <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
