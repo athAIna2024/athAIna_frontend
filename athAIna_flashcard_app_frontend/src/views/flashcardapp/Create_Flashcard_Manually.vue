@@ -49,11 +49,14 @@ const saveFlashcard = async () => {
       }
     });
 
+    console.log("REQUEST", request.data);
+
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
     console.log("ID", request.data.data.id);
     console.log("Studyset Instance", request.data.data.studyset_instance);
+    console.log("STATUS", request.status);
 
     const createFlashcard = {
       id: request.data.data.id,
@@ -62,17 +65,20 @@ const saveFlashcard = async () => {
       image: image.value,
       created_at: new Date(),
       updated_at: new Date(),
-      studyset_instance: request.data.data.studyset_instance,
+      studyset_id: request.data.data.studyset_instance,
     };
 
     await flashcardsDB.flashcards.add(createFlashcard);
-    await studySetDb.studysets.update(studySetId, { flashcard_count: studySetDb.studysets.get(studySetId).flashcard_count + 1 });
+
+    const studySet = await studySetDb.studysets.get(studySetId);
+    await studySetDb.studysets.update(studySetId, {flashcard_count: studySet.flashcard_count + 1});
 
     if (isSuccessful.value) {
       navigateToLibraryPage();
     }
 
   } catch (error) {
+
     if (error.response.status === 400) {
       isSuccessful.value = error.response.data.successful;
       message.value = error.response.data.message;

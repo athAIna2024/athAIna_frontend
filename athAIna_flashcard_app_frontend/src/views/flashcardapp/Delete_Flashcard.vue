@@ -77,9 +77,9 @@ const deleteFlashcard = async () => {
 
     const studySet = await studySetDb.studysets.get(studySetId);
     if (studySet && studySet.flashcard_count !== undefined) {
-      await studySetDb.studysets.update(studySetId, { flashcard_count: studySet.flashcard_count - 1 });
-    } else {
-      console.error("Study set not found or flashcard_count is undefined");
+      if (studySet.flashcard_count > 0) {
+        await studySetDb.studysets.update(studySetId, {flashcard_count: studySet.flashcard_count - 1});
+      }
     }
 
     if (isSuccessful) {
