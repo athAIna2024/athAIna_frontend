@@ -113,7 +113,7 @@ const routes = [
         component: Update_Flashcard,
     },
     {
-        path: '/delete_flashcard/:flashcardId',
+        path: '/delete_flashcard/',
         name: 'Delete_Flashcard',
         component: Delete_Flashcard,
     },
