@@ -108,8 +108,10 @@ const navigateToUpdateFlashcard = () => {
   </div>
 
   <Delete_Flashcard
+      :flashcardId="props.flashcardId"
       :is-visible="isDeleteModalVisible"
-      @close="closeDeleteModal" />
+      @close="closeDeleteModal"
+  />
 
 </template>
 

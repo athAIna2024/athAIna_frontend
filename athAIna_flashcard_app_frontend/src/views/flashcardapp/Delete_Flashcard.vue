@@ -1,6 +1,14 @@
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref } from "vue";
+import { watch } from "vue";
+import axios from '@/axios';
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
 import Delete_Confirmation from "@/views/flashcardapp/Delete_Confirmation.vue";
+
+const flashcard_url = "/flashcard/delete/";
+
+const isSuccessful = ref(false);
+const message = ref("");
 
 const props = defineProps({
   isVisible: {
@@ -10,6 +18,10 @@ const props = defineProps({
   title: {
     type: String,
     default: "Delete Flashcard",
+  },
+  flashcardId: {
+    type: Number,
+    required: true,
   },
 });
 
@@ -48,6 +60,29 @@ watch(isDeleteConfirmationModalVisible, (newValue) => {
     document.title = "Delete Flashcard";
   }
 });
+
+const deleteFlashcard = async () => {
+  try {
+    const request = await axios.delete(`${flashcard_url}${props.flashcardId}/`);
+
+    isSuccessful.value = request.data.successful;
+    message.value = request.data.message;
+
+    if (isSuccessful) {
+      await flashcardsDB.flashcards.delete(props.flashcardId);
+      close();
+      location.reload();
+    }
+  } catch (error) {
+    if (error.response.status === 400) {
+      isSuccessful.value = error.response.data.successful;
+      message.value = error.response.data.message;
+    } else {
+      isSuccessful.value = false;
+      message.value = "An error occurred. Please try again.";
+    }
+  }
+}
 </script>
 <template>
   <transition name="modal-fade" mode="out-in">
@@ -62,9 +97,11 @@ watch(isDeleteConfirmationModalVisible, (newValue) => {
                     <div class="athAIna-border-outer p-1 w-48 rounded-full">
                       <button @click="close" class="athAIna-border-inner rounded-full"> No </button>
                     </div>
-                    <div>
-                      <button @click="openDeleteConfirmationModal" class="btn w-48"> Confirm </button>
-                    </div>
+
+                    <form @submit.prevent="deleteFlashcard">
+                        <button @click="openDeleteConfirmationModal" class="btn w-48"> Confirm </button>
+                    </form>
+
                   </div>
                 </div>
               </div>
