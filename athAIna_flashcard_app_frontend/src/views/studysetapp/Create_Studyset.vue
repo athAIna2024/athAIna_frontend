@@ -49,23 +49,22 @@ const saveStudySet = async () => {
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
-
-    if (isSuccessful.value) {
-
-      const newStudySet = {
-        id: request.data.data.id,
-        learner_instance: Number(learnerId.value),
-        title: title.value,
-        description: description.value,
-        subject: subject.value,
-        created_at: new Date()
-      }
-
-      await studySetDb.studysets.add(newStudySet);
-
-      close();
+    const newStudySet = {
+      id: request.data.data.id,
+      learner_instance: Number(learnerId.value),
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+      created_at: new Date(),
+      updated_at: new Date(),
     }
 
+    await studySetDb.studysets.add(newStudySet);
+    console.log(studySetDb.studysets.get({ id: newStudySet.id }));
+
+    if (isSuccessful.value) {
+      close();
+    }
 
 
   } catch (error) {
