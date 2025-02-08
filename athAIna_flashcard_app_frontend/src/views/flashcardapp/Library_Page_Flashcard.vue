@@ -175,10 +175,17 @@ const fetchFlashcards = async () => {
 // INTEGRATE DEXIE DATABASE logic that will only populate
 const fetchFlashcardsFromDb = async () => {
   try {
-    await fetchFlashcards();
     flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
-    console.log("DEXIE RESPONSE", flashcard_db);
+
+    if (flashcard_db.value.length === 0) {
+      await fetchFlashcards();
+      flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
+    }
+
+    flashcardCounts.value = flashcard_db.value.length;
     isSuccessful.value = true;
+    message.value = "Flashcards retrieved successfully.";
+
   } catch (error) {
     isSuccessful.value = false;
     message.value = "An error occurred. Please try again later.";

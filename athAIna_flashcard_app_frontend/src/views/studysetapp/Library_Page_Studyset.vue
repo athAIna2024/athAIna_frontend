@@ -179,21 +179,17 @@ const fetchStudySet = async () => {
 
 const fetchStudySetFromDb = async () => {
   try {
-    studySet_db.value = await studySetDb.studysets.toArray();
+    studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
 
     if (studySet_db.value.length === 0) {
       await fetchStudySet();
       studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
     }
 
-    if (studySet_db.value.length > 0) {
-      studySetCounts.value = studySet_db.value.length;
-      isSuccessful_studyset.value = true;
-      message_studyset.value = "Study sets fetched successfully";
-    } else {
-      isSuccessful_studyset.value = false;
-      message_studyset.value = "No study sets found";
-    }
+    studySetCounts.value = studySet_db.value.length;
+    isSuccessful_studyset.value = studySetCounts.value > 0;
+    message_studyset.value = isSuccessful_studyset.value ? "Study sets fetched successfully" : "No study sets found";
+
   } catch (error) {
     isSuccessful_studyset.value = false;
     message_studyset.value = "An error occurred. Please try again later.";
