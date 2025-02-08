@@ -127,7 +127,7 @@ const fetchStudySet = async () => {
           title: String(studyset.title),
           description: String(studyset.description),
           subject: String(studyset.subject),
-          flashcard_count: 0,
+          flashcard_count: Number(0),
           created_at: Date(studyset.created_at),
           updated_at: Date(studyset.updated_at),
         };
