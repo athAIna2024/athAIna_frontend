@@ -2,10 +2,14 @@
 import { ref } from 'vue';
 import { computed} from "vue";
 import { useRouter} from "vue-router";
+import { useStudysetStore} from "../../stores/studySetStore.js";
 import Update_Flashcard from "@/views/flashcardapp/Update_Flashcard.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 
+const store = useStudysetStore();
+const studySetName = store.studySetTitle;
+const studySetId = store.studySetId;
 const router = useRouter();
 const props = defineProps({
   flashcardId: {
@@ -58,7 +62,7 @@ const isValidImage = computed(() => {
 });
 
 const navigateToUpdateFlashcard = () => {
-  router.push({ name: 'Update_Flashcard', params: { flashcardId: props.flashcardId } });
+  router.push({ name: 'Update_Flashcard', params: { flashcardId: props.flashcardId, studySetTitle: studySetName, studySetId: studySetId }});
 };
 </script>
 

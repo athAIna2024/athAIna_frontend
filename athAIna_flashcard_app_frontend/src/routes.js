@@ -108,7 +108,7 @@ const routes = [
         component: Test_mode,
     },
     {
-        path: '/update_flashcard/:flashcardId',
+        path: '/:studySetTitle/:studySetId/update_flashcard/:flashcardId',
         name: 'Update_Flashcard',
         component: Update_Flashcard,
     },

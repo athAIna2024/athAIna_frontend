@@ -1,14 +1,16 @@
 <script setup>
-import {useRoute} from "vue-router";
-import { useStudysetStore} from "../../../stores/studySetStore.js";
+import { useRouter } from "vue-router";
+import { useRoute } from 'vue-router';
+import { useStudysetStore } from "../../../stores/studySetStore.js";
 import { ref } from 'vue';
 import axios from '@/axios';
 import { onMounted } from 'vue';
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const route = useRoute();
+const router = useRouter();
 const store = useStudysetStore();
-const studySetName = store.studySetTitle
+const studySetName = store.studySetTitle;
 const studySetId = store.studySetId;
 const flashcardId = route.params.flashcardId;
 const flashcard_url = "/flashcard/update/";
@@ -23,6 +25,7 @@ const question = ref("");
 const answer = ref("");
 const image = ref("");
 const imageName = ref("");
+const originalImageUrl = ref("");
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
@@ -38,20 +41,20 @@ const updateFlashcard = async () => {
     formData.append('studyset_instance', studySetId);
     formData.append('question', question.value);
     formData.append('answer', answer.value);
-    if (image.value) {
+
+    if (image.value && image.value !== originalImageUrl.value) {
       formData.append('image', image.value);
     }
 
-    const request = await axios.put(`${flashcard_url}${flashcardId}/`, formData, {
+    const response = await axios.put(`${flashcard_url}${flashcardId}/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
 
-    isSuccessful.value = request.data.successful;
-    message.value = request.data.message;
+    isSuccessful.value = response.data.successful;
+    message.value = response.data.message;
 
-    // TEST IF IMAGE IS UPLOADED PROPERLY
     const updateFlashcard = {
       id: flashcardId,
       question: question.value,
@@ -62,6 +65,9 @@ const updateFlashcard = async () => {
     await flashcardsDB.flashcards.put(updateFlashcard);
 
 
+    if (isSuccessful.value) {
+      navigateToLibraryPage();
+    }
 
   } catch (error) {
     if (error.response.status === 400) {
@@ -82,41 +88,43 @@ const fetchFlashcardData = async () => {
     if (response.data.question) {
       question.value = response.data.question;
       answer.value = response.data.answer;
-      image.value = response.data.image.replace("flashcard_images/", "");
+      originalImageUrl.value = response.data.image ? response.data.image : "";
+      imageName.value = response.data.image ? response.data.image.split('/').pop() : "";
 
       isSuccessful_retrieved.value = response.data.successful;
-      message_retrieved.value = response.data.message
+      message_retrieved.value = response.data.message;
 
     } else {
       isSuccessful_retrieved.value = false;
-      message_retrieved.value = "There is no flashcard with the given ID."
+      message_retrieved.value = "There is no flashcard with the given ID.";
     }
   } catch (error) {
     if (error.response.status === 404) {
       isSuccessful_retrieved.value = false;
-      message_retrieved.value = error.response.data.message;
+      message_retrieved.value = error.response.message;
     } else {
       isSuccessful_retrieved.value = false;
       message_retrieved.value = "An error occurred. Please try again later.";
     }
   }
-}
+};
+
+const navigateToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+};
 
 onMounted(() => {
   fetchFlashcardData();
 });
-
-
 </script>
-
 <template>
   <div class="text-athAIna-violet text-athAIna-lg font-semibold mx-4 my-8">
     <div class="flex flex-row space-x-6 my-2 mx-8 items-center">
-      <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } }">
+      <button @click="navigateToLibraryPage">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
-      </router-link>
+      </button>
 
       <div>
         Update flashcard for "<span>{{ studySetName}}</span>"
@@ -209,12 +217,11 @@ onMounted(() => {
     <div class="flex flex-row space-x-6 justify-end">
 
       <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
-        <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } }">
-          <button class="athAIna-border-inner rounded-full"> Cancel </button>
-        </router-link>
+        <button @click="navigateToLibraryPage" class="athAIna-border-inner rounded-full"> Cancel </button>
       </div>
       <button class="btn mt-10 mx-2" type="submit"> Update </button>
     </div>
+
   </form>
 </template>
 
