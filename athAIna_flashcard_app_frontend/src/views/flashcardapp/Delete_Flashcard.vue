@@ -70,17 +70,16 @@ const deleteFlashcard = async () => {
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
-
     const studySetId = request.data.data.studyset_instance;
-    console.log("studySetIdDELETE", studySetId);
     await flashcardsDB.flashcards.delete(props.flashcardId);
 
-    const studySet = await studySetDb.studysets.get(studySetId);
-    if (studySet && studySet.flashcard_count !== undefined) {
-      if (studySet.flashcard_count > 0) {
-        await studySetDb.studysets.update(studySetId, {flashcard_count: studySet.flashcard_count - 1});
-      }
-    }
+    const studySet = await studySetDb.studysets.get(Number(studySetId));
+    await studySetDb.studysets
+        .where('id')
+        .equals(studySetId)
+        .modify({flashcard_count: studySet.flashcard_count - 1});
+
+
 
     if (isSuccessful) {
       location.reload();

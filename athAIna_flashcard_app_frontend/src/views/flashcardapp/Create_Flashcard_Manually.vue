@@ -66,9 +66,17 @@ const saveFlashcard = async () => {
 
     await flashcardsDB.flashcards.add(createFlashcard);
 
-    const studySet = await studySetDb.studysets.get(studySetId);
-    await studySetDb.studysets.update(studySetId, {flashcard_count: studySet.flashcard_count + 1});
+    const studySet = await studySetDb.studysets.get(Number(studySetId));
 
+    await studySetDb.studysets
+        .where('id')
+        .equals(Number(studysetId))
+        .modify({flashcard_count: studySet.flashcard_count + 1});
+
+    if (isSuccessful) {
+      location.reload();
+
+    }
 
 
   } catch (error) {
