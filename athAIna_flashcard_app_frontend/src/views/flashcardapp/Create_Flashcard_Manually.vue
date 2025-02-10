@@ -70,7 +70,7 @@ const saveFlashcard = async () => {
 
     await studySetDb.studysets
         .where('id')
-        .equals(Number(studysetId))
+        .equals(Number(studySetId))
         .modify({flashcard_count: studySet.flashcard_count + 1});
 
     if (isSuccessful) {
