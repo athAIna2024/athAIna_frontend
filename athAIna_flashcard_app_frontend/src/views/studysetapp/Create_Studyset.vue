@@ -55,6 +55,7 @@ const saveStudySet = async () => {
       title: title.value,
       description: description.value,
       subject: subject.value,
+      flashcard_count: Number(0),
       created_at: new Date(),
       updated_at: new Date(),
     }
