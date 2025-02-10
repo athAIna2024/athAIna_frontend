@@ -24,6 +24,7 @@ const message = ref("");
 const flashcard_result = ref([]);
 const flashcard_db = ref([]);
 const flashcardCounts = ref(0);
+const flashcardCounts_backend = ref(0);
 const itemsPerPage = 6;
 
 const dropdownOptions = ref({
@@ -109,10 +110,7 @@ function closeAI_Flashcard() {
 
 const fetchFlashcards = async () => {
   try {
-    const response = await axios.get(flashcard_url, {
-      params: { studyset_id: studySetId }
-    });
-
+    const response = await axios.get(flashcard_url);
 
     if (response.data.data.length > 0) {
 
@@ -129,7 +127,7 @@ const fetchFlashcards = async () => {
         };
       });
 
-      console.log("API RESPONSE", response.data.data);
+      flashcardCounts_backend.value = flashcard_result.value.length;
 
 
       const serializableFlashcards = flashcard_result.value.map(flashcard => {
@@ -170,14 +168,14 @@ const fetchFlashcards = async () => {
 }
 
 
-// INTEGRATE DEXIE DATABASE logic that will only populate
 const fetchFlashcardsFromDb = async () => {
   try {
-    flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
+
+    flashcard_db.value = await flashcardsDB.flashcards.toArray();
 
     if (flashcard_db.value.length === 0) {
       await fetchFlashcards();
-      flashcard_db.value = await flashcardsDB.flashcards.orderBy("updated_at").reverse().toArray();
+      flashcard_db.value = await flashcardsDB.flashcards.toArray();
     }
 
     isSuccessful.value = true;
@@ -190,10 +188,11 @@ const fetchFlashcardsFromDb = async () => {
 }
 
 const filteredFlashcards = computed(() => {
-  const filteredFlashcards = flashcard_db.value.filter(flashcard => flashcard.studyset_id === Number(studySetId));
+  const filteredFlashcards = flashcard_db.value.filter(flashcard => flashcard.studyset_id === studySetId);
   flashcardCounts.value = filteredFlashcards.length;
   return filteredFlashcards
 });
+
 
 const currentFlashcards = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
