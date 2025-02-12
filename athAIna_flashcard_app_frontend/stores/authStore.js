@@ -15,9 +15,12 @@ export const useAuthStore = defineStore("auth", {
     },
     logout() {
       this.isLoggedIn = false;
-      this.userProfile = null;
       this.authToken = null;
-      localStorage.removeItem("authToken");
+      this.user_id = null;
+      this.access_token = null;
+      this.refresh_token = null;
+      this.csrf_token = null;
+      
     },
     setTokens(access_token, refresh_token) {
       this.access_token = access_token;

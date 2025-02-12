@@ -3,11 +3,9 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useUserStore } from "../../stores/userStore";
 import { useAuthStore } from "../../stores/authStore";
 import axiosInstance from "@/axiosConfig";
 
-const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
 // const accessToken = Cookies.get("access_token");
@@ -25,13 +23,12 @@ const logout = async () => {
     console.log("response message: ", response.message);
 
     if (response.status === 204) {
-      userStore.clearUserID();
 
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
 
-      authStore.clearTokens();
+      authStore.logout();
       router.push("/login");
     } else {
       console.log(response.error);
