@@ -1,22 +1,3 @@
-<!-- <script>
-export default {
-  name: 'Learner_Navbar',
-  data() {
-    return {
-      modals: {
-        profile: false,
-        accSettings: false,
-      },
-    };
-  },
-  methods: {
-    toggleModal(modalName) {
-      this.modals[modalName] = !this.modals[modalName];
-    },
-  }
-};
-</script> -->
-
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -24,28 +5,18 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../stores/userStore";
 import { useAuthStore } from "../../stores/authStore";
+import axiosInstance from "@/axiosConfig";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 const router = useRouter();
-const accessToken = Cookies.get("access_token");
-const refreshTKN = Cookies.get("refresh_token");
-
-console.log(userStore.getUserID());
+// const accessToken = Cookies.get("access_token");
+// const refreshTKN = Cookies.get("refresh_token");
+// const csrfToken = Cookies.get("athAIna_csrfToken");
 
 const logout = async () => {
   try {
-    const response = await axios.post(
-      "http://localhost:8000/account/logout/",
-      {
-        refresh: refreshTKN,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      }
-    );
+    const response = await axiosInstance.post("/account/logout/", {});
 
     console.log("response: ", response);
     console.log("response data: ", response.data);
@@ -58,6 +29,7 @@ const logout = async () => {
 
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
+      Cookies.remove("athAIna_csrfToken");
 
       authStore.clearTokens();
       router.push("/login");
@@ -160,6 +132,7 @@ const toggleModal = (modalName) => {
         >
           Account Settings
         </button>
+        <form id="csrf-form" style="display: none">{% csrf_token %}</form>
         <button
           @click="logout"
           class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
