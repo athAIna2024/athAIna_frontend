@@ -3,17 +3,15 @@ import { defineStore } from "pinia";
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     isLoggedIn: false,
-    userProfile: null,
     authToken: localStorage.getItem("authToken") || null,
     access_token: null,
     refresh_token: null,
+    csrf_token: null,
+    user_id: null,
   }),
   actions: {
     login() {
       this.isLoggedIn = true;
-      this.userProfile = userData;
-      this.authToken = token;
-      localStorage.setItem("authToken", token);
     },
     logout() {
       this.isLoggedIn = false;
@@ -35,5 +33,15 @@ export const useAuthStore = defineStore("auth", {
       this.access_token = null;
       this.refresh_token = null;
     },
+    setUserID(user_id) {
+      this.user_id = user_id;
+    },
+    clearUserID() {
+      this.user_id = null;
+    },
+    getUserID() {
+      return this.user_id;
+    },
   },
+  persist: true,
 });

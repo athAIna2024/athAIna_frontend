@@ -48,6 +48,12 @@ const login = async () => {
         refresh: response.data.refresh,
       });
 
+      authStore.setUserID(response.data.user_id);
+
+      authStore.login();
+
+      
+
       // router.replace("/library_of_studysets");
       // window.location.href = "/library_of_studysets";
       router.push("/library_of_studysets");
