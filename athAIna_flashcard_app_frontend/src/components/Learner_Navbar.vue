@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useAuthStore } from "../../stores/authStore";
 import axiosInstance from "@/axiosConfig";
+import Delete_Account from "@/components/Delete_Account.vue";
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -23,7 +24,6 @@ const logout = async () => {
     console.log("response message: ", response.message);
 
     if (response.status === 204) {
-
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
@@ -41,6 +41,7 @@ const logout = async () => {
 const modals = ref({
   profile: false,
   accSettings: false,
+  Delete_Account: false,
 });
 
 const toggleModal = (modalName) => {
@@ -49,6 +50,10 @@ const toggleModal = (modalName) => {
 </script>
 
 <template>
+  <Delete_Account
+    :is-open="modals.Delete_Account"
+    @close="toggleModal('Delete_Account')"
+  />
   <div
     v-if="modals.accSettings"
     class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
@@ -70,6 +75,17 @@ const toggleModal = (modalName) => {
           >
             <router-link to="change_password"> Change Password </router-link>
           </button>
+
+          <button
+            @click="
+              toggleModal('profile');
+              toggleModal('Delete_Account');
+            "
+            class="text-base border-athAIna-red border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm text-red-500"
+          >
+            Delete Account
+          </button>
+
           <button
             @click="toggleModal('profile')"
             class="text-base bg-athAIna-orange mt-8 py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
