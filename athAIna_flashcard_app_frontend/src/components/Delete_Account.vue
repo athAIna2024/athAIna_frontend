@@ -51,16 +51,11 @@ const deleteAccount = async () => {
   >
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
-        <div class="flex justify-end pl-4 text-athAIna-lg">
-          <button @click="$emit('close')">x</button>
-        </div>
-
         <div class="flex flex-col items-center justify-between p-5 space-y-6">
           <h2 class="font-semibold text-xl">Delete Account</h2>
 
           <p class="text-center text-gray-600">
-            Are you sure you want to delete your account? This action cannot be
-            undone and will delete all your study sets.
+            Are you sure you want to delete your account?
           </p>
 
           <div v-if="deleteError" class="text-red-500 text-sm">
@@ -70,14 +65,14 @@ const deleteAccount = async () => {
           <div class="flex space-x-4">
             <button
               @click="$emit('close')"
-              class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+              class="border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
             >
               Cancel
             </button>
 
             <button
               @click="deleteAccount"
-              class="text-base bg-red-500 py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
+              class="border-athAIna-red border-[3.5px] py-[10px] px-[30px] rounded-2xl text-me text-white hover:bg-red-600 transition-colors"
             >
               Delete Account
             </button>
