@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { watch } from 'vue';
 import axios from '@/axios';
+import studySetDb from "@/views/studysetapp/dexie.js";
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
@@ -48,9 +49,25 @@ const saveStudySet = async () => {
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
+    const newStudySet = {
+      id: request.data.data.id,
+      learner_instance: Number(learnerId.value),
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+      flashcard_count: Number(0),
+      created_at: new Date(),
+      updated_at: new Date(),
+    }
+
+    await studySetDb.studysets.add(newStudySet);
+    console.log(studySetDb.studysets.get({ id: newStudySet.id }));
+
     if (isSuccessful.value) {
       close();
     }
+
+
   } catch (error) {
 
     if (error.response.status === 400) {
