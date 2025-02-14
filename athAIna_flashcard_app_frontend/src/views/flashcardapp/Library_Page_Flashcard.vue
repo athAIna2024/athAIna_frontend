@@ -110,7 +110,9 @@ function closeAI_Flashcard() {
 
 const fetchFlashcards = async () => {
   try {
-    const response = await axios.get(flashcard_url);
+    const response = await axios.get(flashcard_url, {
+      params: { studyset_id: studySetId }
+    });
 
     if (response.data.data.length > 0) {
 
@@ -170,7 +172,7 @@ const fetchFlashcards = async () => {
 
 const fetchFlashcardsFromDb = async () => {
   try {
-
+    await flashcardsDB.flashcards.clear();
     flashcard_db.value = await flashcardsDB.flashcards.toArray();
 
     if (flashcard_db.value.length === 0) {
