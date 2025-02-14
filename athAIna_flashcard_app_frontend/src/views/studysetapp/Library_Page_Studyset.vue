@@ -127,7 +127,7 @@ const fetchStudySet = async () => {
           title: String(studyset.title),
           description: String(studyset.description),
           subject: String(studyset.subject),
-          flashcard_count: 0,
+          flashcard_count: Number(0),
           created_at: Date(studyset.created_at),
           updated_at: Date(studyset.updated_at),
         };
@@ -179,17 +179,17 @@ const fetchStudySet = async () => {
 
 const fetchStudySetFromDb = async () => {
   try {
-    await fetchStudySet();
     studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
 
-    if (studySet_db.value.length > 0) {
-      studySetCounts.value = studySet_db.value.length;
-      isSuccessful_studyset.value = true;
-      message_studyset.value = "Study sets fetched successfully";
-    } else {
-      isSuccessful_studyset.value = false;
-      message_studyset.value = "No study sets found";
+    if (studySet_db.value.length === 0) {
+      await fetchStudySet();
+      studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
     }
+
+    studySetCounts.value = studySet_db.value.length;
+    isSuccessful_studyset.value = studySetCounts.value > 0;
+    message_studyset.value = isSuccessful_studyset.value ? "Study sets fetched successfully" : "No study sets found";
+
   } catch (error) {
     isSuccessful_studyset.value = false;
     message_studyset.value = "An error occurred. Please try again later.";
@@ -243,7 +243,7 @@ onMounted(() => {
 
 
     <div v-if="isSuccessful_studyset">
-      <div class="grid mt-[60px] mb-[60px] gap-[55px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid mt-[60px] mb-[60px] gap-14 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="(s, index) in store.searchResults.length ? store.searchResults : currentStudySets" :key="index">
           <Studyset_Card
             :title="s.title"

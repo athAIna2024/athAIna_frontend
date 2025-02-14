@@ -1,10 +1,11 @@
 <script setup>
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
-
+import {useStudysetStore} from "../../stores/studySetStore.js";
 import { defineProps } from 'vue';
 import { ref } from 'vue';
 
+const store = useStudysetStore();
 const props = defineProps({
   title: {
     type: String,
@@ -20,7 +21,7 @@ const props = defineProps({
   },
   flashcardCount: {
     type: Number,
-    required: true
+    required: true,
   },
   studySetId: {
     type: Number,
@@ -47,16 +48,17 @@ const closeDeleteModal = () => {
   isDeleteModalVisible.value = false;
 };
 
-
-
-
+const openStudySet = () => {
+  store.setStudySetId(props.studySetId);
+  store.setStudySetTitle(props.title);
+};
 </script>
 
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
-      <router-link to="/library_of_flashcards">
-        <div class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
+      <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: title, studySetId: studySetId } }">
+        <div @click="openStudySet" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px]">

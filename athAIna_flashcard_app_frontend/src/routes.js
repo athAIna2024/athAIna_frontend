@@ -83,7 +83,7 @@ const routes = [
         component: Forgot_Password,
     },
     {
-        path: '/create_flashcard_manually/',
+        path: '/:studySetTitle/:studySetId/flashcards/save',
         name: 'Create_Flashcard_Manually',
         component: Create_Flashcard_Manually,
     },
@@ -93,7 +93,7 @@ const routes = [
         component: Generate_Flashcard_with_AI,
     },
     {
-        path: '/library_of_flashcards/',
+        path: '/:studySetTitle/:studySetId/flashcards',
         name: 'Library_Page_Flashcard',
         component: Library_Page_Flashcard,
     },
@@ -108,12 +108,12 @@ const routes = [
         component: Test_mode,
     },
     {
-        path: '/update_flashcard/:id',
+        path: '/:studySetTitle/:studySetId/update_flashcard/:flashcardId',
         name: 'Update_Flashcard',
         component: Update_Flashcard,
     },
     {
-        path: '/delete_flashcard/:id',
+        path: '/delete_flashcard/',
         name: 'Delete_Flashcard',
         component: Delete_Flashcard,
     },
@@ -128,12 +128,12 @@ const routes = [
         component: Library_Page_Studyset
     },
     {
-        path: '/update_studyset/:id',
+        path: '/update_studyset/',
         name: 'Update_Studyset',
         component: Update_Studyset,
     },
     {
-        path: '/delete_studyset/:id',
+        path: '/delete_studyset/',
         name: 'Delete_Studyset',
         component: Delete_studyset,
     },
