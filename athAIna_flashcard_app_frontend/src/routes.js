@@ -149,6 +149,9 @@ const routes = [
     path: "/library_of_studysets/",
     name: "Library_Page_Studyset",
     component: Library_Page_Studyset,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/update_studyset/:id",
