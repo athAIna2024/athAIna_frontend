@@ -3,6 +3,15 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "@/axios";
 import { useAuthStore } from "../../../stores/authStore";
+import axiosInstance from "@/axiosConfig";
+import Cookies from "js-cookie";
+
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    required: true,
+  },
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -28,33 +37,28 @@ const updatePassword = async () => {
   isSubmitting.value = true;
 
   try {
-    const access_token = authStore.getAccessToken();
-    console.log("Access Token:", access_token);
-    if (!access_token) {
-      error.value = "Not authenticated. Please log in.";
-      return; // Stop the function if no token
-    }
-
-    const response = await axios.patch(
-      `http://localhost:8000/account/change-password/${uidb64}/${token}/`,
+    const response = await axiosInstance.patch(
+      `/account/change-password/${uidb64}/${token}/`,
       {
-        old_Password: oldPassword.value,
-        new_Password: newPassword.value,
+        old_password: oldPassword.value,
+        new_password: newPassword.value,
         confirm_new_password: confirmPassword.value,
       },
       {
         headers: {
-          Authorization: `Bearer` + access_token, // Use the access token in the header
+          Authorization: `Bearer ${Cookies.get("access_token")}`,
         },
       }
     );
 
-    success.value = "Password has been reset successfully";
+    if (response.status === 200) {
+      success.value = "Password has been reset successfully";
 
-    // Redirect to login page after successful password reset
-    setTimeout(() => {
-      router.push("/login");
-    }, 2000);
+      // Redirect to login page after successful password reset
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    }
   } catch (err) {
     error.value =
       err.response?.data?.error ||
@@ -71,7 +75,7 @@ const updatePassword = async () => {
       class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
     ></div>
     <div
-      class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[650px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
+      class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
     >
       <div class="w-full flex flex-row justify-center items-center">
         <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
@@ -79,6 +83,14 @@ const updatePassword = async () => {
       <h1 class="text-athAIna-violet font-semibold w-full text-center">
         Change Password
       </h1>
+
+      <!-- Error/Success Messages -->
+      <div v-if="error" class="text-athAIna-red text-center mt-2">
+        {{ error }}
+      </div>
+      <div v-if="success" class="text-athAIna-violet text-center mt-2">
+        {{ success }}
+      </div>
 
       <!-- Old Password Field -->
       <div
@@ -102,8 +114,7 @@ const updatePassword = async () => {
           <input
             v-model="oldPassword"
             type="password"
-            placeholder="Old Password"
-            :disabled="isSubmitting"
+            placeholder="old Password"
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
@@ -132,7 +143,6 @@ const updatePassword = async () => {
             v-model="newPassword"
             type="password"
             placeholder="New Password"
-            :disabled="isSubmitting"
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
@@ -161,29 +171,16 @@ const updatePassword = async () => {
             v-model="confirmPassword"
             type="password"
             placeholder="Confirm Password"
-            :disabled="isSubmitting"
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
       </div>
 
       <div class="flex m-10 justify-center">
-        <button
-          @click="updatePassword"
-          class="btn w-full"
-          :disabled="isSubmitting"
-        >
-          <span v-if="isSubmitting">Changing Password...</span>
-          <span v-else>Change Password</span>
+        <button @click="updatePassword" class="btn w-full">
+          Change Password
         </button>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.btn {
-  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
-  color: white;
-}
-</style>
