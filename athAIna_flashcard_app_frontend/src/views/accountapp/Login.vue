@@ -3,6 +3,13 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useUserStore } from "../../../stores/userStore";
+import { useAuthStore } from "../../../stores/authStore";
+
+const userStore = useUserStore();
+const authStore = useAuthStore();
+
+console.log(userStore.getUserID());
 
 const router = useRouter();
 const email = ref("");
@@ -10,17 +17,45 @@ const password = ref("");
 
 const login = async () => {
   try {
-    const response = await axios.post("http://localhost:8000/account/login/", {
-      email: email.value,
-      password: password.value,
-    });
+    const response = await axios.post(
+      "http://localhost:8000/account/login/",
+      {
+        email: email.value,
+        password: password.value,
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
     console.log(response.data);
 
     if (response.data.successful) {
-      Cookies.set("access_token", `${response.data.access}`);
-      Cookies.set("refresh_token", `${response.data.refresh}`);
+      userStore.setUserID(response.data.user_id);
+      Cookies.set("access_token", `${response.data.access}`, {
+        secure: true,
+        sameSite: "Strict",
+        expires: 3600 / (24 * 60 * 60),
+      });
+      Cookies.set("refresh_token", `${response.data.refresh}`, {
+        secure: true,
+        sameSite: "Strict",
+        expires: 1209600 / (24 * 60 * 60),
+      });
 
+      authStore.setTokens({
+        access: response.data.access,
+        refresh: response.data.refresh,
+      });
+
+      authStore.setUserID(response.data.user_id);
+
+      authStore.login();
+
+      
+
+      // router.replace("/library_of_studysets");
+      // window.location.href = "/library_of_studysets";
       router.push("/library_of_studysets");
     } else {
       console.log(response.data.error);
@@ -33,7 +68,7 @@ const login = async () => {
 
 <template>
   <div class="flex flex-row justify-center">
-    <div class="mt-40 mr-40 pr-40 flex justify-center">
+    <div class="mt-40 ml-60 pr-40 flex justify-center w-1/2">
       <div
         class="absolute rotate-[12deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
       ></div>
@@ -47,7 +82,7 @@ const login = async () => {
       </div>
     </div>
 
-    <div class="flex flex-col justify-center items-center min-h-screen">
+    <div class="flex flex-col justify-center items-center min-h-screen w-full">
       <h1 class="text-athAIna-violet font-semibold w-full text-center">
         Welcome Back!
       </h1>
