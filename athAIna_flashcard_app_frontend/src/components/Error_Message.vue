@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 // Props
 const props = defineProps({
@@ -13,7 +13,6 @@ const emit = defineEmits(["close"]);
 // Methods
 const closeModal = () => {
   emit("close");
-  modalState.value = "";
 };
 
 </script>
