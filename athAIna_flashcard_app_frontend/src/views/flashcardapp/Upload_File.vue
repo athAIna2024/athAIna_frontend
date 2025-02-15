@@ -3,6 +3,7 @@
 import {defineProps, defineEmits, ref, watch, inject, provide} from "vue";
 // import Success_Message from "@/components/Success_Message.vue";
 import Error_Message from "@/components/Error_Message.vue";
+import Success_Message from "@/components/Success_Message.vue";
 
 // Reactive state variables
 const modalState = ref(""); // 'error'
@@ -42,9 +43,9 @@ const handleFileUpload = (event) => {
     console.log("After update:", event.target.files[0]);
     isFileUploaded.value = true;
     console.log("Successful File Upload!") // For debugging only
-    emit("next");
     // showSuccessModal("File uploaded successfully!");
   }
+  emit('next');
 };
 
 // Watch for when success modal closes
@@ -71,12 +72,12 @@ const handleFileUpload = (event) => {
   </div>
 
   <!-- Success Modal -->
-  <Success_Message
-      v-if="modalState === 'success'"
-      :isVisible="modalState === 'success'"
-      :successMessage="successMessage"
-      @close="modalState = ''"
-  />
+<!--  <Success_Message-->
+<!--      v-if="modalState === 'success'"-->
+<!--      :isVisible="modalState === 'success'"-->
+<!--      :successMessage="successMessage"-->
+<!--      @close="modalState = ''"-->
+<!--  />-->
 </template>
 
 <style scoped>

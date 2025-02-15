@@ -1,6 +1,8 @@
 <!-- FIXME: MAJOR: PAGE LIST RENDERING LOGIC (V-FOR) -->
 <script setup>
-import { ref, computed, defineEmits } from 'vue';
+import {ref, computed, defineEmits, onMounted} from 'vue';
+import Loading_Modal from "@/components/Loading_Modal.vue";
+import Success_Message from "@/components/Success_Message.vue";
 
 // Define props
 const props = defineProps({
@@ -14,11 +16,19 @@ const props = defineProps({
   }
 });
 
-// Emit function to send custom events
-const emit = defineEmits();
+const isSuccessVisible = ref(false);
+const successHeader = ref("Success")
+const successMessage = ref("Redirecting to Library...");
 
-// Define returned data
-const isPageSelectorVisible = ref(true);
+// Emits
+const emit = defineEmits(["close", "next", "warning", "success", "prev", "loading"]);
+
+onMounted(() => {
+  console.log("✅ Page_Selector Mounted!");
+});
+
+// Returned data
+// const isPageSelectorVisible = ref(true);
 const pages = ref([
     {
       id: 1,
@@ -31,7 +41,7 @@ const pages = ref([
 ]);
 const input = '';
 
-// Define computed properties
+// Computed Properties
 const pageList = computed(() => {
   return pages.value.filter(page => {
     // return page.id.toLowerCase().includes(input.toLowerCase());
@@ -39,17 +49,32 @@ const pageList = computed(() => {
   });
 });
 
+// Methods
+const generateFlashcards = () => {
+  console.log("Generating Flashcards...");
+  showSuccessPage();
+  // FIXME: Show Loading_Page
+  // emit("next");
+};
+
+const showSuccessPage = () => {
+  isSuccessVisible.value = true;
+  setTimeout(() => {
+    emit("next");
+  }, 3000);
+}
 </script>
 
 <template>
-  <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40">
+  <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40">
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-7 text-center">
         <div class="flex flex-col">
           <!-- Back Button -->
           <!-- FIXME: Apply 'Previous Step' Logic to Back Button -->
           <div class="flex flex-start">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                 @click="$emit('prev')" class="size-5 hover:cursor-pointer">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
           </div>
@@ -71,12 +96,19 @@ const pageList = computed(() => {
           </div>
           <!-- Generate Button -->
           <div class="flex justify-center mt-[50px]">
-            <div class="btn w-[200px] mb-[25px] hover:cursor-pointer" @click="emit('close')"> Generate </div>
+            <div class="btn w-[200px] mb-[25px] hover:cursor-pointer" @click="generateFlashcards"> Generate </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <Success_Message
+      :isVisible="isSuccessVisible"
+      :successHeader="successHeader"
+      :successMessage="successMessage"
+      @close="close"
+  />
 
 </template>
 

@@ -1,20 +1,27 @@
 <script setup>
-import {defineProps, defineEmits, ref, inject, computed} from "vue";
+import {defineProps, defineEmits, ref, computed} from "vue";
 import Success_Message from "@/components/Success_Message.vue";
 import Error_Message from "@/components/Error_Message.vue";
+import Warning_Message from "@/components/Warning_Message.vue";
+import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 
 // Emits
-const emit = defineEmits(["next", "error", "success", 'prev', 'loading', 'warning']);
+const emit = defineEmits(['next', 'error', 'success', 'prev', 'loading', 'warning', 'confirm', 'pageSelect']);
 
 // Reactive state variables
-const modalState = ref(""); // 'error', 'success', 'warning', 'loading'
+const modalState = ref(""); // 'warning', 'confirm'
 const successMessage = ref("");
 const errorMessage = ref("");
+const warningHeader = ref("Disclaimer");
+const warningMessage = ref("Your file contains images that will not be processed for flashcard generation. " +
+    "Manual creation for image-based learning is recommended.");
+const isConfirmVisible = ref(false);
+const isWarningVisible = ref(false);
+const confirmQuestion = ref("Are you sure you want to submit the file?");
+const hasImage = ref(true);
 // const uploadedFile = inject("uploadedFile");
 // console.log(props.uploadedFile?.name); // For debugging only
 // console.log(uploadedFile); // For debugging only
-
-console.log()
 
 // Props
 const props = defineProps({
@@ -26,6 +33,11 @@ const props = defineProps({
 });
 
 // Methods
+const closeModal = () => {
+  emit("close");
+  modalState.value = "";
+};
+
 const showErrorModal = (message) => {
   errorMessage.value = message;
   modalState.value = "error";
@@ -35,6 +47,59 @@ const showSuccessModal = (message) => {
   successMessage.value = message;
   modalState.value = "success";
 };
+
+const showWarningModal = (header, message) => {
+  warningHeader.value = header;
+  warningMessage.value = message;
+  modalState.value = "warning";
+};
+
+const showConfirmPrompt = () => {
+  // modalState.value = "confirm";
+  isConfirmVisible.value = true;
+};
+
+// FIXME: Fix weird Warning_Message render logic.
+const handleConfirmPrompt = () => {
+  isConfirmVisible.value = false;
+  console.log("handleConfirmPrompt()");
+  if (hasImage === true) {
+    isWarningVisible.value = true;
+  } else {
+    emit('next');
+  }
+};
+
+const closeConfirmPrompt = () => {
+  isConfirmVisible.value = false;
+  console.log("closeConfirmPrompt()")
+};
+
+const validate = () => {
+  // if (!props.uploadedFile) {
+  //   closeModal();
+  //   showConfirmPrompt("Are you sure you want to confirm the file submission?");
+  // } else {
+  //   emit("loading");
+  // };
+  // isConfirmVisible.value = true;
+  emit("next");
+};
+
+// const isWarningModalVisible = () => {
+//   closeModal();
+//   showWarningModal(
+//       "Disclaimer",
+//       "Your file contains images that will not be processed for flashcard generation. " +
+//       "Manual creation for image-based learning is recommended."
+//   );
+//   modalState.value = 'pageSelect';
+// }
+
+const closeWarningModal = () => {
+  isConfirmVisible.value = false;
+  emit('next');
+}
 
 console.log("Prop:" + props.uploadedFile);
 const fileName = computed(() => props.uploadedFile?.name || "No file selected");
@@ -75,8 +140,24 @@ const fileName = computed(() => props.uploadedFile?.name || "No file selected");
     </div>
 
     <!-- Submit Button -->
-    <button class="px-28 btn font-semibold mb-6" @click="$emit('next')">Submit</button>
+    <button class="px-28 btn font-semibold mb-6" @click="showConfirmPrompt">Submit</button>
   </div>
+
+  <!-- Confirmation Prompt -->
+  <Confirmation_Prompt
+      :isVisible="isConfirmVisible"
+      :confirmQuestion="confirmQuestion"
+      @close="closeConfirmPrompt"
+      @confirm="handleConfirmPrompt"
+  />
+
+  <!-- Warning Modal -->
+  <Warning_Message
+      :isVisible="isWarningVisible"
+      :warningHeader="warningHeader"
+      :warningMessage="warningMessage"
+      @close="closeWarningModal"
+  />
 </template>
 
 <style scoped>
