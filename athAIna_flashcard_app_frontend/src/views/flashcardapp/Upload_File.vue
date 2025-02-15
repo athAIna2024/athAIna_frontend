@@ -38,11 +38,30 @@ const handleFileUpload = (event) => {
   if (!event.target.files.length) {
     console.log("Error. No file selected.");
   } else {
-    console.log("Before update:", event.target.files[0]);
-    emit("update:uploadedFile", event.target.files[0]);
-    console.log("After update:", event.target.files[0]);
+    const file = event.target.files[0];
+    console.log("Before update:", file); // For debugging only
+    emit("update:uploadedFile", file);
+    console.log("After update:", file); // For debugging only
     isFileUploaded.value = true;
-    console.log("Successful File Upload!") // For debugging only
+
+    // Store the file in localStorage as Base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      try {
+        localStorage.setItem("uploadedFile", JSON.stringify({
+          name: file.name,
+          data: result
+        }));
+        window.dispatchEvent(new Event('storage')); // ADDED
+      } catch (e) {
+        console.error("Error saving to localStorage:", e);
+      }
+    };
+
+  reader.readAsDataURL(file);
+
+    console.log("File Stored in Local Storage!") // For debugging only
     // showSuccessModal("File uploaded successfully!");
   }
   emit('next');

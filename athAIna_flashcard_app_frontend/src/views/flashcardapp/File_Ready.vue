@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, defineEmits, ref, computed} from "vue";
+import {defineProps, defineEmits, ref, computed, onMounted, watchEffect, onUnmounted} from "vue";
 import Success_Message from "@/components/Success_Message.vue";
 import Error_Message from "@/components/Error_Message.vue";
 import Warning_Message from "@/components/Warning_Message.vue";
@@ -19,7 +19,8 @@ const isConfirmVisible = ref(false);
 const isWarningVisible = ref(false);
 const confirmQuestion = ref("Are you sure you want to submit the file?");
 const hasImage = ref(true);
-// const uploadedFile = inject("uploadedFile");
+// const storedFile = ref("");
+// const uploadedFile = ref("No file selected");
 // console.log(props.uploadedFile?.name); // For debugging only
 // console.log(uploadedFile); // For debugging only
 
@@ -101,8 +102,29 @@ const closeWarningModal = () => {
   emit('next');
 }
 
-console.log("Prop:" + props.uploadedFile);
-const fileName = computed(() => props.uploadedFile?.name || "No file selected");
+const fileName = ref("No file selected.");
+
+onMounted(() => {
+  loadFileName();
+
+  window.addEventListener('storage', loadFileName);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('storage', loadFileName);
+});
+
+const loadFileName = () => {
+  const storedFile = localStorage.getItem("uploadedFile");
+  if (storedFile) {
+    try {
+      const parsedFile = JSON.parse(storedFile);
+      fileName.value = parsedFile.name || "Unknown File";
+    } catch (e) {
+      console.error("Error parsing uploaded file from localStorage:", e);
+    }
+  }
+};
 
 // inject("uploadedFile", uploadedFile);
 </script>
@@ -125,7 +147,7 @@ const fileName = computed(() => props.uploadedFile?.name || "No file selected");
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
           </svg>
           <!-- File Name -->
-          <p class="text-[16px]">{{ fileName }}</p>
+          <p class="text-[16px] w-[200px] truncate">{{ fileName }}</p>
         </div>
 
         <!-- Remove File Section -->
