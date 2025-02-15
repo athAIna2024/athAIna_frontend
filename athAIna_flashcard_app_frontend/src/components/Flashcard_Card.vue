@@ -51,10 +51,10 @@ export default {
     <div class="athAIna-border-inner">
       <div class="rounded-lg p-6 py-8 w-full h-48" @click="goFlashCard()">
         <router-link :to="'/review/' + flashcard.id" class="text-athAIna-red">
-          <h1 class="text-athAIna-violet text-athaina-base mb-5 h-20">{{ flashcard.question }}</h1>
+          <h1 class="text-athAIna-violet text-athaina-base mt-10 mb-14 text-center">{{ flashcard.question }}</h1>
           <!-- FIXME: Add logic for excessive text length. -->
         </router-link>  
-        <div class="athAIna-border-violet p-[0.5px] w-full mt-[12px] mb-[5px]">
+        <div class="border-athAIna-violet border-[0.5px] rounded-lg">
         </div>
             <div class="flex justify-end text-athAIna-violet">
               <router-link :to="'/update_flashcard/' + flashcard.id">

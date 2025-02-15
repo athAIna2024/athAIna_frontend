@@ -61,6 +61,14 @@ export default {
           <input type="text" minlength="1" class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]" />
           <input type="text" minlength="1" class="text-[14px] border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px]" />
         </div>
+        <div class="text-center mt-5"> 
+          Didn't receive the OTP? <span class="font-semibold underline"> 
+            Resent OTP </span>
+        </div>
+        
+        <span class="text-athAIna-red" v-if="OTPmismatch">Pin does not match</span>
+        <span class="text-emerald-400" v-if="OTPresend">A new code has been sent to your email</span>
+
         <div class="m-8 flex justify-center">
           <button @click="nextStep" class="btn w-48"> Verify </button>
         </div>

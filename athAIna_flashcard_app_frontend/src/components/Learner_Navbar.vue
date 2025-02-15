@@ -1,19 +1,32 @@
 <script>
+import Delete_Learner_Profile from '@/views/accountapp/Delete_Learner_Profile.vue';
+import { RouterLink } from 'vue-router';
+import LogoutModal from '@/views/accountapp/Logout.vue';
+
 export default {
-  name: 'Learner_Navbar',
-  data() {
-    return {
-      modals: {
-        profile: false,
-        accSettings: false,
-      },
-    };
-  },
-  methods: {
-    toggleModal(modalName) {
-      this.modals[modalName] = !this.modals[modalName];
+    name: 'Learner_Navbar',
+    data() {
+        return {
+            modals: {
+                profile: false,
+                accSettings: false,
+            },
+            isDeleteModalVisible: false,
+            isLogoutModalVisible: false,
+        };
     },
-  }
+    methods: {
+        toggleModal(modalName) {
+            this.modals[modalName] = !this.modals[modalName];
+        },
+        toggleDeleteModal() {
+          this.isDeleteModalVisible = !this.isDeleteModalVisible;
+        },
+        toggleLogoutModal() {
+          this.isLogoutModalVisible = !this.isLogoutModalVisible;
+        }
+    },
+    components: { Delete_Learner_Profile }
 };
 </script>
 
@@ -34,8 +47,8 @@ export default {
             <button @click="toggleModal('accSettings');" class="mt-10 text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
               <router-link to="change_password"> Change Password </router-link>
             </button>
-            <button @click="toggleModal('profile')" class="text-base bg-athAIna-orange mt-8 py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
-              <router-link to="login"> Log Out </router-link>
+            <button @click="toggleDeleteModal()" class="text-base bg-athAIna-orange mt-8 py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
+              Delete Account
             </button>
           </div>
         </div>
@@ -71,13 +84,16 @@ export default {
             <button @click="toggleModal('profile'); toggleModal('accSettings');" class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
               Account Settings
             </button>
-            <button @click="toggleModal('profile')" class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
-              <router-link to="login"> Log Out </router-link>
+            <button @click="toggleModal('profile'); toggleLogoutModal();" class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white">
+              Log Out
             </button>
       </div>
     </div>
+    
+  <Delete_Learner_Profile :is-visible="isDeleteModalVisible" @close="toggleDeleteModal" /> 
+  <LogoutModal :is-visible="isLogoutModalVisible" @close="toggleDeleteModal" />
   </div>
 </template>
 
 <style scoped>
-</style>
+</style>	
