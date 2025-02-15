@@ -3,6 +3,7 @@ import {defineProps, defineEmits, watchEffect} from "vue";
 
 // Props
 const props = defineProps({
+  successHeader: String,
   successMessage: String,
   isVisible: Boolean,
 });
@@ -15,11 +16,9 @@ const closeModal = () => {
   emit("close");
 };
 
-// FIXME: Why is this needed?
 // Timeout Reference
 let timeoutId = null;
 
-// FIXME: Why does this work instead of 'watch'?
 // Watch for modal visibility changes
 watchEffect(() => {
   if (props.isVisible) {
@@ -44,7 +43,7 @@ watchEffect(() => {
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
         <!-- Title -->
-        <h2 class="font-semibold text-[16px] mt-2">Success</h2>
+        <h2 class="font-semibold text-[16px] mt-2">{{ successHeader }}</h2>
         <!-- Subtitle -->
         <p class="text-[14px] mb-3 mx-9">{{ successMessage }}</p>
         <!-- OK Button -->
