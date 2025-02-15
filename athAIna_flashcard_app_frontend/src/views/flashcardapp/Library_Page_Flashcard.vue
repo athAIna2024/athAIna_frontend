@@ -213,7 +213,8 @@ const navigateToLibraryPage = () => {
 </script>
 
 <template>
-
+{{ studySetId}}
+  {{ studySetTitle }}
   <div class="m-4">
     <div class="athAIna-border-outer p-1 shadow-xl">
       <div class="athAIna-border-inner py-4">
