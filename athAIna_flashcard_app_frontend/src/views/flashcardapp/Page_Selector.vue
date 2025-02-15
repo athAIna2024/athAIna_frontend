@@ -38,6 +38,10 @@ const pages = ref([
       id: 2,
       image: null,
     },
+    {
+      id: 3,
+      image: null,
+    },
 ]);
 const input = '';
 
@@ -71,7 +75,6 @@ const showSuccessPage = () => {
       <div class="athAIna-border-inner p-7 text-center">
         <div class="flex flex-col">
           <!-- Back Button -->
-          <!-- FIXME: Apply 'Previous Step' Logic to Back Button -->
           <div class="flex flex-start">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                  @click="$emit('prev')" class="size-5 hover:cursor-pointer">
@@ -87,11 +90,11 @@ const showSuccessPage = () => {
             notes.docx
           </div>
           <!-- Pages To Select -->
-          <div class="flex flex-row justify-center">
-            <!-- FIXME: Change bg color to gray -->
-            <div class="w-[90px] h-[120px] bg-athAIna-black rounded-[10px]">
-            <!-- FIXME: adding v-for currently prevents rendering of Page Selector modal -->
-              <!--            v-for="page in pageList()" :key="page.id" >-->
+          <div class="flex justify-center">
+            <div class="grid grid-cols-3 gap-5">
+              <div class="w-[90px] h-[120px] bg-athAIna-gray rounded-[10px] z-10"
+                   v-for="page in pageList" :key="page.id" >
+              </div>
             </div>
           </div>
           <!-- Generate Button -->
