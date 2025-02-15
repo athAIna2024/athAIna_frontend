@@ -83,7 +83,7 @@ export default {
         <h1 class="text-athAIna-violet font-semibold flex"> Networking </h1>
         <div class="flex flex-row justify-between space-x-6 items-center">
           <Flashcard_Search_Bar v-model="input" />
-          <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
+          <button class="relative btn w-80 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
             <div v-if="modals.learningMode" class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
               <button class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
                 <router-link to="review/1"> Review Mode </router-link>
@@ -92,7 +92,7 @@ export default {
                 Test Mode
               </button>
             </div>
-          <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
+          <button class="relative btn w-80 text-[16px] font-semibold" @click="toggleModal('addFlashcard')"> Add Flashcard </button>
           <div v-if="modals.addFlashcard" class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
             <button class="text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
               <router-link to="create_flashcard_manually"> Create Manually </router-link>
