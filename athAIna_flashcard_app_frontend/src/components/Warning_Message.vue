@@ -14,7 +14,6 @@ const emit = defineEmits(["close", "next"]);
 // Methods
 const closeModal = () => {
   emit("close");
-  modalState.value = "";
 };
 
 </script>
