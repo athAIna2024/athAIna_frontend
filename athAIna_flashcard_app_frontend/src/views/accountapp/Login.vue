@@ -14,6 +14,11 @@ console.log(userStore.getUserID());
 const router = useRouter();
 const email = ref("");
 const password = ref("");
+const errors = ref({
+  email: [],
+  password: [],
+  general: "",
+});
 
 const login = async () => {
   try {
@@ -59,7 +64,13 @@ const login = async () => {
       console.log(response.data.error);
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.response);
+    if (error.response.status === 400) {
+      errors.value.email = error.response.data.email;
+      errors.value.password = error.response.data.password;
+    } else {
+      errors.value.general = error.response.data.error;
+    }
   }
 };
 </script>
@@ -110,6 +121,11 @@ const login = async () => {
           />
         </div>
       </div>
+      <div v-if="errors.email.length" class="text-athAIna-red">
+        <div v-for="(error, index) in errors.email" :key="index">
+          {{ error }}
+        </div>
+      </div>
 
       <div
         class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-[700px]"
@@ -141,6 +157,9 @@ const login = async () => {
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
+        <span v-if="errors.password" class="text-athAIna-red ml-7">
+          {{ errors.password }}
+        </span>
 
         <div class="justify-end flex flex-end my-10">
           <span class="underline">
