@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import axios from "@/axios";
 
 const props = defineProps({
   isVisible: {
@@ -65,7 +65,7 @@ const handleBoxKeydown = (boxIndex, event) => {
 const verifyOTP = async () => {
   try {
     const response = await axios.post(
-        "http://localhost:8009/account/verify-email/",
+        "/account/verify-email/",
         {
           otp: otpValue.value,
         }
