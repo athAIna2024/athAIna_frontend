@@ -1,8 +1,8 @@
 <script setup>
 import { reactive, ref } from "vue";
-import axios from "axios";
 import OTP from "@/views/accountapp/Email_OTP.vue";
 import { useRouter } from "vue-router";
+import axios from "@/axios";
 
 const email = ref("");
 const password = ref("");
@@ -45,14 +45,11 @@ const createUser = async () => {
   }
 
   try {
-    const response = await axios.post(
-      "http://localhost:8000/account/register/",
-      {
-        email: email.value,
-        password: password.value,
-        password2: password2.value,
-      }
-    );
+    const response = await axios.post("/account/register/", {
+      email: email.value,
+      password: password.value,
+      password2: password2.value,
+    });
     console.log(response.data);
     isSuccessful.value = response.data.successful;
 

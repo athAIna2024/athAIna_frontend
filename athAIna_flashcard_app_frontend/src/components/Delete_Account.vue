@@ -38,16 +38,16 @@ const deleteAccount = async () => {
   } catch (error) {
     console.error("Error deleting account:", error);
     deleteError.value =
-      error.response?.data?.message ||
-      "An error occurred while deleting your account";
+        error.response?.data?.message ||
+        "An error occurred while deleting your account";
   }
 };
 </script>
 
 <template>
   <div
-    v-if="isOpen"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
+      v-if="isOpen"
+      class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
   >
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
@@ -64,15 +64,15 @@ const deleteAccount = async () => {
 
           <div class="flex space-x-4">
             <button
-              @click="$emit('close')"
-              class="border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                @click="$emit('close')"
+                class="border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
             >
               Cancel
             </button>
 
             <button
-              @click="deleteAccount"
-              class="border-athAIna-red border-[3.5px] py-[10px] px-[30px] rounded-2xl text-me text-white hover:bg-red-600 transition-colors"
+                @click="deleteAccount"
+                class="border-athAIna-red border-[3.5px] py-[10px] px-[30px] rounded-2xl text-me text-white hover:bg-red-600 transition-colors"
             >
               Delete Account
             </button>

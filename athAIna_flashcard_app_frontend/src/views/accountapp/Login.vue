@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import axios from "@/axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../../stores/userStore";
 import { useAuthStore } from "../../../stores/authStore";
@@ -18,7 +18,7 @@ const password = ref("");
 const login = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/account/login/",
+      "/account/login/",
       {
         email: email.value,
         password: password.value,
@@ -51,8 +51,6 @@ const login = async () => {
       authStore.setUserID(response.data.user_id);
 
       authStore.login();
-
-      
 
       // router.replace("/library_of_studysets");
       // window.location.href = "/library_of_studysets";

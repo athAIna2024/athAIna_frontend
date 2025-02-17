@@ -22,12 +22,12 @@ const resetPassword = async () => {
 
   try {
     const response = await axios.patch(
-      // Changed from post to patch
-      `http://localhost:8000/account/forgot-password/${uidb64}/${token}/`,
-      {
-        password: newPassword.value, // Changed from new_password
-        confirm_password: confirmPassword.value,
-      }
+        // Changed from post to patch
+        `http://localhost:8009/account/forgot-password/${uidb64}/${token}/`,
+        {
+          password: newPassword.value, // Changed from new_password
+          confirm_password: confirmPassword.value,
+        }
     );
 
     success.value = "Password has been reset successfully";
@@ -38,8 +38,8 @@ const resetPassword = async () => {
     }, 2000);
   } catch (err) {
     error.value =
-      err.response?.data?.error ||
-      "An error occurred while resetting your password";
+        err.response?.data?.error ||
+        "An error occurred while resetting your password";
   }
 };
 </script>
@@ -47,13 +47,13 @@ const resetPassword = async () => {
 <template>
   <div class="min-h-screen">
     <div
-      class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+        class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
     ></div>
     <div
-      class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+        class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
     ></div>
     <div
-      class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
+        class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
     >
       <div class="w-full flex flex-row justify-center items-center">
         <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
@@ -72,56 +72,56 @@ const resetPassword = async () => {
 
       <!-- New Password Field -->
       <div
-        class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
+          class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
       >
         <div class="relative flex flex-row items-center">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             />
           </svg>
           <input
-            v-model="newPassword"
-            type="password"
-            placeholder="New Password"
-            class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+              v-model="newPassword"
+              type="password"
+              placeholder="New Password"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
       </div>
 
       <!-- Confirm Password Field -->
       <div
-        class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
+          class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
       >
         <div class="relative flex flex-row items-center">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             />
           </svg>
           <input
-            v-model="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+              v-model="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
       </div>
