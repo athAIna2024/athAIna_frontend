@@ -60,13 +60,19 @@ export default {
     <div class="flex flex-row justify-between items-center space-x-20">
       <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
       <div>Features</div>
-      <div>FAQS</div>
+      <div>
+        <router-link to="faqs">
+        FAQs
+      </router-link>
+      </div>
       <div>
         <router-link to="contact_us">
           Contact us
         </router-link>
       </div>
-      <div>Demo</div>
+      <div><router-link to="demo">
+        Demo
+      </router-link></div>
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-20">
