@@ -9,23 +9,30 @@ import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import Pagination from "@/components/Pagination.vue";
 
-import axios from '@/axios';
+import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import {useStudysetStore} from "../../../stores/studySetStore.js";
+import {useFlashcardStore} from "../../../stores/flashcardStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const flashcard_url = "/flashcard/";
-const store = useStudysetStore();
+const studySetStore = useStudysetStore();
+const flashcardStore = useFlashcardStore();
+const route = useRoute()
 const router = useRouter();
-const studySetTitle = store.studySetTitle;
-const studySetId = store.studySetId;
+const studySetTitle = studySetStore.studySetTitle;
+const studySetId = Number(studySetStore.studySetId);
 const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_result = ref([]);
 const flashcard_db = ref([]);
-const flashcardCounts = ref(0);
+
 const flashcardCounts_backend = ref(0);
 const itemsPerPage = 6;
+
+const flashcardCounts = computed(() => {
+  return flashcardStore.searchResults.length || flashcard_db.value.length;
+});
 
 const dropdownOptions = ref({
   ARTS: "Arts",
@@ -47,44 +54,6 @@ const dropdownOptions = ref({
 
 const input = ref('');
 const currentPage = ref(1);
-const flashcards = ref([
-  {
-    id: 1,
-    question: 'What is a network?',
-    answer: 'A network is a collection of computers, servers, mainframes, network devices, and other devices connected to one another to allow the sharing of data.',
-    category: 'Networking'
-  },
-  {
-    id: 2,
-    question: 'What is a router?',
-    answer: 'A router is a networking device that forwards data packets between computer networks.',
-    category: 'Networking'
-  },
-  {
-    id: 3,
-    question: 'What is a switch?',
-    answer: 'A switch is a device that connects devices together on a computer network by using packet switching to receive, process, and forward data to the destination device.',
-    category: 'Networking'
-  },
-  {
-    id: 4,
-    question: 'What is a firewall? What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall What is a firewall',
-    answer: 'A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.',
-    category: 'Networking'
-  },
-  {
-    id: 5,
-    question: 'What is a hub?',
-    answer: 'A hub is a common connection point for devices in a network. Hubs are commonly used to connect segments of a LAN.',
-    category: 'Networking'
-  },
-  {
-    id: 6,
-    question: 'What is a modem?',
-    answer: 'A modem is a device that modulates an analog carrier signal to encode digital information, and also demodulates such a carrier signal to decode the transmitted information.',
-    category: 'Networking'
-  }
-]);
 
 const modals = ref({
   deleteModal: false,
@@ -108,78 +77,11 @@ function closeAI_Flashcard() {
   isAIFlashcardVisible.value = false;
 }
 
-const fetchFlashcards = async () => {
-  try {
-    const response = await axios.get(flashcard_url, {
-      params: { studyset_id: studySetId }
-    });
-
-    if (response.data.data.length > 0) {
-
-      flashcard_result.value = response.data.data.map(flashcard => {
-        return {
-          id: Number(flashcard.id),
-          question: String(flashcard.question),
-          answer: String(flashcard.answer),
-          image: String(flashcard.image),
-          studyset_id: Number(flashcard.studyset_instance),
-          created_at: Date(flashcard.created_at),
-          updated_at: Date(flashcard.updated_at),
-          is_ai_generated: Boolean(flashcard.is_ai_generated),
-        };
-      });
-
-      flashcardCounts_backend.value = flashcard_result.value.length;
-
-
-      const serializableFlashcards = flashcard_result.value.map(flashcard => {
-        return {
-          id: flashcard.id,
-          question: flashcard.question,
-          answer: flashcard.answer,
-          image: flashcard.image,
-          studyset_id: flashcard.studyset_id,
-          created_at: flashcard.created_at,
-          updated_at: flashcard.updated_at,
-          is_ai_generated: flashcard.is_ai_generated,
-        };
-      });
-
-      await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
-
-    } else {
-      flashcard_result.value = [];
-    }
-
-    isSuccessful.value = response.data.successful;
-    message.value = response.data.message;
-    return flashcard_result;
-
-  } catch (error) {
-    if (error.response && error.response.status === 400) {
-      isSuccessful.value = error.response.data.successful;
-      message.value = error.response.data.message;
-    } else {
-      isSuccessful.value = false;
-      message.value = "An error occurred. Please try again later.";
-    }
-    flashcard_result.value = [];
-
-    return flashcard_result;
-  }
-}
 
 
 const fetchFlashcardsFromDb = async () => {
   try {
-    await flashcardsDB.flashcards.clear();
-    flashcard_db.value = await flashcardsDB.flashcards.toArray();
-
-    if (flashcard_db.value.length === 0) {
-      await fetchFlashcards();
-      flashcard_db.value = await flashcardsDB.flashcards.toArray();
-    }
-
+    flashcard_db.value = await flashcardsDB.flashcards.where('studyset_id').equals(studySetId).toArray();
     isSuccessful.value = true;
     message.value = "Flashcards retrieved successfully.";
 
@@ -189,22 +91,15 @@ const fetchFlashcardsFromDb = async () => {
   }
 }
 
-const filteredFlashcards = computed(() => {
-  const filteredFlashcards = flashcard_db.value.filter(flashcard => flashcard.studyset_id === studySetId);
-  flashcardCounts.value = filteredFlashcards.length;
-  return filteredFlashcards
-});
-
-
 const currentFlashcards = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return filteredFlashcards.value.slice(startIndex, endIndex);
+  return flashcard_db.value.slice(startIndex, endIndex);
 });
 
 onMounted(() => {
   fetchFlashcardsFromDb();
-  document.title = "Flashcards";
+  document.title = `${studySetTitle} - Flashcards`;
 });
 
 const navigateToLibraryPage = () => {
@@ -272,7 +167,7 @@ const navigateToLibraryPage = () => {
           </div>
 
           <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-            <li class="list-none" v-for="flashcard in currentFlashcards" :key="flashcard.id">
+            <li class="list-none" v-for="(flashcard, index) in flashcardStore.searchResults.length ? flashcardStore.searchResults : currentFlashcards" :key="index">
               <Flashcard_Card
                   :flashcardId="flashcard.id"
                   :question="flashcard.question"

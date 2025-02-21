@@ -18,10 +18,9 @@ const updateValue = (event) => {
 };
 
 const handleKeyPress = async (event) => {
-  if (event.key === 'Enter') {
-    searchResults.value = await searchStudySets(event.target.value);
-    store.setSearchResults(searchResults.value);
-  }
+  emit('update:modelValue', event.target.value);
+  searchResults.value = await searchStudySets(event.target.value);
+  store.setSearchResults(searchResults.value);
 };
 
 const searchStudySets = async (query) => {
