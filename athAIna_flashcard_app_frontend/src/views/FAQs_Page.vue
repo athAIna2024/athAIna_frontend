@@ -1,7 +1,9 @@
-<script>
-export default {
-  name: 'FAQs_Page',
-};
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+
+
 </script>
 
 <template>

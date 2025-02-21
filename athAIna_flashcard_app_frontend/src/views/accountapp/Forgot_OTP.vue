@@ -3,6 +3,8 @@ import { ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
+const router = useRouter();
+
 const props = defineProps({
   isVisible: {
     type: Boolean,
@@ -15,7 +17,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close"]);
-const router = useRouter();
+
 const step = ref(1);
 const error = ref("");
 const isVerified = ref("false");
@@ -65,26 +67,30 @@ const handleBoxKeydown = (boxIndex, event) => {
 const verifyOTP = async () => {
   try {
     const response = await axios.post(
-        "http://localhost:8009/account/verify-email/",
+        "http://localhost:8009/account/verify-forgot-password-otp/",
         {
           otp: otpValue.value,
         }
     );
 
-    console.log(response.data);
-
     if (response.data.successful) {
       isVerified.value = true;
       step.value++;
+
+      // Extract the uidb64 and token from the password_reset_link
+      const resetLink = response.data.password_reset_link;
+      const [uidb64, token] = resetLink.split('/').slice(-3, -1);
+
+      // Redirect to the reset password page with the tokens
       setTimeout(() => {
         close();
-        router.push("/login");
+        router.push({
+          name: 'Forgot_password_page',
+          params: { uidb64, token }
+        });
       }, 2000);
-    } else {
-      error.value = response.data.error;
     }
   } catch (err) {
-    console.log(err.response.data);
     error.value = err.response?.data?.message || "Invalid OTP code";
     console.error("OTP verification error", err);
   }
@@ -117,9 +123,9 @@ watch(step, (newValue) => {
     setTimeout(() => {
       close();
       try {
-        router.push("/login");
+        router.push("/Forgot_Password_Page");
       } catch (err) {
-        console.error("Error redirecting to login page", err);
+        console.error("Error redirecting to Forgot page", err);
       }
     }, 2000);
   }
