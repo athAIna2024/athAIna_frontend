@@ -26,9 +26,13 @@ const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_result = ref([]);
 const flashcard_db = ref([]);
-const flashcardCounts = ref(0);
+
 const flashcardCounts_backend = ref(0);
 const itemsPerPage = 6;
+
+const flashcardCounts = computed(() => {
+  return flashcardStore.searchResults.length || flashcard_db.value.length;
+});
 
 const dropdownOptions = ref({
   ARTS: "Arts",
