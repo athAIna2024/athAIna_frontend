@@ -12,14 +12,16 @@ import Pagination from "@/components/Pagination.vue";
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import {useStudysetStore} from "../../../stores/studySetStore.js";
+import {useFlashcardStore} from "../../../stores/flashcardStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const flashcard_url = "/flashcard/";
-const store = useStudysetStore();
+const studySetStore = useStudysetStore();
+const flashcardStore = useFlashcardStore();
 const route = useRoute()
 const router = useRouter();
-const studySetTitle = store.studySetTitle;
-const studySetId = Number(store.studySetId);
+const studySetTitle = studySetStore.studySetTitle;
+const studySetId = Number(studySetStore.studySetId);
 const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_result = ref([]);
@@ -92,8 +94,6 @@ const currentFlashcards = computed(() => {
   return flashcard_db.value.slice(startIndex, endIndex);
 });
 
-
-
 onMounted(() => {
   fetchFlashcardsFromDb();
   document.title = `${studySetTitle} - Flashcards`;
@@ -164,7 +164,7 @@ const navigateToLibraryPage = () => {
           </div>
 
           <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-            <li class="list-none" v-for="flashcard in currentFlashcards" :key="flashcard.id">
+            <li class="list-none" v-for="(flashcard, index) in flashcardStore.searchResults.length ? flashcardStore.searchResults : currentFlashcards" :key="index">
               <Flashcard_Card
                   :flashcardId="flashcard.id"
                   :question="flashcard.question"
