@@ -57,8 +57,11 @@ export default {
 
 
   <div class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 sticky font-poppins shadow-md">
-    <div class="flex flex-row justify-between items-center space-x-20">
+    <div class="flex flex-row justify-between items-center space-x-20 w-full">
+      
+      <router-link to="/">
       <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
+      </router-link>
       <div>Features</div>
       <div>
         <router-link to="faqs">
@@ -75,7 +78,7 @@ export default {
       </router-link></div>
     </div>
 
-    <div class="flex flex-row justify-between items-center space-x-20">
+    <div class="flex flex-row justify-end items-center space-x-20 w-full">
       <router-link to="/library_of_studysets">
         <div>Library</div>
       </router-link>
