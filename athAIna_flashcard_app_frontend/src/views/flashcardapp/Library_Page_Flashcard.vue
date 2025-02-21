@@ -84,7 +84,6 @@ const fetchFlashcardsFromDb = async () => {
     flashcard_db.value = await flashcardsDB.flashcards.where('studyset_id').equals(studySetId).toArray();
     isSuccessful.value = true;
     message.value = "Flashcards retrieved successfully.";
-    flashcardCounts.value = flashcard_db.value.length;
 
   } catch (error) {
     isSuccessful.value = false;
