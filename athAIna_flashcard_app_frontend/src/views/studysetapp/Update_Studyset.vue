@@ -93,18 +93,18 @@ const updateStudySet = async () => {
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
 
-    // Update Local Database
-    const updateStudySet = {
-      id: props.studySetId,
-      title: title.value,
-      description: description.value,
-      subject: subject.value,
-      updated_at: new Date()
-    };
-
-    await studySetDb.studysets.put(updateStudySet);
 
     if (isSuccessful_updated.value) {
+      const updateStudySet = {
+        id: props.studySetId,
+        title: title.value,
+        description: description.value,
+        subject: subject.value,
+        updated_at: new Date()
+      };
+
+      await studySetDb.studysets.update(props.studySetId, updateStudySet);
+
       close();
       location.reload();
     }
