@@ -209,7 +209,7 @@ const navigateToLibraryPage = () => {
           <h1 class="mt-8 text-athAIna-lg font-semibold"> Set Number of Questions </h1>
           <div class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-3/4 ">
             <div class="relative flex flex-row items-center">
-              <input type="text" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]" />
+              <input type="text" class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-6" />
             </div>
           </div>
           <div class="mb-8 flex justify-center">
