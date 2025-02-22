@@ -9,10 +9,18 @@
 
   <!-- Sample Card Display -->
   <div class="ml-0 mr-28 pr-0 flex justify-center w-1/2 mt-10 mb-10">
+    <!-- Lowermost Card -->
     <div class="mr-28 mt-7 absolute rotate-[-4deg] shadow-md w-[360px] h-[490px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"></div>
+
+    <!-- Middle Card-->
     <div class="mr-12 mt-3 absolute rotate-[0deg] shadow-md w-[360px] h-[490px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"></div>
-    <div class="absolute rotate-[3deg] w-[360px] h-[490px] rounded-[15px] border-4 bg-athAIna-white flex">
+
+    <!-- Topmost Card -->
+    <div class="absolute ml-3 p-[5px] shadow-md bg-gradient-to-br rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red
+          rotate-[4deg] w-[360px] h-[490px]">
+    <div class="absolute ml-0 rotate-[0deg] w-[350px] h-[480px] rounded-[10px] bg-athAIna-white flex">
       <span class="absolute p-8 bottom-1 font-semibold"> What is the largest star in the universe? </span>
+    </div>
     </div>
   </div>
 
