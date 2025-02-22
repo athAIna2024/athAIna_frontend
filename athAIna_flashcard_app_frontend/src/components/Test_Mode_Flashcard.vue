@@ -1,19 +1,5 @@
 <script setup>
 
-/*
-PSEUDOCODE
-ADD CONFIRMATION PROMPT WHEN NAVIGATING BACK TO LIBRARY PAGE THAT ALL PROGRESS WILL NOT BE SAVED
-
-1. Retrieve how many questions to be created
-a. If it is beyond the number of questions available, set it to maximum questions available
-b. If it is set to less than 1, suggest user to set the question to at least 10
-- Create a store for test mode that can be persisted for the number of questions to be randomized
-
-2. Randomized the questions and save it to a temporary front-end database
-3.
-
- */
-
 import { ref } from 'vue';
 
 const question = ref(true);
@@ -30,7 +16,6 @@ const triggerEvent = (event) => {
     result.value = !result.value;
   }
 };
-
 
 </script>
 
