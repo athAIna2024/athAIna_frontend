@@ -3,10 +3,12 @@ import { ref, watch, defineProps, defineEmits } from 'vue';
 import Delete_Confirmation from "@/views/studysetapp/Delete_Confirmation.vue";
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
 const studyset_url = "/studyset/delete/";
 const studyset_title = ref("");
 const isSuccessful = ref(false);
 const message = ref("");
+
 
 const props = defineProps({
   isVisible: {
@@ -22,6 +24,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const studySetId = Number(props.studySetId);
 
 const emit = defineEmits(['close']);
 const isDeleteConfirmationModalVisible = ref(false);
@@ -61,12 +65,16 @@ watch(isDeleteConfirmationModalVisible, (newValue) => {
 
 const deleteStudySet = async () => {
   try {
-    const request = await axios.delete(`${studyset_url}${props.studySetId}/`);
+    const request = await axios.delete(`${studyset_url}${studySetId}/`);
 
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
     if (isSuccessful) {
+      const flashcards = await flashcardsDB.flashcards.where({ studyset_id: studySetId }).toArray();
+      const flashcardIds = flashcards.map(flashcard => flashcard.id);
+      await flashcardsDB.flashcards.bulkDelete(flashcardIds);
+
       await studySetDb.studysets.delete(props.studySetId);
 
       openDeleteConfirmationModal();
