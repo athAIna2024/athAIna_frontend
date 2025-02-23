@@ -2,8 +2,16 @@
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 import {useStudysetStore} from "../../stores/studySetStore.js";
-import { defineProps } from 'vue';
+import {defineProps, onMounted} from 'vue';
 import { ref } from 'vue';
+import axios from "@/axios.js";
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
+
+const flashcard_url = "/flashcard/";
+const flashcard_result = ref([]);
+const flashcardCounts_backend = ref(0);
+const isSuccessful = ref(false);
+const message = ref("");
 
 const store = useStudysetStore();
 const props = defineProps({
@@ -49,17 +57,88 @@ const closeDeleteModal = () => {
   isDeleteModalVisible.value = false;
 };
 
-const openStudySet = () => {
-  store.setStudySetId(props.studySetId);
-  store.setStudySetTitle(props.title);
+const studySetId = Number(props.studySetId);
+const studySetTitle = props.title;
+
+const fetchFlashcards = async () => {
+  try {
+    const response = await axios.get(flashcard_url, {
+      params: { studyset_id: studySetId }
+    });
+
+    if (response.data.data.length > 0) {
+
+      flashcard_result.value = response.data.data.map(flashcard => {
+        return {
+          id: Number(flashcard.id),
+          question: String(flashcard.question),
+          answer: String(flashcard.answer),
+          image: String(flashcard.image),
+          studyset_id: Number(flashcard.studyset_instance),
+          created_at: Date(flashcard.created_at),
+          updated_at: Date(flashcard.updated_at),
+          is_ai_generated: Boolean(flashcard.is_ai_generated),
+        };
+      });
+
+      flashcardCounts_backend.value = flashcard_result.value.length;
+
+
+      const serializableFlashcards = flashcard_result.value.map(flashcard => {
+        return {
+          id: flashcard.id,
+          question: flashcard.question,
+          answer: flashcard.answer,
+          image: flashcard.image,
+          studyset_id: flashcard.studyset_id,
+          created_at: flashcard.created_at,
+          updated_at: flashcard.updated_at,
+          is_ai_generated: flashcard.is_ai_generated,
+        };
+      });
+
+      await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
+
+    } else {
+      flashcard_result.value = [];
+    }
+
+    isSuccessful.value = response.data.successful;
+    message.value = response.data.message;
+
+    return flashcard_result;
+
+  } catch (error) {
+    if (error.response && error.response.status === 400) {
+      isSuccessful.value = error.response.data.successful;
+      message.value = error.response.data.message;
+    } else {
+      isSuccessful.value = false;
+      message.value = "An error occurred. Please try again later.";
+    }
+    flashcard_result.value = [];
+
+    return flashcard_result;
+  }
+}
+
+
+const fetchFlashcardsIfNotExisting = async (studySetId) => {
+  store.setStudySetId(studySetId);
+  store.setStudySetTitle(studySetTitle);
+  const studySet = await flashcardsDB.flashcards.where('studyset_id').equals(Number(studySetId)).toArray();
+  if (studySet.length === 0) {
+    await fetchFlashcards();
+  }
 };
+
 </script>
 
 <template>
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
       <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: title, studySetId: studySetId } }">
-        <div @click="openStudySet" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
+        <div @click="fetchFlashcardsIfNotExisting(studySetId)" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       </router-link>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px]">

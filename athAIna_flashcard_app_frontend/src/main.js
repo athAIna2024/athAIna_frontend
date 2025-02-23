@@ -8,8 +8,6 @@ import { useAuthStore } from "../stores/authStore";
 
 const app = createApp(App);
 
-app.use(createPinia()); // pinia store instance
-
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   if (to.matched.some((record) => record.meta.requiresAuth)) {
