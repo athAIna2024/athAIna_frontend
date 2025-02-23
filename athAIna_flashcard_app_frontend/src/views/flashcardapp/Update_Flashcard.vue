@@ -35,6 +35,7 @@ const handleFileUpload = (event) => {
   }
 };
 
+
 const updateFlashcard = async () => {
   try {
     const formData = new FormData();
@@ -109,9 +110,12 @@ const fetchFlashcardData = async () => {
   }
 };
 
-const navigateToLibraryPage = () => {
-  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
-};
+function navigateToLibraryPageSmoothly() {
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+  }, 500); // Match the duration of the CSS transition
+}
 
 onMounted(() => {
   fetchFlashcardData();
@@ -120,7 +124,7 @@ onMounted(() => {
 <template>
   <div class="text-athAIna-violet text-athAIna-lg font-semibold mx-4 my-8">
     <div class="flex flex-row space-x-6 my-2 mx-8 items-center">
-      <button @click="navigateToLibraryPage">
+      <button @click="navigateToLibraryPageSmoothly">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
@@ -217,7 +221,7 @@ onMounted(() => {
     <div class="flex flex-row space-x-6 justify-end">
 
       <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
-        <button @click="navigateToLibraryPage" class="athAIna-border-inner rounded-full"> Cancel </button>
+        <button @click="navigateToLibraryPageSmoothly" class="athAIna-border-inner rounded-full"> Cancel </button>
       </div>
       <button class="btn mt-10 mx-2" type="submit"> Update </button>
     </div>
@@ -226,4 +230,8 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
 </style>
