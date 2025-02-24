@@ -58,10 +58,10 @@ const saveFlashcard = async () => {
       id: request.data.data.id,
       question: question.value,
       answer: answer.value,
-      image: image.value,
+      image: request.data.data.image,
       created_at: new Date(),
       updated_at: new Date(),
-      studyset_id: request.data.data.studyset_instance,
+      studyset_id: Number(studySetId),
     };
 
     await flashcardsDB.flashcards.add(createFlashcard);
