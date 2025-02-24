@@ -71,7 +71,7 @@ const updateFlashcard = async () => {
     }
 
   } catch (error) {
-    if (error.response.status === 400) {
+    if (error.status  === 400) {
       isSuccessful.value = error.response.data.successful;
       message.value = error.response.data.message;
 
