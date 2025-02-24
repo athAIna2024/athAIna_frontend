@@ -60,7 +60,7 @@ const updateFlashcard = async () => {
     console.log(response.data.data.image);
     if (isSuccessful.value) {
       const updateFlashcard = {
-        id: flashcardId,
+        id: Number(flashcardId),
         question: question.value,
         answer: answer.value,
         image: response.data.data.image,
