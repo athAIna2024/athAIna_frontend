@@ -57,17 +57,20 @@ const updateFlashcard = async () => {
     message.value = response.data.message;
 
 
+    console.log(response.data.data.image);
     if (isSuccessful.value) {
       const updateFlashcard = {
         id: flashcardId,
         question: question.value,
         answer: answer.value,
-        image: formData.get('image') ? formData.get('image').name : null
+        image: response.data.data.image,
+        updated_at: new Date(),
+        studyset_id: studySetId,
       }
 
-      await flashcardsDB.flashcards.update(flashcardId, updateFlashcard);
+      await flashcardsDB.flashcards.put(updateFlashcard);
 
-      navigateToLibraryPage();
+      navigateToLibraryPageSmoothly();
     }
 
   } catch (error) {
