@@ -43,13 +43,25 @@ import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 
 import {ref} from "vue";
+import {watch} from "vue";
+import {computed} from "vue";
+import { useTestModeStore} from "../../../stores/testModeStore.js";
 import { useStudysetStore} from "../../../stores/studySetStore.js";
 import { useRouter } from 'vue-router';
+import Dexie from "dexie";
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const router = useRouter();
+const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 const progress = 1;
-const questionLength = 10;
+
+const questionLength = Number(testModeStore.numberOfQuestions);
+
+const flashcardIds = computed(() => [...testModeStore.testModeQuestions]);
+const testQuestions = ref([]);
+
+
 const studySetName = studySetStore.studySetTitle;
 const studySetId = studySetStore.studySetId;
 const showConfirmation = ref(false);
@@ -66,8 +78,31 @@ const closeConfirmation = () => {
 
 const confirmNavigation = () => {
   showConfirmation.value = false;
+  testModeStore.setNumberOfQuestions(null);
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
 };
+
+// const testModeDB = new Dexie('TestModeDatabase');
+// testModeDB.version(1).stores({
+//   test_field: 'id, batch_id, created_at, learner_answer, correct_at'
+// });
+
+
+const loadQuestions = async () => {
+  try {
+    console.log("Flashcard IDs:", flashcardIds);
+    const fetchedFlashcards = await flashcardsDB.flashcards.where('id').anyOf(flashcardIds.value).toArray();
+    console.log("Fetched Flashcards:", fetchedFlashcards);
+    testQuestions.value = flashcardIds.value.map(id => fetchedFlashcards.find(flashcard => flashcard.id === id));
+    console.log("Test Questions:", testQuestions.value);
+  } catch (error) {
+    // console.error("Error fetching flashcards:", error);
+  }
+};
+
+watch(flashcardIds, () => {
+  loadQuestions();
+});
 
 </script>
 
@@ -76,7 +111,6 @@ const confirmNavigation = () => {
   <div class="athAIna-border-inner p-6">
     <div class="flex flex-row justify-between">
       <div class="flex flex-row space-x-6 my-2 items-center">
-
         <button @click="navigateToLibraryPage">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -91,7 +125,10 @@ const confirmNavigation = () => {
       <span class="font-bold"> {{progress}} / {{questionLength}} </span>
     </div>
 
-    <Test_Mode_Flashcard />
+    <div v-for="flashcard in testQuestions" :key="flashcard.id">
+      <Test_Mode_Flashcard :question="flashcard.question" :answer="flashcard.answer" />
+    </div>
+
   </div>
 </div>
 <Confirmation_Prompt

@@ -6,6 +6,16 @@ const question = ref(true);
 const answer = ref(false);
 const result = ref(false);
 
+const props = defineProps({
+  question: {
+    type: String,
+    required: true,
+  },
+  answer: {
+    type: String,
+    required: true,
+  },
+});
 
 const triggerEvent = (event) => {
   if (event === 'question') {
@@ -26,7 +36,7 @@ const triggerEvent = (event) => {
 <div v-if="question" class="athAIna-border-outer p-1 my-4">
 <div class="athAIna-border-inner">
   <h1 class="text-athAIna-violet p-10 h-64 font-normal">
-    What is a network?
+    {{  props.question }}
   </h1>
   <div class="p-10 flex flex-row justify-between">
     <div class="athAIna-border-outer p-1 rounded-[20px] h-[40px] mx-10">
@@ -37,8 +47,7 @@ const triggerEvent = (event) => {
         <input type="text" placeholder="Enter Answer" class="text-[14px] text-athAIna-orange placeholder-athAIna-orange focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]">
       </div>
     </div>
-    <button class="btn w-48" @click="triggerEvent('answer'); triggerEvent('question');"> Next </button>
-  </div>
+   </div>
 </div>
 </div>
 

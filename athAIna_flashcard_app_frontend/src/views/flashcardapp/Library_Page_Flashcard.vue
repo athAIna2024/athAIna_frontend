@@ -13,6 +13,7 @@ import {useStudysetStore} from "../../../stores/studySetStore.js";
 import {useFlashcardStore} from "../../../stores/flashcardStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
+import axios from '@/axios';
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 const flashcardStore = useFlashcardStore();
@@ -22,6 +23,10 @@ const studySetId = Number(studySetStore.studySetId);
 const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_db = ref([]);
+
+
+const isSuccessful_test = ref(false);
+const message_test = ref("");
 
 const itemsPerPage = 6;
 
@@ -82,7 +87,29 @@ const errorMessage = ref({
   numberOfQuestions: null,
 });
 
+const randomizeTestUrl = '/test/randomize/'
+const randomizeTestModeFlashcards = async () => {
 
+  const numberOfQuestions = Number(testModeStore.numberOfQuestions);
+  try {
+    const response = await axios.get(`${randomizeTestUrl}`,{
+      params: {
+        studyset_id: studySetId,
+        number_of_questions: numberOfQuestions
+      }
+    });
+
+    isSuccessful_test.value = response.data.successful;
+    message_test.value = response.data.message;
+
+    if (isSuccessful_test.value) {
+      testModeStore.setTestModeQuestions(response.data.flashcard_ids);
+    }
+
+  } catch (error) {
+
+  }
+};
 const redirectToTestMode = () => {
 
   if (numberOfQuestions.value <= 0 || numberOfQuestions.value === null || isNaN(numberOfQuestions.value)) {
@@ -96,15 +123,24 @@ const redirectToTestMode = () => {
     errorMessage.value.numberOfQuestions = null;
     testModeStore.setNumberOfQuestions(numberOfQuestions.value);
     toggleModal('takeTest');
+
+    randomizeTestModeFlashcards();
     router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle, studySetId: studySetId } });
   }
 };
 
+
 const fetchFlashcardsFromDb = async () => {
   try {
     flashcard_db.value = await flashcardsDB.flashcards.where('studyset_id').equals(studySetId).toArray();
-    isSuccessful.value = true;
-    message.value = "Flashcards retrieved successfully.";
+
+    if (flashcard_db.value.length === 0) {
+      isSuccessful.value = false;
+      message.value = "There are no flashcards in this study set.";
+    } else {
+      isSuccessful.value = true;
+      message.value = "Flashcards retrieved successfully.";
+    }
 
   } catch (error) {
     isSuccessful.value = false;
@@ -230,9 +266,9 @@ const navigateToLibraryPage = () => {
             </svg>
           </button>
 
-          <div class="flex flex-col space-y-6 p-6 items-center justify-between">
+          <div class="flex flex-col space-y-4 p-6 items-center justify-between">
             <h1 class="text-athAIna-lg font-medium">Number of Questions to be Taken</h1>
-            <div class="p-2">
+            <div class="px-2">
               <input type="number" v-model="numberOfQuestions" class="text-athAIna-base font-medium text-athAIna-violet w-52 placeholder-athAIna-violet rounded-xl border-1 ring-2 ring-athAIna-violet border-athAIna-violet pl-4 focus: outline-none" />
             </div>
             <div :style="{ visibility: errors.numberOfQuestions ? 'visible' : 'hidden' }" class="text-athAIna-red text-athAIna-base">

@@ -4,6 +4,7 @@ import { ref } from 'vue';
 export const useTestModeStore = defineStore('testMode', () => {
     const numberOfQuestions = ref(null);
     const currentQuestionIndex = ref(0);
+    const testModeQuestions = ref([]);
 
     const setNumberOfQuestions = (num) => {
         numberOfQuestions.value = num;
@@ -12,10 +13,18 @@ export const useTestModeStore = defineStore('testMode', () => {
     const setCurrentQuestionIndex = (index) => {
         currentQuestionIndex.value = index;
     }
+
+    const setTestModeQuestions = (questions) => {
+        testModeQuestions.value = questions;
+    }
+
     return { numberOfQuestions,
         setNumberOfQuestions,
         currentQuestionIndex,
-        setCurrentQuestionIndex };
+        setCurrentQuestionIndex,
+        testModeQuestions,
+        setTestModeQuestions
+    };
 }, {
     persist: true
 });
