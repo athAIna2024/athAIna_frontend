@@ -15,7 +15,7 @@ export default {
 };
 </script> -->
 <script setup>
-import { ref, defineProps, watch } from "vue";
+import { ref, defineProps, watch, computed } from "vue";
 import Dexie from "dexie";
 
 const props = defineProps({
@@ -56,6 +56,14 @@ watch(
   },
   { immediate: true }
 );
+
+const isValidImage = computed(() => {
+  return (
+    typeof props.flashcard.image === "string" &&
+    props.flashcard.image.trim() !== "" &&
+    props.flashcard.image.startsWith("http")
+  );
+});
 </script>
 
 /* text depends on the flashcard id*/
@@ -89,6 +97,13 @@ watch(
               <h1 class="text-athAIna-violet p-64 text-xl">
                 {{ flashcard.question }}
               </h1>
+            </div>
+            <div v-if="isValidImage" class="p-10">
+              <img
+                :src="flashcard.image"
+                alt="Flashcard Image"
+                class="max-w-xs h-auto"
+              />
             </div>
             <div class="p-10 font-semibold text-lg">
               <button @click="flipCard">
