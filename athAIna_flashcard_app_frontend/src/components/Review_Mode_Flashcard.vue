@@ -17,6 +17,7 @@ export default {
 <script setup>
 import { ref, defineProps, watch, computed } from "vue";
 import Dexie from "dexie";
+import { useRouter, useRoute } from "vue-router";
 
 const props = defineProps({
   flashcard: {
@@ -27,30 +28,55 @@ const props = defineProps({
 
 const isFlipped = ref(false);
 const studysetName = ref("");
+const router = useRouter();
+const route = useRoute();
 
 // Initialize the existing study sets database
 const studysetsDB = new Dexie("StudySetDatabase");
 studysetsDB.version(1).stores({
   studysets: "id, name, description, created_at, updated_at",
 });
+const flashcardsDB = new Dexie("FlashcardDatabase");
+flashcardsDB.version(1).stores({
+  flashcards: "++id, question, answer, image, studyset_id",
+});
+
 const flipCard = () => {
   isFlipped.value = !isFlipped.value;
   console.log(isFlipped.value);
 };
+const fetchStudysetName = async (studysetId) => {
+  try {
+    const studyset = await studysetsDB.studysets.get(Number(studysetId));
+    studysetName.value = studyset ? studyset.title : "Unknown Studyset";
+  } catch (error) {
+    console.error("Failed to fetch study set:", error);
+    studysetName.value = "Unknown Studyset";
+  }
+};
+
 watch(
   () => props.flashcard,
-  async (newFlashcard) => {
+  (newFlashcard) => {
     if (newFlashcard) {
+      fetchStudysetName(newFlashcard.studyset_id);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (newId) {
       try {
-        const studyset = await studysetsDB.studysets.get(
-          Number(newFlashcard.studyset_id)
-        );
-        console.log(studyset);
-        console.log("name", studyset.title);
-        studysetName.value = studyset ? studyset.title : "Unknown Studyset";
+        const flashcard = await flashcardsDB.flashcards.get(Number(newId));
+        if (flashcard) {
+          props.flashcard = flashcard;
+          fetchStudysetName(flashcard.studyset_id);
+        }
       } catch (error) {
-        console.error("Failed to fetch study set:", error);
-        studysetName.value = "Unknown Studyset";
+        console.error("Failed to fetch flashcard:", error);
       }
     }
   },
@@ -64,6 +90,27 @@ const isValidImage = computed(() => {
     props.flashcard.image.startsWith("http")
   );
 });
+
+const navigateToRandomFlashcard = async () => {
+  try {
+    const flashcards = await flashcardsDB.flashcards
+      .where("studyset_id")
+      .equals(props.flashcard.studyset_id)
+      .toArray();
+    const filteredFlashcards = flashcards.filter(
+      (f) => f.id !== props.flashcard.id
+    );
+    if (filteredFlashcards.length > 0) {
+      const randomFlashcard =
+        filteredFlashcards[
+          Math.floor(Math.random() * filteredFlashcards.length)
+        ];
+      window.location.href = `/review/${randomFlashcard.id}`;
+    }
+  } catch (error) {
+    console.error("Failed to fetch flashcards:", error);
+  }
+};
 </script>
 
 /* text depends on the flashcard id*/
@@ -110,6 +157,25 @@ const isValidImage = computed(() => {
                 <h1>></h1>
               </button>
             </div>
+            <button
+              @click="navigateToRandomFlashcard"
+              class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="#69003D"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -154,5 +220,14 @@ const isValidImage = computed(() => {
 }
 .answer {
   transform: rotateY(180deg);
+}
+.circle-button {
+  background-color: white;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 </style>
