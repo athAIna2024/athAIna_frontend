@@ -20,11 +20,18 @@ export default {
 </script>
 
 <template>
-  <div class="min-h-screen">
-     <div class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
-     <div class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"></div>  
-     <div class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10">
-       <div class="w-full flex flex-row justify-center items-center">
+ <div class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center">
+    <!-- Right Card -->
+    <div class="mt-8 ml-10 rotate-[-12deg] shadow-md w-[400px] h-[550px] rounded-lg bg-gradient-to-br from-athAIna-yellow to-athAIna-red"></div>
+
+    <!-- Left Card -->
+    <div class="mt-16 mr-12 rotate-[15deg] shadow-md w-[400px] h-[500px] rounded-lg bg-gradient-to-bl from-athAIna-yellow to-athAIna-red"></div>
+
+    <!-- Middle Card -->
+    <div class="absolute bg-gradient-to-b rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red
+          w-[450px] h-[600px] bg-athAIna-white flex flex-col p-[5px]">
+    <div class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10">
+<div class="w-full flex flex-row justify-center items-center">
          <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
        </div>
        <h1 class="text-athAIna-violet font-semibold w-full text-center"> Email Verification </h1>
@@ -42,6 +49,7 @@ export default {
            Change My Password
           </button>
        </div>
+      </div>
       </div>
   </div>  
 
