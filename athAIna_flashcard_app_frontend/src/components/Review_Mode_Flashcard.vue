@@ -15,7 +15,7 @@ export default {
 };
 </script> -->
 <script setup>
-import { ref, defineProps, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import Dexie from "dexie";
 import { useRouter, useRoute } from "vue-router";
 
@@ -30,8 +30,9 @@ const isFlipped = ref(false);
 const studysetName = ref("");
 const router = useRouter();
 const route = useRoute();
+const currentFlashcard = ref(props.flashcard);
+const flashcardHistory = ref([]);
 
-// Initialize the existing study sets database
 const studysetsDB = new Dexie("StudySetDatabase");
 studysetsDB.version(1).stores({
   studysets: "id, name, description, created_at, updated_at",
@@ -45,6 +46,7 @@ const flipCard = () => {
   isFlipped.value = !isFlipped.value;
   console.log(isFlipped.value);
 };
+
 const fetchStudysetName = async (studysetId) => {
   try {
     const studyset = await studysetsDB.studysets.get(Number(studysetId));
@@ -59,6 +61,7 @@ watch(
   () => props.flashcard,
   (newFlashcard) => {
     if (newFlashcard) {
+      currentFlashcard.value = newFlashcard;
       fetchStudysetName(newFlashcard.studyset_id);
     }
   },
@@ -72,7 +75,8 @@ watch(
       try {
         const flashcard = await flashcardsDB.flashcards.get(Number(newId));
         if (flashcard) {
-          props.flashcard = flashcard;
+          flashcardHistory.value.push(currentFlashcard.value); // Add current flashcard to history
+          currentFlashcard.value = flashcard;
           fetchStudysetName(flashcard.studyset_id);
         }
       } catch (error) {
@@ -85,9 +89,9 @@ watch(
 
 const isValidImage = computed(() => {
   return (
-    typeof props.flashcard.image === "string" &&
-    props.flashcard.image.trim() !== "" &&
-    props.flashcard.image.startsWith("http")
+    typeof currentFlashcard.value.image === "string" &&
+    currentFlashcard.value.image.trim() !== "" &&
+    currentFlashcard.value.image.startsWith("http")
   );
 });
 
@@ -95,20 +99,27 @@ const navigateToRandomFlashcard = async () => {
   try {
     const flashcards = await flashcardsDB.flashcards
       .where("studyset_id")
-      .equals(props.flashcard.studyset_id)
+      .equals(currentFlashcard.value.studyset_id)
       .toArray();
     const filteredFlashcards = flashcards.filter(
-      (f) => f.id !== props.flashcard.id
+      (f) => f.id !== currentFlashcard.value.id
     );
     if (filteredFlashcards.length > 0) {
       const randomFlashcard =
         filteredFlashcards[
           Math.floor(Math.random() * filteredFlashcards.length)
         ];
-      window.location.href = `/review/${randomFlashcard.id}`;
+      router.push(`/review/${randomFlashcard.id}`);
     }
   } catch (error) {
     console.error("Failed to fetch flashcards:", error);
+  }
+};
+
+const navigateToPreviousFlashcard = () => {
+  if (flashcardHistory.value.length > 0) {
+    const previousFlashcard = flashcardHistory.value.pop();
+    router.push(`/review/${previousFlashcard.id}`);
   }
 };
 </script>
@@ -142,12 +153,12 @@ const navigateToRandomFlashcard = async () => {
             </div>
             <div>
               <h1 class="text-athAIna-violet p-64 text-xl">
-                {{ flashcard.question }}
+                {{ currentFlashcard.question }}
               </h1>
             </div>
             <div v-if="isValidImage" class="p-10">
               <img
-                :src="flashcard.image"
+                :src="currentFlashcard.image"
                 alt="Flashcard Image"
                 class="max-w-xs h-auto"
               />
@@ -157,10 +168,7 @@ const navigateToRandomFlashcard = async () => {
                 <h1>></h1>
               </button>
             </div>
-            <button
-              @click="navigateToRandomFlashcard"
-              class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
-            >
+            <button @click="navigateToRandomFlashcard" class="next-button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -173,6 +181,22 @@ const navigateToRandomFlashcard = async () => {
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+            <button @click="navigateToPreviousFlashcard" class="prev-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="#69003D"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 19l-7-7 7-7"
                 />
               </svg>
             </button>
@@ -194,7 +218,7 @@ const navigateToRandomFlashcard = async () => {
             </div>
             <div>
               <h1 class="text-athAIna-violet p-64 text-xl">
-                {{ flashcard.answer }}
+                {{ currentFlashcard.answer }}
               </h1>
             </div>
             <div class="p-10 font-semibold text-lg">
