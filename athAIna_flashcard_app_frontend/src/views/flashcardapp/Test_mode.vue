@@ -42,7 +42,7 @@ FRONTEND DATABASE SCHEMA for TEST MODE
 import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {watch} from "vue";
 import {computed} from "vue";
 import { useTestModeStore} from "../../../stores/testModeStore.js";
@@ -54,13 +54,12 @@ import flashcardsDB from "@/views/flashcardapp/dexie.js";
 const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
-const progress = 1;
+const progress = ref(testModeStore.currentQuestionIndex + 1);
 
-const questionLength = Number(testModeStore.numberOfQuestions);
-
-const flashcardIds = computed(() => [...testModeStore.testModeQuestions]);
-const testQuestions = ref([]);
-
+const flashcardIds = ref([...testModeStore.testModeQuestions]);
+const questionIndex = ref(testModeStore.currentQuestionIndex);
+const questionLength = ref(Number(testModeStore.numberOfQuestions));
+const currentQuestion = ref(null);
 
 const studySetName = studySetStore.studySetTitle;
 const studySetId = studySetStore.studySetId;
@@ -79,6 +78,7 @@ const closeConfirmation = () => {
 const confirmNavigation = () => {
   showConfirmation.value = false;
   testModeStore.setNumberOfQuestions(null);
+  testModeStore.setCurrentQuestionIndex(0);
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
 };
 
@@ -88,20 +88,19 @@ const confirmNavigation = () => {
 // });
 
 
-const loadQuestions = async () => {
+const loadQuestion = async () => {
   try {
-    console.log("Flashcard IDs:", flashcardIds);
-    const fetchedFlashcards = await flashcardsDB.flashcards.where('id').anyOf(flashcardIds.value).toArray();
-    console.log("Fetched Flashcards:", fetchedFlashcards);
-    testQuestions.value = flashcardIds.value.map(id => fetchedFlashcards.find(flashcard => flashcard.id === id));
-    console.log("Test Questions:", testQuestions.value);
+    const flashcardId = flashcardIds.value[questionIndex.value];
+    const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId);
+    currentQuestion.value = fetchedFlashcard;
+
   } catch (error) {
-    // console.error("Error fetching flashcards:", error);
+    console.error("Error fetching flashcard:", error);
   }
 };
 
-watch(flashcardIds, () => {
-  loadQuestions();
+onMounted(() => {
+  loadQuestion();
 });
 
 </script>
@@ -125,9 +124,22 @@ watch(flashcardIds, () => {
       <span class="font-bold"> {{progress}} / {{questionLength}} </span>
     </div>
 
-    <div v-for="flashcard in testQuestions" :key="flashcard.id">
-      <Test_Mode_Flashcard :question="flashcard.question" :answer="flashcard.answer" />
+    <div v-if="currentQuestion">
+      <Test_Mode_Flashcard :question="currentQuestion.question" :answer="currentQuestion.answer" />
     </div>
+
+    <!--<div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">-->
+    <!--  <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">-->
+    <!--    <div class="athAIna-border-inner p-4 text-center">-->
+    <!--      <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>-->
+    <!--      <h1 class="m-8 text-2xl text-emerald-400 font-semibold"> 90% </h1>-->
+    <!--      <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>-->
+    <!--      <div class="m-8 flex justify-center">-->
+    <!--        <button class="btn w-48"> Start New Test </button>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--  </div>-->
+    <!--</div>-->
 
   </div>
 </div>
