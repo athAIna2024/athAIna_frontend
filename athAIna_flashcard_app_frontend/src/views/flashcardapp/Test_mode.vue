@@ -42,7 +42,8 @@ FRONTEND DATABASE SCHEMA for TEST MODE
 import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
+import {onMounted} from "vue";
 import {watch} from "vue";
 import {computed} from "vue";
 import { useTestModeStore} from "../../../stores/testModeStore.js";
@@ -77,8 +78,6 @@ const closeConfirmation = () => {
 
 const confirmNavigation = () => {
   showConfirmation.value = false;
-  testModeStore.setNumberOfQuestions(null);
-  testModeStore.setCurrentQuestionIndex(0);
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
 };
 
