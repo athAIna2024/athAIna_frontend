@@ -8,6 +8,8 @@ const question = ref(true);
 const answer = ref(false);
 const result = ref(false);
 const learner_answer = ref(null);
+const showAnswer = ref(false);
+const showQuestion = ref(true);
 
 const props = defineProps({
   question: {
@@ -21,20 +23,25 @@ const props = defineProps({
 });
 
 
-const submitAndNext = async () => {
-  if (testModeStore.currentQuestionIndex < testModeStore.numberOfQuestions) {
-    const increment = testModeStore.currentQuestionIndex + 1;
-    testModeStore.setCurrentQuestionIndex(increment);
+const submitAnswer = () => {
+  showQuestion.value = false;
+  showAnswer.value = true;
+  setTimeout(() => {
+    showAnswer.value = false;
+    if (testModeStore.currentQuestionIndex < testModeStore.numberOfQuestions) {
+      const increment = testModeStore.currentQuestionIndex + 1;
+      testModeStore.setCurrentQuestionIndex(increment);
+      location.reload();
+    }
+  }, 1000); // 1 minute = 60000 milliseconds // change to 60000 (1000 for testing)
+};
 
-    location.reload();
-  }
-}
 </script>
 
 <template>
 
 
-<div class="athAIna-border-outer p-1 my-4">
+<div v-if="showQuestion" class="athAIna-border-outer p-1 my-4">
   <div class="athAIna-border-inner">
     <div class="text-athAIna-violet m-auto flex items-center justify-center h-96">
       {{  props.question }}
@@ -50,7 +57,7 @@ const submitAndNext = async () => {
           </div>
         </div>
 
-        <button class="btn w-48" @click="submitAndNext"> Send </button>
+        <button class="btn w-48" @click="submitAnswer"> Send </button>
       </div>
 
 
@@ -59,7 +66,7 @@ const submitAndNext = async () => {
 </div>
 
 
-<div class="athAIna-border-outer p-1 my-4">
+<div v-if="showAnswer" class="athAIna-border-outer p-1 my-4">
   <div class="athAIna-border-inner">
     <div class="px-10 py-8 flex items-center">
       <span class="text-athAIna-base">
