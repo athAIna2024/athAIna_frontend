@@ -31,6 +31,12 @@ const handleFileUpload = (event) => {
   }
 };
 
+function smoothReload() {
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    location.reload();
+  }, 500); // Match the duration of the CSS transition
+}
 
 // SAVE FLASHCARD IN INDEXEDDB
 const saveFlashcard = async () => {
@@ -58,10 +64,10 @@ const saveFlashcard = async () => {
       id: request.data.data.id,
       question: question.value,
       answer: answer.value,
-      image: image.value,
+      image: request.data.data.image,
       created_at: new Date(),
       updated_at: new Date(),
-      studyset_id: request.data.data.studyset_instance,
+      studyset_id: Number(studySetId),
     };
 
     await flashcardsDB.flashcards.add(createFlashcard);
@@ -74,7 +80,7 @@ const saveFlashcard = async () => {
         .modify({flashcard_count: studySet.flashcard_count + 1});
 
     if (isSuccessful) {
-      location.reload();
+      smoothReload();
 
     }
 
@@ -206,4 +212,8 @@ const navigateToLibraryPage = () => {
 </template>
 
 <style scoped>
+.fade-out {
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
 </style>
