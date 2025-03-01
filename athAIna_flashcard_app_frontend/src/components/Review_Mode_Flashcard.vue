@@ -1,24 +1,9 @@
-<!-- <script>
-export default {
-  name: 'Review_Mode_Flashcard',
-  data() {
-    return {
-      isFlipped: false
-    };
-  },
-  methods: {
-    flipCard() {
-      this.isFlipped = !this.isFlipped;
-      console.log(this.isFlipped);
-    }
-  }
-};
-</script> -->
 <script setup>
 import { ref, watch, computed } from "vue";
 import Dexie from "dexie";
 import { useRouter, useRoute } from "vue-router";
-
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import studySetDb from "@/views/studysetapp/dexie.js";
 const props = defineProps({
   flashcard: {
     type: Object,
@@ -33,15 +18,6 @@ const route = useRoute();
 const currentFlashcard = ref(props.flashcard);
 const flashcardHistory = ref([]);
 
-const studysetsDB = new Dexie("StudySetDatabase");
-studysetsDB.version(1).stores({
-  studysets: "id, name, description, created_at, updated_at",
-});
-const flashcardsDB = new Dexie("FlashcardDatabase");
-flashcardsDB.version(1).stores({
-  flashcards: "++id, question, answer, image, studyset_id",
-});
-
 const flipCard = () => {
   isFlipped.value = !isFlipped.value;
   console.log(isFlipped.value);
@@ -49,7 +25,10 @@ const flipCard = () => {
 
 const fetchStudysetName = async (studysetId) => {
   try {
-    const studyset = await studysetsDB.studysets.get(Number(studysetId));
+    const studyset = await studySetDb.studysets
+      .where("id")
+      .equals(Number(studysetId))
+      .first();
     studysetName.value = studyset ? studyset.title : "Unknown Studyset";
   } catch (error) {
     console.error("Failed to fetch study set:", error);
