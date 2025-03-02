@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+
 import Cookies from "js-cookie";
 import { useAuthStore } from "../../stores/authStore";
 import axiosInstance from "@/axiosConfig";
@@ -111,7 +111,7 @@ const toggleModal = (modalName) => {
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-20">
-      <router-link to="/library_of_studysets">
+      <router-link to="/library_of_studysets" exact-active-class="active-link">
         <div>Library</div>
       </router-link>
       <div>Reports</div>
@@ -157,4 +157,9 @@ const toggleModal = (modalName) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.active-link {
+  font-weight: bold;
+  color: #da384c;
+}
+</style>
