@@ -39,18 +39,15 @@ FRONTEND DATABASE SCHEMA for TEST MODE
 
  */
 
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+import { watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useTestModeStore } from '../../../stores/testModeStore.js';
+import { useStudysetStore } from '../../../stores/studySetStore.js';
+import flashcardsDB from '@/views/flashcardapp/dexie.js';
 import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
-
-import {ref} from "vue";
-import {onMounted} from "vue";
-import {watch} from "vue";
-import {computed} from "vue";
-import { useTestModeStore} from "../../../stores/testModeStore.js";
-import { useStudysetStore} from "../../../stores/studySetStore.js";
-import { useRouter } from 'vue-router';
-import Dexie from "dexie";
-import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const router = useRouter();
 const testModeStore = useTestModeStore();
@@ -60,17 +57,17 @@ const progress = ref(testModeStore.currentQuestionIndex + 1);
 const flashcardIds = ref(testModeStore.testModeQuestions);
 const questionIndex = ref(testModeStore.currentQuestionIndex);
 const questionLength = ref(Number(testModeStore.numberOfQuestions));
-const currentQuestion = ref(null);
+const flashcard = ref(null);
+const flashcardQuestion = ref(null);
+const flashcardAnswer = ref(null);
 
 const studySetName = studySetStore.studySetTitle;
 const studySetId = studySetStore.studySetId;
 const showConfirmation = ref(false);
 
-
 const navigateToLibraryPage = () => {
   showConfirmation.value = true;
 };
-
 
 const closeConfirmation = () => {
   showConfirmation.value = false;
@@ -81,27 +78,32 @@ const confirmNavigation = () => {
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
 };
 
-// const testModeDB = new Dexie('TestModeDatabase');
-// testModeDB.version(1).stores({
-//   test_field: 'id, batch_id, created_at, learner_answer, correct_at'
-// });
-
-
 const loadQuestion = async () => {
   try {
     const flashcardId = flashcardIds.value[questionIndex.value];
     const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId);
-    currentQuestion.value = fetchedFlashcard;
+    flashcard.value = fetchedFlashcard;
+
+    flashcardQuestion.value = flashcard.value.question;
+    flashcardAnswer.value = flashcard.value.answer;
+
+    console.log("Question", flashcardQuestion.value);
 
   } catch (error) {
     console.error("Error fetching flashcard:", error);
   }
 };
 
-onMounted(() => {
+watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
+  console.log("Question index changed from", oldValue, "to", newValue);
+  progress.value = newValue + 1;
+  questionIndex.value = newValue;
   loadQuestion();
 });
 
+onMounted(() => {
+  loadQuestion();
+});
 
 </script>
 
@@ -124,9 +126,7 @@ onMounted(() => {
         <span class="font-bold"> {{progress}} / {{questionLength}} </span>
       </div>
 
-      <div v-if="currentQuestion">
-        <Test_Mode_Flashcard :question="currentQuestion.question" :answer="currentQuestion.answer" />
-      </div>
+      <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" />
 
       <!--<div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">-->
       <!--  <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">-->
