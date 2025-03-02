@@ -57,7 +57,7 @@ const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 const progress = ref(testModeStore.currentQuestionIndex + 1);
 
-const flashcardIds = ref([...testModeStore.testModeQuestions]);
+const flashcardIds = ref(testModeStore.testModeQuestions);
 const questionIndex = ref(testModeStore.currentQuestionIndex);
 const questionLength = ref(Number(testModeStore.numberOfQuestions));
 const currentQuestion = ref(null);
@@ -102,52 +102,53 @@ onMounted(() => {
   loadQuestion();
 });
 
+
 </script>
 
 <template>
-<div class="mx-6">
-  <div class="athAIna-border-inner p-6">
-    <div class="flex flex-row justify-between">
-      <div class="flex flex-row space-x-6 my-2 items-center">
-        <button @click="navigateToLibraryPage">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
-        </button>
+  <div class="mx-6">
+    <div class="athAIna-border-inner p-6">
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-row space-x-6 my-2 items-center">
+          <button @click="navigateToLibraryPage">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+          </button>
 
-        <div>
-          Test mode for <span class="font-bold text-athAIna-violet text-athAIna-large">{{ studySetName}}</span>
+          <div>
+            Test mode for <span class="font-bold text-athAIna-violet text-athAIna-large">{{ studySetName}}</span>
+          </div>
         </div>
+
+        <span class="font-bold"> {{progress}} / {{questionLength}} </span>
       </div>
 
-      <span class="font-bold"> {{progress}} / {{questionLength}} </span>
+      <div v-if="currentQuestion">
+        <Test_Mode_Flashcard :question="currentQuestion.question" :answer="currentQuestion.answer" />
+      </div>
+
+      <!--<div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">-->
+      <!--  <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">-->
+      <!--    <div class="athAIna-border-inner p-4 text-center">-->
+      <!--      <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>-->
+      <!--      <h1 class="m-8 text-2xl text-emerald-400 font-semibold"> 90% </h1>-->
+      <!--      <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>-->
+      <!--      <div class="m-8 flex justify-center">-->
+      <!--        <button class="btn w-48"> Start New Test </button>-->
+      <!--      </div>-->
+      <!--    </div>-->
+      <!--  </div>-->
+      <!--</div>-->
+
     </div>
-
-    <div v-if="currentQuestion">
-      <Test_Mode_Flashcard :question="currentQuestion.question" :answer="currentQuestion.answer" />
-    </div>
-
-    <!--<div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">-->
-    <!--  <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">-->
-    <!--    <div class="athAIna-border-inner p-4 text-center">-->
-    <!--      <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>-->
-    <!--      <h1 class="m-8 text-2xl text-emerald-400 font-semibold"> 90% </h1>-->
-    <!--      <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>-->
-    <!--      <div class="m-8 flex justify-center">-->
-    <!--        <button class="btn w-48"> Start New Test </button>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--  </div>-->
-    <!--</div>-->
-
   </div>
-</div>
-<Confirmation_Prompt
-  :confirmQuestion="'Are you sure you want to leave? All progress will be lost.'"
-  :isVisible="showConfirmation"
-  @close="closeConfirmation"
-  @confirm="confirmNavigation"
-/>
+  <Confirmation_Prompt
+      :confirmQuestion="'Are you sure you want to leave? All progress will be lost.'"
+      :isVisible="showConfirmation"
+      @close="closeConfirmation"
+      @confirm="confirmNavigation"
+  />
 </template>
 
 <style scoped>
