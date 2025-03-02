@@ -96,8 +96,10 @@ const loadQuestion = async () => {
 
 watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
   console.log("Question index changed from", oldValue, "to", newValue);
-  progress.value = newValue + 1;
-  questionIndex.value = newValue;
+  if (progress.value < questionLength.value) {
+    progress.value = newValue + 1;
+    questionIndex.value = newValue;
+  }
   loadQuestion();
 });
 
