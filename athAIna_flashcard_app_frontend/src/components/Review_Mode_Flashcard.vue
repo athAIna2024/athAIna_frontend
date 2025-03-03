@@ -76,6 +76,7 @@ const isValidImage = computed(() => {
 
 const navigateToRandomFlashcard = async () => {
   try {
+    fetchStudysetName(currentFlashcard.value.studyset_id);
     const flashcards = await flashcardsDB.flashcards
       .where("studyset_id")
       .equals(currentFlashcard.value.studyset_id)
@@ -88,7 +89,9 @@ const navigateToRandomFlashcard = async () => {
         filteredFlashcards[
           Math.floor(Math.random() * filteredFlashcards.length)
         ];
-      router.push(`/review/${randomFlashcard.id}`);
+      router.push(
+        `/${studysetName.value}/${currentFlashcard.value.studyset_id}/review/${randomFlashcard.id}`
+      );
     }
   } catch (error) {
     console.error("Failed to fetch flashcards:", error);

@@ -111,7 +111,7 @@ const routes = [
     component: Library_Page_Flashcard,
   },
   {
-    path: "/review/:id",
+    path: "/:studySetTitle/:studySetId/review/:id",
     name: "Review_Mode",
     component: Review_Mode,
   },
@@ -166,7 +166,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const testModeStore = useTestModeStore();
 
-  if (!to.path.includes('/test')) {
+  if (!to.path.includes("/test")) {
     testModeStore.setNumberOfQuestions(null);
     testModeStore.setCurrentQuestionIndex(0);
   }
