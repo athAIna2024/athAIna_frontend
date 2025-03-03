@@ -98,6 +98,7 @@ const navigateToRandomFlashcard = async () => {
 const navigateToPreviousFlashcard = () => {
   if (flashcardHistory.value.length > 0) {
     const previousFlashcard = flashcardHistory.value.pop();
+    isFlipped.value = false;
     router.push(`/review/${previousFlashcard.id}`);
   }
 };
