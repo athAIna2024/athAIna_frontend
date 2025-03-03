@@ -31,6 +31,8 @@ import Delete_studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue";
 
+import { useTestModeStore } from "../stores/testModeStore.js";
+
 const routes = [
   {
     path: "",
@@ -114,7 +116,7 @@ const routes = [
     component: Review_Mode,
   },
   {
-    path: "/test/",
+    path: "/:studySetTitle/:studySetId/test/",
     name: "Test_Mode",
     component: Test_mode,
   },
@@ -158,6 +160,18 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// Crucial for resetting the test mode store when leaving the test mode
+router.beforeEach((to, from, next) => {
+  const testModeStore = useTestModeStore();
+
+  if (!to.path.includes('/test')) {
+    testModeStore.setNumberOfQuestions(null);
+    testModeStore.setCurrentQuestionIndex(0);
+  }
+
+  next();
 });
 
 export default router;

@@ -11,13 +11,13 @@ const flashcard = ref(null);
 const flashcardsDB = new Dexie("FlashcardDatabase");
 flashcardsDB.version(1).stores({
   flashcards:
-    "id, question, answer, image, studyset_id, created_at, updated_at, is_ai_generated",
+      "id, question, answer, image, studyset_id, created_at, updated_at, is_ai_generated",
 });
 
 onMounted(async () => {
   try {
     flashcard.value = await flashcardsDB.flashcards.get(
-      Number(flashcardId.value)
+        Number(flashcardId.value)
     );
     console.log(flashcardId.value);
   } catch (error) {

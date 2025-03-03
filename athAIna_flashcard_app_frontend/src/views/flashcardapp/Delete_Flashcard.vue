@@ -27,6 +27,13 @@ const props = defineProps({
 
 });
 
+function smoothReload() {
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    location.reload();
+  }, 500); // Match the duration of the CSS transition
+}
+
 const emit = defineEmits(['close']);
 
 const isDeleteConfirmationModalVisible = ref(false);
@@ -82,7 +89,7 @@ const deleteFlashcard = async () => {
 
 
     if (isSuccessful) {
-      location.reload();
+      smoothReload();
     }
   } catch (error) {
     if (error.response.status === 400) {
@@ -131,5 +138,10 @@ const deleteFlashcard = async () => {
 }
 .modal-fade-enter, .modal-fade-leave-to /* .modal-fade-leave-active in <2.1.8 */ {
   opacity: 0;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
 }
 </style>

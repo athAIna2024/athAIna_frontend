@@ -56,39 +56,39 @@ export default {
 
     <!-- FAQs List -->
     <div
-      v-else
-      v-for="(faq, i) in faqs"
-      :key="i"
-      class="athAIna-border-outer p-1 my-10"
+        v-else
+        v-for="(faq, i) in faqs"
+        :key="i"
+        class="athAIna-border-outer p-1 my-10"
     >
       <div class="athAIna-border-inner px-10 py-5">
         <button
-          @click="toggle(i)"
-          class="flex items-center w-full justify-between"
-          :aria-expanded="faq.open"
-          :aria-controls="'faq-' + i"
+            @click="toggle(i)"
+            class="flex items-center w-full justify-between"
+            :aria-expanded="faq.open"
+            :aria-controls="'faq-' + i"
         >
           <span class="text-left"> {{ faq.question }} </span>
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m19.5 8.25-7.5 7.5-7.5-7.5"
             />
           </svg>
         </button>
         <div
-          v-show="faq.open"
-          :id="'faq-' + i"
-          class="text-left font-normal m-10"
-          v-html="faq.answer"
+            v-show="faq.open"
+            :id="'faq-' + i"
+            class="text-left font-normal m-10"
+            v-html="faq.answer"
         ></div>
       </div>
     </div>
