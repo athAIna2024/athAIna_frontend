@@ -130,7 +130,7 @@ const navigateToPreviousFlashcard = () => {
         />
       </svg>
     </button>
-    <div class="flashcard">
+    <div @click="flipCard" class="flashcard">
       <div v-if="flashcard" class="card h-48 py-80">
         <div
           :class="{
@@ -161,9 +161,9 @@ const navigateToPreviousFlashcard = () => {
                   />
                 </div>
                 <div class="p-10 font-semibold text-lg">
-                  <button @click="flipCard">
+                  <!-- <button @click="flipCard">
                     <h1>></h1>
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </div>
@@ -177,18 +177,16 @@ const navigateToPreviousFlashcard = () => {
                 class="athAIna-border-inner flex flex-c justify-between items-center"
               >
                 <div class="p-10 font-semibold text-lg">
-                  <button @click="flipCard">
+                  <!-- <button @click="flipCard">
                     <h1><</h1>
-                  </button>
+                  </button> -->
                 </div>
                 <div>
                   <h1 class="text-athAIna-violet p-64 text-xl">
                     {{ currentFlashcard.answer }}
                   </h1>
                 </div>
-                <div class="p-10 font-semibold text-lg">
-                  <h1>></h1>
-                </div>
+                <div class="p-10 font-semibold text-lg"></div>
               </div>
             </div>
           </div>
