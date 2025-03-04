@@ -31,6 +31,11 @@ const handleFileUpload = (event) => {
   }
 };
 
+const clearImage = () => {
+  image.value = null;
+  imageName.value = null;
+};
+
 function smoothReload() {
   document.body.classList.add('fade-out');
   setTimeout(() => {
@@ -142,7 +147,6 @@ const navigateToLibraryPage = () => {
                   </div>
                   <div v-if="field_errors.question" class="text-athAIna-red text-athAIna-base">{{ field_errors.question }}</div>
 
-                <label for="image-upload">
 
                   <div class="athAIna-border-outer p-1 mb-4">
                     <div class="athAIna-border-inner py-1">
@@ -151,22 +155,33 @@ const navigateToLibraryPage = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                           <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                         </svg>
+                        <label for="image-upload">
 
-                        <span v-if="imageName">{{ imageName }}</span>
-                        <span v-else class="text-athAIna-base">+ Insert Image</span>
+                          <span v-if="imageName">{{ imageName }}</span>
+                          <span v-else class="text-athAIna-base">+ Insert Image</span>
+                            <input
+                                type="file"
+                                accept="image/png, image/jpeg"
+                                id="image-upload"
+                                class="hidden"
+                                @change="handleFileUpload"
+                            />
+                        </label>
+
+                        <button @click="clearImage" v-if="imageName">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                          </svg>
+                        </button>
 
                       </div>
 
-                      <input
-                          type="file"
-                          accept="image/png, image/jpeg"
-                          id="image-upload"
-                          class="hidden"
-                          @change="handleFileUpload"
-                      />
+
+
+
                     </div>
                   </div>
-                </label>
+
                 <div v-if="field_errors.image" class="text-athAIna-red text-athAIna-base">{{ field_errors.image }}</div>
 
               </div>
