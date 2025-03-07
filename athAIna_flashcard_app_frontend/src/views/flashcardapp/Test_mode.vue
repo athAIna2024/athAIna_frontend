@@ -94,12 +94,14 @@ const loadQuestion = async () => {
   }
 };
 
+
 watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
   console.log("Question index changed from", oldValue, "to", newValue);
   if (progress.value < questionLength.value) {
     progress.value = newValue + 1;
     questionIndex.value = newValue;
   }
+
   loadQuestion();
 });
 
@@ -130,18 +132,21 @@ onMounted(() => {
 
       <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" />
 
-      <!--<div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">-->
-      <!--  <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">-->
-      <!--    <div class="athAIna-border-inner p-4 text-center">-->
-      <!--      <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>-->
-      <!--      <h1 class="m-8 text-2xl text-emerald-400 font-semibold"> 90% </h1>-->
-      <!--      <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>-->
-      <!--      <div class="m-8 flex justify-center">-->
-      <!--        <button class="btn w-48"> Start New Test </button>-->
-      <!--      </div>-->
-      <!--    </div>-->
-      <!--  </div>-->
-      <!--</div>-->
+      <div v-if="testModeStore.isTestCompleted">
+        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">
+          <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
+            <div class="athAIna-border-inner p-4 text-center">
+              <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>
+              <h1 class="m-8 text-2xl text-athAIna-green font-semibold"> 90% </h1>
+              <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>
+              <div class="m-8 flex justify-center">
+                <button class="btn w-48" @click=""> Start New Test </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
     </div>
   </div>

@@ -37,7 +37,7 @@ const displayAnswer = () => {
 
   setTimeout(() => {
     transitionToNext();
-  }, 1000); // Adjust the delay as needed
+  }, 1000); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
 
 };
 
@@ -47,16 +47,17 @@ const transitionToNext = () => {
     const increment = testModeStore.currentQuestionIndex + 1;
     testModeStore.setCurrentQuestionIndex(increment);
     showQuestion.value = true;
+  } else {
+
+    // Shows the summary of score in 500 milliseconds
+    showAnswer.value = true;
+    showQuestion.value = false;
+    setTimeout(() => {
+      testModeStore.setIsTestCompleted(true);
+    }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
   }
 };
 
-watch(() => showQuestion.value, (newValue) => {
-  if (newValue) {
-    console.log("Question is now being shown");
-  } else {
-    console.log("Question is now hidden");
-  }
-});
 </script>
 
 <template>

@@ -5,6 +5,7 @@ export const useTestModeStore = defineStore('testMode', () => {
     const numberOfQuestions = ref(null);
     const currentQuestionIndex = ref(0);
     const testModeQuestions = ref([]);
+    const isTestCompleted = ref(false);
 
     const setNumberOfQuestions = (num) => {
         numberOfQuestions.value = num;
@@ -18,12 +19,19 @@ export const useTestModeStore = defineStore('testMode', () => {
         testModeQuestions.value = questions;
     }
 
+    const setIsTestCompleted = (bool) => {
+        isTestCompleted.value = bool;
+    }
+
+
     return { numberOfQuestions,
         setNumberOfQuestions,
         currentQuestionIndex,
         setCurrentQuestionIndex,
         testModeQuestions,
-        setTestModeQuestions
+        setTestModeQuestions,
+        isTestCompleted,
+        setIsTestCompleted
     };
 }, {
     persist: true

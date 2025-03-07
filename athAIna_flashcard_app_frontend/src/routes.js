@@ -169,6 +169,7 @@ router.beforeEach((to, from, next) => {
   if (!to.path.includes('/test')) {
     testModeStore.setNumberOfQuestions(null);
     testModeStore.setCurrentQuestionIndex(0);
+    testModeStore.setIsTestCompleted(false);
   }
 
   next();
