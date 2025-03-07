@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { onMounted } from 'vue';
+import { watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
@@ -91,16 +91,18 @@ const redirectToTestMode = async () => {
 
     if (isSuccessful_test.value) {
       const newUuid = uuidv4();
-
-      await router.push({name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: newUuid }});
+      testModeStore.setBatchId(newUuid);
+      await router.push({name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId }});
     }
 
   }
 };
 
+
+
 </script>
 <template>
-  <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40">
+  <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
         <div class="flex flex-col p-2">
