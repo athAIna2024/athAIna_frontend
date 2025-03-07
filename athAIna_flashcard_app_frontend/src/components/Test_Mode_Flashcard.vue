@@ -48,10 +48,7 @@ const transitionToNext = () => {
     testModeStore.setCurrentQuestionIndex(increment);
     showQuestion.value = true;
   } else {
-
     // Shows the summary of score in 500 milliseconds
-    showAnswer.value = true;
-    showQuestion.value = false;
     setTimeout(() => {
       testModeStore.setIsTestCompleted(true);
     }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes

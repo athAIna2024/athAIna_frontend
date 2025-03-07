@@ -170,6 +170,7 @@ router.beforeEach((to, from, next) => {
     testModeStore.setNumberOfQuestions(null);
     testModeStore.setCurrentQuestionIndex(0);
     testModeStore.setIsTestCompleted(false);
+    testModeStore.setTestModeQuestions([]);
   }
 
   next();

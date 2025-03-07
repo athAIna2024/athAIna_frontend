@@ -81,6 +81,7 @@ const confirmNavigation = () => {
 const loadQuestion = async () => {
   try {
     const flashcardId = flashcardIds.value[questionIndex.value];
+    console.log("Flashcard ID", flashcardId);
     const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId);
     flashcard.value = fetchedFlashcard;
 
@@ -105,8 +106,11 @@ watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
   loadQuestion();
 });
 
+
 onMounted(() => {
-  loadQuestion();
+  if (questionIndex.value < questionLength.value) {
+    loadQuestion();
+  }
 });
 
 </script>
