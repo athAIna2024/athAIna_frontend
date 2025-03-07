@@ -43,7 +43,7 @@ const displayAnswer = () => {
 
 const transitionToNext = () => {
   showAnswer.value = false;
-  if (!showAnswer.value && testModeStore.currentQuestionIndex < testModeStore.numberOfQuestions) {
+  if (testModeStore.currentQuestionIndex + 1 < testModeStore.numberOfQuestions) {
     const increment = testModeStore.currentQuestionIndex + 1;
     testModeStore.setCurrentQuestionIndex(increment);
     showQuestion.value = true;

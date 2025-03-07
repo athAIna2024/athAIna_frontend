@@ -104,13 +104,13 @@ watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
   }
 
   loadQuestion();
+
+
 });
 
 
 onMounted(() => {
-  if (questionIndex.value < questionLength.value) {
-    loadQuestion();
-  }
+  loadQuestion();
 });
 
 </script>
