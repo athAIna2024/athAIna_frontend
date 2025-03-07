@@ -197,10 +197,6 @@ const navigateToLibraryPage = () => {
   <Test_Mode_Number_Of_Questions_Prompt
       :is-visible="isTestModeVisible"
       @close="closeTest_Mode"
-      :flashcardCounts="flashcardCounts"
-      :studySetId="studySetId"
-      :studySetTitle="studySetTitle"
-
   />
 
 </template>

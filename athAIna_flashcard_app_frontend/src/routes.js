@@ -116,7 +116,7 @@ const routes = [
     component: Review_Mode,
   },
   {
-    path: "/:studySetTitle/:studySetId/test/",
+    path: "/:studySetTitle/:studySetId/test/:batchId",
     name: "Test_Mode",
     component: Test_mode,
   },

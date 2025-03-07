@@ -1,31 +1,32 @@
 <script setup>
 import { ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
+import { useStudysetStore} from "../../stores/studySetStore.js";
 import axios from '@/axios';
+import studySetDb from "@/views/studysetapp/dexie.js";
+import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   isVisible: Boolean,
-  flashcardCounts: {
-    type: Number,
-    default: 0,
-  },
-  studySetId: {
-    type: Number,
-    default: 0,
-  },
-  studySetTitle: {
-    type: String,
-    default: '',
-  }
 });
+const flashcardCounts = ref(0);
 
 const router = useRouter();
 const testModeStore = useTestModeStore();
-const studySetTitle = computed(() => props.studySetTitle);
-const studySetId = computed(() => props.studySetId);
-const flashcardCounts = computed(() => props.flashcardCounts);
+const studySetStore = useStudysetStore();
+
+const studySetTitle = ref(studySetStore.studySetTitle);
+const studySetId = ref(studySetStore.studySetId);
+
+const fetchFlashcardCounts = async () => {
+  console.log(studySetId);
+  const flashcard = await studySetDb.studysets.get(Number(studySetId.value));
+  flashcardCounts.value = flashcard ? flashcard.flashcard_count : 0;
+  console.log("FLASHCARD COUNTS FROM INDEXEDDB: ", flashcardCounts.value);
+};
 
 const isSuccessful_test = ref(false);
 const message_test = ref('');
@@ -69,6 +70,8 @@ const randomizeTestModeFlashcards = async () => {
 };
 const redirectToTestMode = async () => {
 
+  await fetchFlashcardCounts();
+
   console.log("FLASHCARD COUNTS: ", flashcardCounts.value);
   console.log("NUMBER OF QUESTIONS: ", numberOfQuestions.value);
   if (numberOfQuestions.value <= 0 || numberOfQuestions.value === null || isNaN(numberOfQuestions.value)) {
@@ -87,8 +90,11 @@ const redirectToTestMode = async () => {
     await randomizeTestModeFlashcards();
 
     if (isSuccessful_test.value) {
-      await router.push({name: 'Test_Mode', params: {studySetTitle: studySetTitle.value, studySetId: studySetId.value}});
+      const newUuid = uuidv4();
+
+      await router.push({name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: newUuid }});
     }
+
   }
 };
 

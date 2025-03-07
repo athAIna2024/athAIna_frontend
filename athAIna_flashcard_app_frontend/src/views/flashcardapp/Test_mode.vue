@@ -48,6 +48,7 @@ import { useStudysetStore } from '../../../stores/studySetStore.js';
 import flashcardsDB from '@/views/flashcardapp/dexie.js';
 import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
+import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
 
 const router = useRouter();
 const testModeStore = useTestModeStore();
@@ -63,6 +64,7 @@ const flashcardAnswer = ref(null);
 
 const studySetName = studySetStore.studySetTitle;
 const studySetId = studySetStore.studySetId;
+
 const showConfirmation = ref(false);
 
 const navigateToLibraryPage = () => {
@@ -76,6 +78,15 @@ const closeConfirmation = () => {
 const confirmNavigation = () => {
   showConfirmation.value = false;
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+};
+
+const isTestModeVisible = ref(false);
+const openTest_Mode = () => {
+  isTestModeVisible.value = true;
+};
+
+const closeTest_Mode = () => {
+  isTestModeVisible.value = false;
 };
 
 const loadQuestion = async () => {
@@ -116,6 +127,7 @@ onMounted(() => {
 </script>
 
 <template>
+
   <div class="mx-6">
     <div class="athAIna-border-inner p-6">
       <div class="flex flex-row justify-between">
@@ -144,7 +156,7 @@ onMounted(() => {
               <h1 class="m-8 text-2xl text-athAIna-green font-semibold"> 90% </h1>
               <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>
               <div class="m-8 flex justify-center">
-                <button class="btn w-48" @click=""> Start New Test </button>
+                <button class="btn w-48" @click="openTest_Mode"> Start New Test </button>
               </div>
             </div>
           </div>
@@ -154,6 +166,11 @@ onMounted(() => {
 
     </div>
   </div>
+  <Test_Mode_Number_Of_Questions_Prompt
+    :is-visible="isTestModeVisible"
+    @close="closeTest_Mode"
+
+  />
   <Confirmation_Prompt
       :confirmQuestion="'Are you sure you want to leave? All progress will be lost.'"
       :isVisible="showConfirmation"
