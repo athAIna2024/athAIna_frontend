@@ -71,19 +71,20 @@ const updateFlashcard = async () => {
 
 
     console.log(response.data.data.image);
+
+    const updateFlashcard = {
+      id: Number(flashcardId),
+      question: question.value,
+      answer: answer.value,
+      image: response.data.data.image,
+      updated_at: new Date(),
+      studyset_id: studySetId,
+    }
+
+    await flashcardsDB.flashcards.update(Number(flashcardId), updateFlashcard);
+    console.log("UPDATE FRONTEND DB", updateFlashcard);
+
     if (isSuccessful.value) {
-      const updateFlashcard = {
-        id: Number(flashcardId),
-        question: question.value,
-        answer: answer.value,
-        image: response.data.data.image,
-        updated_at: new Date(),
-        studyset_id: studySetId,
-      }
-
-      await flashcardsDB.flashcards.put(updateFlashcard);
-      console.log("UPDATE FRONTEND DB", updateFlashcard);
-
       navigateToLibraryPageSmoothly();
     }
 
@@ -128,10 +129,13 @@ const fetchFlashcardData = async () => {
 };
 
 function navigateToLibraryPageSmoothly() {
+
   document.body.classList.add('fade-out');
   setTimeout(() => {
+    location.reload(); // UPDATES THE FLASHCARD SUCCESSFULL, MUST INTEGRATE WATCH INSTEAD OF location.reload();
     router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
   }, 500); // Match the duration of the CSS transition
+
 }
 
 onMounted(() => {
