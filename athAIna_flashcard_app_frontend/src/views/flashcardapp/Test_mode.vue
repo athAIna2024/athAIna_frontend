@@ -113,10 +113,7 @@ watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
     progress.value = newValue + 1;
     questionIndex.value = newValue;
   }
-
   loadQuestion();
-
-
 });
 
 
@@ -124,6 +121,9 @@ onMounted(() => {
   loadQuestion();
 });
 
+const navigateBackToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+};
 </script>
 
 <template>
@@ -152,6 +152,13 @@ onMounted(() => {
         <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">
           <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
             <div class="athAIna-border-inner p-4 text-center">
+
+              <button @click="navigateBackToLibraryPage" class="flex flex-start">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+              </button>
+
               <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>
               <h1 class="m-8 text-2xl text-athAIna-green font-semibold"> 90% </h1>
               <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>
