@@ -12,10 +12,10 @@ export default {
         <span class="text-3xl font-semibold">Memorization made memorable</span> <br>
         <div class="text-2xl my-4">Now powered with AI</div> <br>
       </div>
-      <div class="text-xl m-10 text-justify">
+      <div class="text-xl m-10 md:w-2/3 text-justify">
         <span> athAIna offers the best flashcard software service, seamlessly integrated with advanced AI technology. Create personalized flashcards effortlessly, along with review and test modes with detailed learning statistics. Embrace a smarter way to learn and master new concepts with athAIna!</span>
       </div>
-      <div class="w-full flex flex-row">
+      <div class="w-full md:w-1/2 flex flex-row">
           <button class="btn w-full mx-4"> Try now </button>
           <button class="btn w-full"> Learn more </button>
      </div>    
