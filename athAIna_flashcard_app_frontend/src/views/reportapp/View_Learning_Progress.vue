@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import Choose_Studyset from "@/views/reportapp/Choose_Studyset.vue";
+import Report from "@/views/reportapp/Report.vue";
 
 // Props
 const props = defineProps({
@@ -9,6 +10,7 @@ const props = defineProps({
 
 // Reactive Variables
 const isChooseStudySetVisible = ref(false);
+const isEmpty = ref(false);
 
 // Define Emits
 const defineEmits = ["close"];
@@ -26,9 +28,13 @@ const close = () => {
 
 <template>
   <div class="h-screen">
-    <div class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+    <div v-if="isEmpty" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
       <p>No report yet. Take a test first.</p>
       <div class="btn w-60 hover:cursor-pointer" @click="showChooseStudySetModal">Test yourself now</div>
+    </div>
+
+    <div v-else class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+      <Report></Report>
     </div>
   </div>
 
