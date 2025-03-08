@@ -9,11 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^11.0.1",
     "athaina-flashcard-app-frontend": "file:",
     "axios": "^1.7.7",
-    "pinia": "^2.2.6",
     "mitt": "^3.0.1",
+    "pinia": "^2.2.6",
     "vue": "^3.5.12",
+    "vue-datepicker-next": "^1.0.3",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
