@@ -34,11 +34,6 @@ const submitAnswer = () => {
 const displayAnswer = () => {
   showAnswer.value = true;
   showQuestion.value = false;
-
-  setTimeout(() => {
-    transitionToNext();
-  }, 1000); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
-
 };
 
 const transitionToNext = () => {
@@ -53,7 +48,8 @@ const transitionToNext = () => {
     showQuestion.value = false;
     setTimeout(() => {
       testModeStore.setIsTestCompleted(true);
-    }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
+
+      }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
   }
 };
 
@@ -116,6 +112,11 @@ const transitionToNext = () => {
             {{ props.answer }}
           </span>
         </div>
+
+        <div class="px-10 py-8 flex items-center justify-end">
+          <button class="btn w-48" @click="transitionToNext">Next</button>
+        </div>
+
       </div>
     </div>
   </Transition>
