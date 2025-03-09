@@ -5,6 +5,9 @@ import { watch } from 'vue';
 
 import { defineProps } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
+import {testModeDB} from "@/views/flashcardapp/dexie.js";
+import flashcardsDB  from "@/views/flashcardapp/dexie.js";
+import Dexie from "dexie";
 
 const testModeStore = useTestModeStore();
 const question = ref(true);
@@ -13,6 +16,7 @@ const result = ref(false);
 const learner_answer = ref(null);
 const showAnswer = ref(false);
 const showQuestion = ref(true);
+const batchId = ref(testModeStore.batchId);
 
 const props = defineProps({
   question: {
@@ -23,13 +27,52 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  flashcardId: {
+    type: Number,
+    required: true,
+  }
 });
 
 
-const submitAnswer = () => {
+const submitAnswer = async () => {
+  console.log("Flashcard Id", props.flashcardId);
+  console.log("Batch Id", batchId.value);
+  console.log("Learner Answer", learner_answer.value);
+  console.log("Created At", new Date());
+  console.log("Is Correct", validateAnswer(props.answer));
+  console.log("Corrected At", new Date());
+
+  const newTestField = {
+    flashcard_id: props.flashcardId,
+    batch_id: batchId.value,
+    created_at: new Date(),
+    learner_answer: learner_answer.value,
+    is_correct: false,
+    corrected_at: new Date(),
+  }
+
+  console.log("New Test Field", newTestField);
+
+  try
+  {
+    await testModeDB.test_field.add(newTestField);
+  } catch (error) {
+    console.error(error);
+  }
+
+
   displayAnswer();
+
 };
 
+
+const validateAnswer = (correctAnswer) => {
+  if (learner_answer === correctAnswer) {
+    return true;
+  } else {
+    return false; // Integrate AI validation (for partial match) and return the result
+  }
+}
 
 const displayAnswer = () => {
   showAnswer.value = true;
@@ -37,10 +80,13 @@ const displayAnswer = () => {
 };
 
 const transitionToNext = () => {
+
   showAnswer.value = false;
   if (testModeStore.currentQuestionIndex + 1 < testModeStore.numberOfQuestions) {
     const increment = testModeStore.currentQuestionIndex + 1;
     testModeStore.setCurrentQuestionIndex(increment);
+
+    learner_answer.value = null; // Reset the learner's answer
     showQuestion.value = true;
   } else {
     // Shows the summary of score in 500 milliseconds
@@ -52,6 +98,7 @@ const transitionToNext = () => {
       }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
   }
 };
+
 
 </script>
 
@@ -94,8 +141,11 @@ const transitionToNext = () => {
           <span class="text-athAIna-sm">
             Your answer
           </span>
-          <span class="text-athAIna-green text-athAIna-base">
-            insert learner answer
+          <span v-if="learner_answer" class="text-athAIna-green text-athAIna-base">
+            {{ learner_answer }}
+          </span>
+          <span v-else class="text-athAIna-red text-athAIna-base">
+            You did not provide an answer
           </span>
         </div>
 

@@ -42,6 +42,7 @@ FRONTEND DATABASE SCHEMA for TEST MODE
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { useTestModeStore } from '../../../stores/testModeStore.js';
 import { useStudysetStore } from '../../../stores/studySetStore.js';
@@ -50,11 +51,13 @@ import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
 
+const route = useRoute();
 const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 const progress = ref(testModeStore.currentQuestionIndex + 1);
 
+const flashcardId = ref(null);
 const flashcardIds = ref(testModeStore.testModeQuestions);
 const questionIndex = ref(testModeStore.currentQuestionIndex);
 const questionLength = ref(Number(testModeStore.numberOfQuestions));
@@ -64,11 +67,16 @@ const flashcardAnswer = ref(null);
 
 const studySetName = studySetStore.studySetTitle;
 const studySetId = studySetStore.studySetId;
+const batchId = ref(testModeStore.batchId);
 
 const showConfirmation = ref(false);
 
 const navigateToLibraryPage = () => {
   showConfirmation.value = true;
+};
+
+const navigateBackToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
 };
 
 const closeConfirmation = () => {
@@ -91,29 +99,32 @@ const closeTest_Mode = () => {
 
 const loadQuestion = async () => {
   try {
-    const flashcardId = flashcardIds.value[questionIndex.value];
-    console.log("Flashcard ID", flashcardId);
-    const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId);
-    flashcard.value = fetchedFlashcard;
+    flashcardId.value = flashcardIds.value[questionIndex.value];
+    console.log("Flashcard ID", flashcardId.value);
 
-    flashcardQuestion.value = flashcard.value.question;
-    flashcardAnswer.value = flashcard.value.answer;
+    if (flashcardId.value !== null && flashcardId.value !== undefined) {
+      const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId.value);
+      flashcard.value = fetchedFlashcard;
 
-    console.log("Question", flashcardQuestion.value);
+      flashcardQuestion.value = flashcard.value.question;
+      flashcardAnswer.value = flashcard.value.answer;
 
+      console.log("Question", flashcardQuestion.value);
+    } else {
+      console.error("Invalid flashcard ID:", flashcardId.value);
+    }
   } catch (error) {
     console.error("Error fetching flashcard:", error);
   }
 };
 
-
-watch(() => testModeStore.currentQuestionIndex, (newValue, oldValue) => {
+watch(() => testModeStore.currentQuestionIndex, async (newValue, oldValue) => {
   console.log("Question index changed from", oldValue, "to", newValue);
   if (progress.value < questionLength.value) {
     progress.value = newValue + 1;
     questionIndex.value = newValue;
   }
-  loadQuestion();
+ await loadQuestion();
 });
 
 
@@ -121,9 +132,6 @@ onMounted(() => {
   loadQuestion();
 });
 
-const navigateBackToLibraryPage = () => {
-  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
-};
 </script>
 
 <template>
@@ -146,7 +154,7 @@ const navigateBackToLibraryPage = () => {
         <span class="font-bold"> {{progress}} / {{questionLength}} </span>
       </div>
 
-      <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" />
+      <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" :flashcardId="flashcardId" />
 
       <div v-if="testModeStore.isTestCompleted">
         <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">

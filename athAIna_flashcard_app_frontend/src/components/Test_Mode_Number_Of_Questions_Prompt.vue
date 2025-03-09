@@ -1,8 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { computed } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
 import { useStudysetStore} from "../../stores/studySetStore.js";
 import axios from '@/axios';
@@ -45,8 +43,6 @@ const errorMessage = ref({
 const randomizeTestUrl = '/test/randomize/'
 const randomizeTestModeFlashcards = async () => {
 
-  console.log("STUDY SET TITLE", studySetTitle.value);
-  console.log("STUDY SET ID", studySetId.value);
   const numberOfQuestions = Number(testModeStore.numberOfQuestions);
   try {
     const response = await axios.get(`${randomizeTestUrl}`,{
@@ -59,7 +55,6 @@ const randomizeTestModeFlashcards = async () => {
     isSuccessful_test.value = response.data.successful;
     message_test.value = response.data.message;
 
-    console.log("FLASHCARD IDS: ", response.data.flashcard_ids);
     testModeStore.setTestModeQuestions(response.data.flashcard_ids);
 
 
@@ -72,8 +67,6 @@ const redirectToTestMode = async () => {
 
   await fetchFlashcardCounts();
 
-  console.log("FLASHCARD COUNTS: ", flashcardCounts.value);
-  console.log("NUMBER OF QUESTIONS: ", numberOfQuestions.value);
   if (numberOfQuestions.value <= 0 || numberOfQuestions.value === null || isNaN(numberOfQuestions.value)) {
     errors.value.numberOfQuestions = true;
     errorMessage.value.numberOfQuestions = "You cannot test yourself with empty questions."
@@ -89,15 +82,24 @@ const redirectToTestMode = async () => {
 
     await randomizeTestModeFlashcards();
 
-    if (isSuccessful_test.value) {
+    if (isSuccessful_test.value)
+    {
       const newUuid = uuidv4();
       testModeStore.setBatchId(newUuid);
-      await router.push({name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId }});
+
+      if (testModeStore.isTestCompleted)
+      {
+        testModeStore.setCurrentQuestionIndex(0);
+        testModeStore.setIsTestCompleted(false);
+      }
+
+      await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId } });
     }
+
+    router.go(0); // Refresh the page (alternative for location.reload();
 
   }
 };
-
 
 
 </script>
