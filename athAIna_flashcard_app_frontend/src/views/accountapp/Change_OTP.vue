@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
+import axios from "@/axios";
 
 const router = useRouter();
 
@@ -50,9 +50,9 @@ const handleBoxInput = (boxIndex, event) => {
 
 const handleBoxKeydown = (boxIndex, event) => {
   if (
-      event.key === "Backspace" &&
-      !displayOTP.value[boxIndex] &&
-      boxIndex > 0
+    event.key === "Backspace" &&
+    !displayOTP.value[boxIndex] &&
+    boxIndex > 0
   ) {
     event.preventDefault();
     const prevInput = event.target.previousElementSibling;
@@ -66,12 +66,9 @@ const handleBoxKeydown = (boxIndex, event) => {
 
 const verifyOTP = async () => {
   try {
-    const response = await axios.post(
-        "http://localhost:8000/account/verify-password-change-otp/",
-        {
-          otp: otpValue.value,
-        }
-    );
+    const response = await axios.post("/account/verify-password-change-otp/", {
+      otp: otpValue.value,
+    });
 
     if (response.data.successful) {
       isVerified.value = true;
@@ -154,8 +151,8 @@ const buttonText = computed(() => {
 
 <template>
   <div
-      v-if="isVisible"
-      class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
+    v-if="isVisible"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
   >
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
@@ -166,21 +163,21 @@ const buttonText = computed(() => {
         <p v-if="error" class="text-athAIna-red text-sm mb-4">{{ error }}</p>
         <div class="flex flex-row justify-center items-center">
           <input
-              type="text"
-              v-model="otpValue"
-              class="sr-only"
-              @input="handleOTPChange"
+            type="text"
+            v-model="otpValue"
+            class="sr-only"
+            @input="handleOTPChange"
           />
           <div class="flex flex-row justify-center items-center gap-2">
             <input
-                v-for="(digit, boxIndex) in displayOTP"
-                :key="boxIndex"
-                type="text"
-                maxlength="1"
-                v-model="displayOTP[boxIndex]"
-                @input="handleBoxInput(boxIndex, $event)"
-                @keydown="handleBoxKeydown(boxIndex, $event)"
-                class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
+              v-for="(digit, boxIndex) in displayOTP"
+              :key="boxIndex"
+              type="text"
+              maxlength="1"
+              v-model="displayOTP[boxIndex]"
+              @input="handleBoxInput(boxIndex, $event)"
+              @keydown="handleBoxKeydown(boxIndex, $event)"
+              class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
             />
           </div>
           <!-- <input
@@ -216,9 +213,9 @@ const buttonText = computed(() => {
         </div>
         <div class="m-8 flex justify-center">
           <button
-              @click="nextStep"
-              class="btn w-48"
-              :disabled="otpValue.length !== 6"
+            @click="nextStep"
+            class="btn w-48"
+            :disabled="otpValue.length !== 6"
           >
             Verify
           </button>
