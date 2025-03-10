@@ -1,13 +1,11 @@
 <script setup>
 
 import { ref } from 'vue';
-import { watch } from 'vue';
+import { computed } from 'vue';
 
 import { defineProps } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
 import {testModeDB} from "@/views/flashcardapp/dexie.js";
-import flashcardsDB  from "@/views/flashcardapp/dexie.js";
-import Dexie from "dexie";
 import axios from '@/axios';
 
 const ai_validation_url = 'test/validate_learner_answer/';
@@ -19,6 +17,11 @@ const learner_answer = ref(null);
 const showAnswer = ref(false);
 const showQuestion = ref(true);
 const batchId = ref(testModeStore.batchId);
+
+const is_correct = ref(false);
+const answerClass = computed(() => {
+  return is_correct.value ? 'text-athAIna-green' : 'text-athAIna-red';
+});
 
 const props = defineProps({
   question: {
@@ -37,25 +40,16 @@ const props = defineProps({
 
 
 const submitAnswer = async () => {
-  console.log("Flashcard Id", props.flashcardId);
-  console.log("Batch Id", batchId.value);
-  console.log("Learner Answer", learner_answer.value);
-  console.log("Created At", new Date());
-  console.log("Is Correct", await validateAnswer());
-  console.log("Corrected At", new Date());
-
-  const validated_answer = await validateAnswer();
+  is_correct.value = await validateAnswer();
 
   const newTestField = {
     flashcard_id: props.flashcardId,
     batch_id: batchId.value,
     created_at: new Date(),
     learner_answer: learner_answer.value,
-    is_correct: validated_answer,
+    is_correct: is_correct.value,
     corrected_at: new Date(),
   }
-
-  console.log("New Test Field", newTestField);
 
   try
   {
@@ -71,8 +65,15 @@ const submitAnswer = async () => {
 
 
 const validateAnswer = async (correctAnswer) => {
-  return learner_answer.value?.toLowerCase() === props.answer?.toLowerCase()
-      || await validateLearnAnswerWithAi();
+  if (!learner_answer.value) {
+    return false;
+  } else {
+    if (learner_answer.value.toLowerCase() === props.answer.toLowerCase()) {
+      return true;
+    } else {
+      return await validateLearnAnswerWithAi();
+    }
+  }
 }
 
 const validateLearnAnswerWithAi = async () => {
@@ -108,22 +109,24 @@ const displayAnswer = () => {
 };
 
 const transitionToNext = () => {
+  try {
+    showAnswer.value = false;
+    if (testModeStore.currentQuestionIndex + 1 < testModeStore.numberOfQuestions) {
+      const increment = testModeStore.currentQuestionIndex + 1;
+      testModeStore.setCurrentQuestionIndex(increment);
 
-  showAnswer.value = false;
-  if (testModeStore.currentQuestionIndex + 1 < testModeStore.numberOfQuestions) {
-    const increment = testModeStore.currentQuestionIndex + 1;
-    testModeStore.setCurrentQuestionIndex(increment);
-
-    learner_answer.value = null; // Reset the learner's answer
-    showQuestion.value = true;
-  } else {
-    // Shows the summary of score in 500 milliseconds
-    showAnswer.value = true;
-    showQuestion.value = false;
-    setTimeout(() => {
-      testModeStore.setIsTestCompleted(true);
-
+      learner_answer.value = null; // Reset the learner's answer
+      showQuestion.value = true;
+    } else {
+      // Shows the summary of score in 500 milliseconds
+      showAnswer.value = true;
+      showQuestion.value = false;
+      setTimeout(() => {
+        testModeStore.setIsTestCompleted(true);
       }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
+    }
+  } catch (error) {
+    console.error("Error during transition:", error);
   }
 };
 
@@ -169,11 +172,8 @@ const transitionToNext = () => {
           <span class="text-athAIna-sm">
             Your answer
           </span>
-          <span v-if="learner_answer" class="text-athAIna-green text-athAIna-base">
-            {{ learner_answer }}
-          </span>
-          <span v-else class="text-athAIna-red text-athAIna-base">
-            You did not provide an answer
+          <span :class="[answerClass, 'text-athAIna-base']">
+            {{ learner_answer || 'You did not provide an answer' }}
           </span>
         </div>
 
