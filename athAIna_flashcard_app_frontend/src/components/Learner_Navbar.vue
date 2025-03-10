@@ -102,7 +102,9 @@ const toggleModal = (modalName) => {
   >
     <div class="flex flex-row justify-between items-center space-x-20">
       <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
-      <div>Features</div>
+      <div>
+        <router-link to="/features"> Features </router-link>
+      </div>
       <div>
         <router-link to="/faqs">FAQS</router-link>
       </div>
