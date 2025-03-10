@@ -57,13 +57,14 @@ const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 const progress = ref(testModeStore.currentQuestionIndex + 1);
 
-const flashcardId = ref(null);
+const flashcardId = ref(0);
 const flashcardIds = ref(testModeStore.testModeQuestions);
 const questionIndex = ref(testModeStore.currentQuestionIndex);
 const questionLength = ref(Number(testModeStore.numberOfQuestions));
+
 const flashcard = ref(null);
-const flashcardQuestion = ref(null);
-const flashcardAnswer = ref(null);
+const flashcardQuestion = ref('');
+const flashcardAnswer = ref('');
 
 const studySetName = studySetStore.studySetTitle;
 const studySetId = studySetStore.studySetId;
@@ -106,8 +107,8 @@ const loadQuestion = async () => {
       const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId.value);
       flashcard.value = fetchedFlashcard;
 
-      flashcardQuestion.value = flashcard.value.question;
-      flashcardAnswer.value = flashcard.value.answer;
+      flashcardQuestion.value = flashcard.value?.question || '';
+      flashcardAnswer.value = flashcard.value?.answer || '';
 
       console.log("Question", flashcardQuestion.value);
     } else {

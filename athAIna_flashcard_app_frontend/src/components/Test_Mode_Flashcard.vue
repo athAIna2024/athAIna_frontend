@@ -8,11 +8,13 @@ import { useTestModeStore} from "../../stores/testModeStore.js";
 import {testModeDB} from "@/views/flashcardapp/dexie.js";
 import flashcardsDB  from "@/views/flashcardapp/dexie.js";
 import Dexie from "dexie";
+import axios from '@/axios';
+
+const ai_validation_url = 'test/validate_learner_answer/';
+const isSuccessful = ref(false);
+const message = ref(null);
 
 const testModeStore = useTestModeStore();
-const question = ref(true);
-const answer = ref(false);
-const result = ref(false);
 const learner_answer = ref(null);
 const showAnswer = ref(false);
 const showQuestion = ref(true);
@@ -39,15 +41,17 @@ const submitAnswer = async () => {
   console.log("Batch Id", batchId.value);
   console.log("Learner Answer", learner_answer.value);
   console.log("Created At", new Date());
-  console.log("Is Correct", validateAnswer(props.answer));
+  console.log("Is Correct", await validateAnswer());
   console.log("Corrected At", new Date());
+
+  const validated_answer = await validateAnswer();
 
   const newTestField = {
     flashcard_id: props.flashcardId,
     batch_id: batchId.value,
     created_at: new Date(),
     learner_answer: learner_answer.value,
-    is_correct: false,
+    is_correct: validated_answer,
     corrected_at: new Date(),
   }
 
@@ -66,13 +70,37 @@ const submitAnswer = async () => {
 };
 
 
-const validateAnswer = (correctAnswer) => {
-  if (learner_answer === correctAnswer) {
-    return true;
-  } else {
-    return false; // Integrate AI validation (for partial match) and return the result
-  }
+const validateAnswer = async (correctAnswer) => {
+  return learner_answer.value?.toLowerCase() === props.answer?.toLowerCase()
+      || await validateLearnAnswerWithAi();
 }
+
+const validateLearnAnswerWithAi = async () => {
+  try {
+    const response = await axios.get(`${ai_validation_url}${Number(props.flashcardId)}/`, {
+      params: {
+        learner_answer: learner_answer.value
+      }
+    });
+
+    isSuccessful.value = response.data.successful;
+
+    if (isSuccessful.value) {
+      if (response.data.is_correct) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      isSuccessful.value = false;
+      message.value = response.data.message;
+    }
+  } catch (error) {
+    console.error("Error", error);
+    isSuccessful.value = false;
+    message.value = error.message;
+  }
+};
 
 const displayAnswer = () => {
   showAnswer.value = true;
