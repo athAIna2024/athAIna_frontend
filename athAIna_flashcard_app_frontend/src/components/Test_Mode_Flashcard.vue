@@ -9,8 +9,12 @@ import {testModeDB} from "@/views/flashcardapp/dexie.js";
 import axios from '@/axios';
 
 const ai_validation_url = 'test/validate_learner_answer/';
+const save_test_results_url = 'test/save/'
 const isSuccessful = ref(false);
 const message = ref(null);
+
+const isSuccessful_save = ref(false);
+const message_save = ref(null);
 
 const testModeStore = useTestModeStore();
 const learner_answer = ref(null);
@@ -121,15 +125,47 @@ const transitionToNext = () => {
       // Shows the summary of score in 500 milliseconds
       showAnswer.value = true;
       showQuestion.value = false;
-      setTimeout(() => {
-        testModeStore.setIsTestCompleted(true);
-      }, 500); // To be adjusted to 6000 milliseconds, 1000 milliseconds is for testing purposes
+      testModeStore.setIsTestCompleted(true);
+
+      if (testModeStore.isTestCompleted) {
+        console.log("Test Completed");
+        saveTestResults();
+      }
+
     }
   } catch (error) {
     console.error("Error during transition:", error);
   }
 };
 
+const saveTestResults = async () => {
+  try {
+    const testResults = await testModeDB.test_field.where('batch_id').equals(batchId.value).toArray();
+
+    const cleanTestResults = testResults.map((result) => {
+      return {
+        flashcard_instance: Number(result.flashcard_id), // Convert to number
+        batch_id: result.batch_id, // Keep as string since it's a UUID
+        created_at: new Date(result.created_at).toISOString(), // Convert to ISO string
+        learner_answer: String(result.learner_answer).trim(), // Convert to string and trim whitespace
+        is_correct: Boolean(result.is_correct), // Convert to boolean
+        corrected_at: new Date(result.corrected_at).toISOString() // Convert to ISO string
+      };
+    });
+    console.log("Clean Test Results", cleanTestResults);
+
+    const request = await axios.post(save_test_results_url, cleanTestResults);
+
+    isSuccessful_save.value = request.data.successful;
+    message_save.value = request.data.message;
+    console.log("Did it save successfully?", isSuccessful_save.value);
+
+  } catch (error) {
+    isSuccessful_save.value = false;
+    message_save.value = error.message;
+    console.error("Failed to save the data", error);
+  }
+};
 
 </script>
 
