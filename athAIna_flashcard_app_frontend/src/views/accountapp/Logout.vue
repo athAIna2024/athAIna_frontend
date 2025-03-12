@@ -1,16 +1,38 @@
 <script>
 export default {
-  name: 'Logout',
+  name: "Logout",
+  props: {
+    isVisible: {
+      type: Boolean,
+      required: true,
+    },
+    title: {
+      type: String,
+      default: "Modal Title",
+    },
+  },
 };
 </script>
 
 <template>
-  <div class="">
-    Even this is just a button, better to have a separate page for this
-    so that it is maintainable and readable
-    Refer to 5.6 Logout in Figma
+  <div
+    v-if="isVisible"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
+  >
+    <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
+      <div class="athAIna-border-inner p-4 text-center">
+        <div class="flex justify-start m-8 pl-4 text-athAIna-lg">
+          Are you sure you want to log out?
+        </div>
+        <div class="mb-8 flex justify-center">
+          <button @click="close" class="btn-alt w-48 mr-5">No</button>
+          <button class="btn w-48">
+            <router-link :to="login"> Yes </router-link>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
