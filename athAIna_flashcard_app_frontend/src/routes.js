@@ -173,6 +173,7 @@ router.beforeEach((to, from, next) => {
     testModeStore.setIsTestCompleted(false);
     testModeStore.setTestModeQuestions([]);
     testModeStore.setBatchId(null);
+    testModeStore.setCreatedAt(null);
   }
 
   next();

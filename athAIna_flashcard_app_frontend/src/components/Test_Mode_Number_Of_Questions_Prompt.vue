@@ -91,8 +91,10 @@ const redirectToTestMode = async () => {
       {
         testModeStore.setCurrentQuestionIndex(0);
         testModeStore.setIsTestCompleted(false);
+        testModeStore.setCreatedAt(null);
       }
 
+      testModeStore.setCreatedAt(new Date());
       await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId } });
     }
 

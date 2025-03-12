@@ -49,7 +49,7 @@ const submitAnswer = async () => {
   const newTestField = {
     flashcard_id: props.flashcardId,
     batch_id: batchId.value,
-    created_at: new Date(),
+    created_at: testModeStore.created_at,
     learner_answer: learner_answer.value,
     is_correct: is_correct.value,
     corrected_at: new Date(),
