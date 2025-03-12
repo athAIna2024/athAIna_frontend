@@ -11,7 +11,7 @@ import Pagination from "@/components/Pagination.vue";
 
 import { useRouter } from 'vue-router';
 import {useStudysetStore} from "../../../stores/studySetStore.js";
-import {useFlashcardStore} from "../../../stores/flashcardStore.js";
+import {useFlashcardSearchStore} from "../../../stores/flashcardSearchStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
@@ -20,7 +20,7 @@ import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_
 const route = useRoute();
 
 const studySetStore = useStudysetStore();
-const flashcardStore = useFlashcardStore();
+const flashcardSearchStore = useFlashcardSearchStore();
 const router = useRouter();
 const studySetTitle = studySetStore.studySetTitle;
 const studySetId = Number(studySetStore.studySetId);
@@ -32,7 +32,7 @@ const flashcard_db = ref([]);
 const itemsPerPage = 6;
 
 const flashcardCounts = computed(() => {
-  return flashcardStore.getSearchResults(studySetId).length || flashcard_db.value.length;
+  return flashcardSearchStore.getSearchResults(studySetId).length || flashcard_db.value.length;
 });
 
 
@@ -180,7 +180,7 @@ const navigateToLibraryPage = () => {
           </div>
 
           <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-            <div class="list-none" v-for="(flashcard, index) in flashcardStore.getSearchResults(studySetId).length ? flashcardStore.getSearchResults(studySetId) : currentFlashcards" :key="index">              <Flashcard_Card
+            <div class="list-none" v-for="(flashcard, index) in flashcardSearchStore.getSearchResults(studySetId).length ? flashcardSearchStore.getSearchResults(studySetId) : currentFlashcards" :key="index">
                 <Flashcard_Card
                   :flashcardId="flashcard.id"
                   :question="flashcard.question"

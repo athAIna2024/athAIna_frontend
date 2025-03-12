@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useFlashcardStore = defineStore('flashcard', () => {
+export const useFlashcardSearchStore = defineStore('flashcardSearch', () => {
   const searchResults = ref({});
 
   const setSearchResults = (studySetId, results) => {
@@ -18,3 +18,4 @@ export const useFlashcardStore = defineStore('flashcard', () => {
     getSearchResults,
   };
 });
+

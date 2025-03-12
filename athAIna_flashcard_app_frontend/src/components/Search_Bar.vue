@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
-import { useFlashcardStore} from "../../stores/flashcardStore.js";
+import { useFlashcardSearchStore} from "../../stores/flashcardSearchStore.js";
 import { useStudysetStore} from "../../stores/studySetStore.js";
 
-const flashcardStore = useFlashcardStore();
+const flashcardSearchStore = useFlashcardSearchStore();
 const studySetStore = useStudysetStore();
 
 const studySetId = Number(studySetStore.studySetId);
@@ -24,7 +24,7 @@ const updateValue = (event) => {
 const handleKeyPress = async (event) => {
   emit('update:modelValue', event.target.value);
   searchResults.value = await searchFlashcards(event.target.value);
-  flashcardStore.setSearchResults(studySetId, searchResults.value);
+  flashcardSearchStore.setSearchResults(studySetId, searchResults.value);
 };
 
 const searchFlashcards = async (query) => {
