@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
 import Cookies from "js-cookie";
@@ -19,7 +19,7 @@ const locked = ref(false);
 const lockedTime = ref(0);
 const failedAttempts = ref(0);
 const maxAttempts = 5;
-const lockoutTime = 60 * 6;
+const lockoutDuration = 60;
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
@@ -98,7 +98,6 @@ const login = async () => {
 
 const handleFailedAttempt = () => {
   failedAttempts.value += 1;
-  console.log("failed attempts: ", failedAttempts.value);
   if (failedAttempts.value >= maxAttempts) {
     lockUserOut();
   } else {
@@ -108,16 +107,41 @@ const handleFailedAttempt = () => {
 
 const lockUserOut = () => {
   locked.value = true;
-  lockedTime.value = lockoutTime;
-  const interval = setInterval(() => {
-    lockedTime.value -= 1;
-    if (lockedTime.value <= 0) {
-      clearInterval(interval);
+  const lockoutEndTime = Date.now() + lockoutDuration * 1000;
+  localStorage.setItem("lockoutEndTime", lockoutEndTime);
+  localStorage.setItem("locked", true);
+  updateLockedTime();
+};
+
+const updateLockedTime = () => {
+  const lockoutEndTime = localStorage.getItem("lockoutEndTime");
+  if (lockoutEndTime) {
+    const remainingTime = Math.max(0, lockoutEndTime - Date.now());
+    lockedTime.value = Math.floor(remainingTime / 1000);
+    if (remainingTime > 0) {
+      setTimeout(updateLockedTime, 1000);
+    } else {
       locked.value = false;
       failedAttempts.value = 0;
+      localStorage.removeItem("lockoutEndTime");
+      localStorage.removeItem("locked");
     }
-  }, 1000);
+  }
 };
+
+onMounted(() => {
+  const storedLocked = localStorage.getItem("locked");
+  const storedLockedTime = localStorage.getItem("lockoutEndTime");
+
+  if (storedLocked && storedLockedTime) {
+    locked.value = storedLocked === "true";
+    const remainingTime = Math.max(0, storedLockedTime - Date.now());
+    lockedTime.value = Math.floor(remainingTime / 1000);
+    if (locked.value) {
+      updateLockedTime();
+    }
+  }
+});
 </script>
 
 <template>
