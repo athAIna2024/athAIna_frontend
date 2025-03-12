@@ -32,7 +32,7 @@ const flashcard_db = ref([]);
 const itemsPerPage = 6;
 
 const flashcardCounts = computed(() => {
-  return flashcardStore.searchResults.length || flashcard_db.value.length;
+  return flashcardStore.getSearchResults(studySetId).length || flashcard_db.value.length;
 });
 
 
@@ -180,14 +180,13 @@ const navigateToLibraryPage = () => {
           </div>
 
           <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-            <li class="list-none" v-for="(flashcard, index) in flashcardStore.searchResults.length ? flashcardStore.searchResults : currentFlashcards" :key="index">
-              <Flashcard_Card
+            <div class="list-none" v-for="(flashcard, index) in flashcardStore.getSearchResults(studySetId).length ? flashcardStore.getSearchResults(studySetId) : currentFlashcards" :key="index">              <Flashcard_Card
+                <Flashcard_Card
                   :flashcardId="flashcard.id"
                   :question="flashcard.question"
                   :answer="flashcard.answer"
-                  :image="flashcard.image"
-              />
-            </li>
+                  :image="flashcard.image" />
+            </div>
             <div class="item error" v-if="!isSuccessful">
               <p>{{ message }}</p>
             </div>
