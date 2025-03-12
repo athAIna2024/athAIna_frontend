@@ -2,7 +2,9 @@
 import {ref} from 'vue';
 import {computed} from "vue";
 import {onMounted} from "vue";
-import Flashcard_Search_Bar from "@/components/Search_Bar.vue";
+import { watch } from 'vue';
+import {useRoute} from 'vue-router';
+import Search_Bar from "@/components/Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 import Pagination from "@/components/Pagination.vue";
@@ -13,6 +15,10 @@ import {useFlashcardStore} from "../../../stores/flashcardStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
+
+
+const route = useRoute();
+
 const studySetStore = useStudysetStore();
 const flashcardStore = useFlashcardStore();
 const router = useRouter();
@@ -66,7 +72,10 @@ const closeTest_Mode = () => {
 
 const fetchFlashcardsFromDb = async () => {
   try {
-    flashcard_db.value = await flashcardsDB.flashcards.where('studyset_id').equals(studySetId).toArray();
+    flashcard_db.value = await flashcardsDB.flashcards
+        .filter(flashcard => flashcard.studyset_id === studySetId)
+        .sortBy('updated_at')
+        .then(array => array.reverse());
 
     if (flashcard_db.value.length === 0) {
       isSuccessful.value = false;
@@ -88,8 +97,19 @@ const currentFlashcards = computed(() => {
   return flashcard_db.value.slice(startIndex, endIndex);
 });
 
-onMounted(() => {
-  fetchFlashcardsFromDb();
+watch(
+    () => [route.params.studySetId, route.params.studySetTitle],
+    async ([newStudySetId, newStudySetTitle], [oldStudySetId, oldStudySetTitle]) => {
+      if (newStudySetId !== oldStudySetId || newStudySetTitle !== oldStudySetTitle) {
+        studySetStore.setStudySetId(newStudySetId);
+        studySetStore.setStudySetTitle(newStudySetTitle);
+        await fetchFlashcardsFromDb();
+      }
+    }
+);
+
+onMounted(async () => {
+  await fetchFlashcardsFromDb();
   document.title = `${studySetTitle} - Flashcards`;
 });
 
@@ -99,8 +119,6 @@ const navigateToLibraryPage = () => {
 </script>
 
 <template>
-{{ studySetId}}
-  {{ studySetTitle }}
   <div class="m-4">
     <div class="athAIna-border-outer p-1 shadow-xl">
       <div class="athAIna-border-inner py-4">
@@ -119,7 +137,7 @@ const navigateToLibraryPage = () => {
             </div>
 
             <div class="flex flex-row justify-between space-x-6 items-center">
-              <Flashcard_Search_Bar v-model="input" />
+              <Search_Bar v-model="input" />
               <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
               <div v-if="modals.learningMode" class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
                 <button class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
@@ -171,9 +189,6 @@ const navigateToLibraryPage = () => {
               />
             </li>
             <div class="item error" v-if="!isSuccessful">
-              <p>{{ message }}</p>
-            </div>
-            <div class="item error" v-if="flashcardCounts === 0">
               <p>{{ message }}</p>
             </div>
           </div>
