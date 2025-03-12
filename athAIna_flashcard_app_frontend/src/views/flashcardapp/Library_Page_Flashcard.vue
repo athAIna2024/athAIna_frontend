@@ -10,6 +10,7 @@ import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 import Pagination from "@/components/Pagination.vue";
 
 import { useRouter } from 'vue-router';
+import { onBeforeRouteLeave}   from "vue-router";
 import {useStudysetStore} from "../../../stores/studySetStore.js";
 import {useFlashcardSearchStore} from "../../../stores/flashcardSearchStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
@@ -22,8 +23,17 @@ const route = useRoute();
 const studySetStore = useStudysetStore();
 const flashcardSearchStore = useFlashcardSearchStore();
 const router = useRouter();
+
+// Remove ref since they are declared as reactive in pinia store
+const studySetTitleFromStore = ref(studySetStore.studySetTitle);
+const studySetIdFromStore = ref(studySetStore.studySetId);
+
+// const studySetTitle = studySetTitleFromStore.value;
+// const studySetId = studySetIdFromStore.value;
+
 const studySetTitle = studySetStore.studySetTitle;
 const studySetId = Number(studySetStore.studySetId);
+
 const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_db = ref([]);
@@ -72,11 +82,13 @@ const closeTest_Mode = () => {
 
 const fetchFlashcardsFromDb = async () => {
   try {
+    console.log("studyset ID", studySetId);
     flashcard_db.value = await flashcardsDB.flashcards
         .filter(flashcard => flashcard.studyset_id === studySetId)
         .sortBy('updated_at')
         .then(array => array.reverse());
 
+    console.log(flashcard_db);
     if (flashcard_db.value.length === 0) {
       isSuccessful.value = false;
       message.value = "There are no flashcards in this study set.";
@@ -97,19 +109,8 @@ const currentFlashcards = computed(() => {
   return flashcard_db.value.slice(startIndex, endIndex);
 });
 
-watch(
-    () => [route.params.studySetId, route.params.studySetTitle],
-    async ([newStudySetId, newStudySetTitle], [oldStudySetId, oldStudySetTitle]) => {
-      if (newStudySetId !== oldStudySetId || newStudySetTitle !== oldStudySetTitle) {
-        studySetStore.setStudySetId(newStudySetId);
-        studySetStore.setStudySetTitle(newStudySetTitle);
-        await fetchFlashcardsFromDb();
-      }
-    }
-);
-
-onMounted(async () => {
-  await fetchFlashcardsFromDb();
+onMounted( () => {
+  fetchFlashcardsFromDb();
   document.title = `${studySetTitle} - Flashcards`;
 });
 
