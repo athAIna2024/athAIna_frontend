@@ -42,7 +42,7 @@ const submitInquiry = async () => {
 <template>
   <div class="flex flex-row justify-between">
     <div class="flex flex-col justify-center items-center min-h-screen mx-10">
-      <h1 class="text-athAIna-violet font-semibold w-full p-10">
+      <h1 class="text-athAIna-violet font-semibold w-full p-10 text-center lg:text-left">
         Welcome Back!
       </h1>
 
@@ -63,7 +63,7 @@ const submitInquiry = async () => {
       </div>
 
       <div
-          class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-[700px]"
+          class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full md:w-[700px]"
       >
         <div class="relative flex flex-row items-center">
           <svg
@@ -153,7 +153,7 @@ const submitInquiry = async () => {
       </div>
     </div>
 
-    <div class="mt-40 mr-40 pr-40 flex justify-center">
+    <div class="invisible xl:visible mt-40 mr-40 pr-40 flex justify-center">
       <div
           class="absolute rotate-[12deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
       ></div>

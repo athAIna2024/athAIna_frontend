@@ -30,7 +30,7 @@ export default {
           <button class="btn w-full">Learn more</button>
         </div>
       </div>
-      <div class="w-full flex flex-row justify-end">
+      <div class="invisible 2xl:visible w-full flex flex-row justify-end">
         <div
           class="absolute transform -translate-x-[15rem] translate-y-10 shadow-md w-[360px] h-[480px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
         ></div>
