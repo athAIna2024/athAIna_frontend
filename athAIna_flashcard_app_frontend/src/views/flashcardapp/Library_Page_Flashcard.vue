@@ -82,13 +82,11 @@ const closeTest_Mode = () => {
 
 const fetchFlashcardsFromDb = async () => {
   try {
-    console.log("studyset ID", studySetId);
     flashcard_db.value = await flashcardsDB.flashcards
         .filter(flashcard => flashcard.studyset_id === studySetId)
         .sortBy('updated_at')
         .then(array => array.reverse());
 
-    console.log(flashcard_db);
     if (flashcard_db.value.length === 0) {
       isSuccessful.value = false;
       message.value = "There are no flashcards in this study set.";
