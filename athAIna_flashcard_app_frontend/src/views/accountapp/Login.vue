@@ -15,6 +15,11 @@ const router = useRouter();
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
+const locked = ref(false);
+const lockedTime = ref(0);
+const failedAttempts = ref(0);
+const maxAttempts = 5;
+const lockoutTime = 60 * 6;
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
@@ -27,6 +32,13 @@ const errors = ref({
 });
 
 const login = async () => {
+  if (locked.value) {
+    errors.value.general = `You are locked out. Please try again in ${Math.ceil(
+      lockedTime.value / 60
+    )} minutes.`;
+    return;
+  }
+
   try {
     const response = await axios.post(
       "/account/login/",
@@ -70,6 +82,7 @@ const login = async () => {
       console.log(response.data.error);
     }
   } catch (error) {
+    handleFailedAttempt();
     console.log(error.value);
     if (error.response.status === 400) {
       errors.value.email = error.response.data.email || [];
@@ -81,6 +94,29 @@ const login = async () => {
       errors.value.general = error.response.data.error;
     }
   }
+};
+
+const handleFailedAttempt = () => {
+  failedAttempts.value += 1;
+  console.log("failed attempts: ", failedAttempts.value);
+  if (failedAttempts.value >= maxAttempts) {
+    lockUserOut();
+  } else {
+    errors.value.general = "Invalid email or password.";
+  }
+};
+
+const lockUserOut = () => {
+  locked.value = true;
+  lockedTime.value = lockoutTime;
+  const interval = setInterval(() => {
+    lockedTime.value -= 1;
+    if (lockedTime.value <= 0) {
+      clearInterval(interval);
+      locked.value = false;
+      failedAttempts.value = 0;
+    }
+  }, 1000);
 };
 </script>
 
@@ -242,7 +278,8 @@ const login = async () => {
           </h1>
           <div class="athAIna-border-inner mt-4 rounded-t-none p-4 text-center">
             <h1 class="m-8 text-2xl text-emerald-400 font-semibold">
-              Time remaining: 1 hour
+              Time remaining: {{ Math.floor(lockedTime / 60) }} minutes
+              {{ lockedTime % 60 }} seconds
             </h1>
             <p class="m-8 text-athAIna-md">Try logging in again later</p>
           </div>
