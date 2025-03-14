@@ -70,8 +70,8 @@ const toggleModal = (modalName) => {
             <span> ************ </span>
           </div>
           <button
-            @click="toggleModal('accSettings')"
-            class="mt-10 text-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+            @click="toggleModal('accSettings'); "
+            class="mt-10 text-base border-athAIna-orange border-[3.5px] w-52 mb-2 py-[10px] px-[30px] rounded-2xl text-sm"
           >
             <router-link to="change_password"> Change Password </router-link>
           </button>
@@ -81,7 +81,7 @@ const toggleModal = (modalName) => {
               toggleModal('profile');
               toggleModal('Delete_Account');
             "
-            class="text-base border-athAIna-red border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm text-red-500"
+            class="text-base border-athAIna-red border-[3.5px] w-52 py-[10px] px-[30px] rounded-2xl text-sm text-red-500"
           >
             Delete Account
           </button>
@@ -100,19 +100,19 @@ const toggleModal = (modalName) => {
   <div
     class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 sticky font-poppins shadow-md"
   >
-    <div class="flex flex-row justify-between items-center space-x-20">
-      <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
+    <div class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20">
+      <router-link to="/"><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" /></router-link>
       <div>
-        <router-link to="/features"> Features </router-link>
+        <router-link to="/features" exact-active-class="active-link"> Features </router-link>
       </div>
       <div>
-        <router-link to="/faqs">FAQS</router-link>
+        <router-link to="/faqs" exact-active-class="active-link">FAQS</router-link>
       </div>
       <div>
-        <router-link to="/contact_us"> Contact us </router-link>
+        <router-link to="/contact_us" exact-active-class="active-link"> Contact us </router-link>
       </div>
       <div>
-        <router-link to="/demo">Demo</router-link>
+        <router-link to="/demo" exact-active-class="active-link">Demo</router-link>
       </div>
     </div>
 

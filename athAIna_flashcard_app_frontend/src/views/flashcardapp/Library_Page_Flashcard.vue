@@ -210,9 +210,9 @@ const navigateToLibraryPage = () => {
             </div>
 
             <div class="flex flex-row justify-between space-x-6 items-center">
-              <Flashcard_Search_Bar v-model="input" />
+              <Flashcard_Search_Bar v-model="input" class="lg:visible lg:w-full w-0 invisible"/>
               <button
-                class="relative btn w-60 text-[16px] font-semibold"
+                class="relative btn w-30 lg:w-60 text-[16px] font-semibold"
                 @click="toggleModal('learningMode')"
               >
                 Learning Mode
@@ -235,7 +235,7 @@ const navigateToLibraryPage = () => {
                 </button>
               </div>
               <button
-                class="relative btn w-60 text-[16px] font-semibold"
+                class="relative btn w-30 lg:w-60 text-[16px] font-semibold"
                 @click="toggleModal('addFlashcard')"
               >
                 Add Flashcard

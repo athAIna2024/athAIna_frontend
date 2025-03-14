@@ -98,12 +98,12 @@ const handleOTPSuccess = () => {
         class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
     ></div>
     <div
-        class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
+        class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10 py-20"
     >
       <div class="w-full flex flex-row justify-center items-center">
         <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
       </div>
-      <h1 class="text-athAIna-violet font-semibold w-full text-center">
+      <h1 class="text-athAIna-violet font-semibold w-full text-center my-10">
         Forgot Password Email Verification
       </h1>
 
