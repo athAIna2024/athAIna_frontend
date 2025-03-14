@@ -34,13 +34,13 @@ const closeModal = () => {
         <!-- Error Icon -->
         <div class="flex justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red"
-               class="size-6">
+               class="size-7 mt-3">
             <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
         </div>
 
         <!-- Error Header & Message-->
-        <h2 class="font-semibold text-[16px] mt-5">{{ errorHeader }}</h2>
+        <h2 class="font-semibold text-[16px] mt-3">{{ errorHeader }}</h2>
         <p class="text-[14px] mb-5 px-8">{{ errorMessage }}</p>
       </div>
     </div>
