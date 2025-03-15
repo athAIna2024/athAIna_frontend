@@ -156,8 +156,8 @@ onMounted(() => {
 
 <template>
   <Loading_Modal
-    :loadingMessage="'Logging in...'"
-    :loadingHeader="'Login'"
+    :loadingMessage="'Please wait a minute'"
+    :loadingHeader="'Logging in...'"
     :isVisible="isLoading"
     :condition="!isLoading"
   />
