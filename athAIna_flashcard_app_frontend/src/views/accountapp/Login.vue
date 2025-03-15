@@ -6,10 +6,14 @@ import Cookies from "js-cookie";
 import { useUserStore } from "../../../stores/userStore";
 import { useAuthStore } from "../../../stores/authStore";
 
+import Loading_Modal from "@/components/Loading_Modal.vue";
+
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
 console.log(userStore.getUserID());
+
+const isLoading = ref(false);
 
 const router = useRouter();
 const email = ref("");
@@ -38,6 +42,9 @@ const login = async () => {
     )} minutes.`;
     return;
   }
+
+  isLoading.value = true;
+  console.log("Logging in...", isLoading.value);
 
   try {
     const response = await axios.post(
@@ -93,6 +100,9 @@ const login = async () => {
     } else {
       errors.value.general = error.response.data.error;
     }
+  } finally {
+    isLoading.value = false;
+    console.log("Logging in done...", isLoading.value);
   }
 };
 
@@ -145,6 +155,13 @@ onMounted(() => {
 </script>
 
 <template>
+  <Loading_Modal
+    :loadingMessage="'Logging in...'"
+    :loadingHeader="'Login'"
+    :isVisible="isLoading"
+    :condition="!isLoading"
+  />
+
   <div class="flex flex-row gap-x-0 mt-16 my-16 mr-16 ml-14 p-0 max-h-screen">
     <!-- Sample Card Display -->
     <div class="ml-0 mr-28 pr-0 flex justify-center w-1/2 mt-10 mb-10">
