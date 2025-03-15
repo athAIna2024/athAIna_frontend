@@ -1,47 +1,13 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-
-import Cookies from "js-cookie";
-import { useAuthStore } from "../../stores/authStore";
-import axiosInstance from "@/axiosConfig";
 import Delete_Account from "@/components/Delete_Account.vue";
-
-const authStore = useAuthStore();
-const router = useRouter();
-// const accessToken = Cookies.get("access_token");
-// const refreshTKN = Cookies.get("refresh_token");
-// const csrfToken = Cookies.get("athAIna_csrfToken");
-
-const logout = async () => {
-  try {
-    const response = await axiosInstance.post("/account/logout/", {});
-
-    console.log("response: ", response);
-    console.log("response data: ", response.data);
-    console.log("response status: ", response.status);
-    console.log("response error: ", response.error);
-    console.log("response message: ", response.message);
-
-    if (response.status === 204) {
-      Cookies.remove("access_token");
-      Cookies.remove("refresh_token");
-      Cookies.remove("athAIna_csrfToken");
-
-      authStore.logout();
-      router.push("/login");
-    } else {
-      console.log(response.error);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
+import Logout from "@/views/accountapp/Logout.vue";
 
 const modals = ref({
   profile: false,
   accSettings: false,
   Delete_Account: false,
+  logout: false,
 });
 
 const toggleModal = (modalName) => {
@@ -54,6 +20,7 @@ const toggleModal = (modalName) => {
     :is-open="modals.Delete_Account"
     @close="toggleModal('Delete_Account')"
   />
+  <Logout :isVisible="modals.logout" @close="toggleModal('logout')" />
   <div
     v-if="modals.accSettings"
     class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
@@ -70,27 +37,28 @@ const toggleModal = (modalName) => {
             <span> ************ </span>
           </div>
           <button
-            @click="toggleModal('accSettings'); "
+            @click="toggleModal('accSettings')"
             class="mt-10 text-base border-athAIna-orange border-[3.5px] w-52 mb-2 py-[10px] px-[30px] rounded-2xl text-sm"
           >
             <router-link to="change_password"> Change Password </router-link>
           </button>
 
           <button
-            @click="
-              toggleModal('profile');
-              toggleModal('Delete_Account');
-            "
+            @click="toggleModal('Delete_Account')"
             class="text-base border-athAIna-red border-[3.5px] w-52 py-[10px] px-[30px] rounded-2xl text-sm text-red-500"
           >
             Delete Account
           </button>
 
           <button
-            @click="toggleModal('profile')"
+            @click="
+              toggleModal('accSettings');
+              toggleModal('logout');
+            "
             class="text-base bg-athAIna-orange mt-8 py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
           >
-            <router-link to="login"> Log Out </router-link>
+            <!-- <router-link to="login"> Log Out </router-link> -->
+            Log Out
           </button>
         </div>
       </div>
@@ -100,19 +68,31 @@ const toggleModal = (modalName) => {
   <div
     class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 sticky font-poppins shadow-md"
   >
-    <div class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20">
-      <router-link to="/"><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" /></router-link>
+    <div
+      class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"
+    >
+      <router-link to="/"
+        ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
+      /></router-link>
       <div>
-        <router-link to="/features" exact-active-class="active-link"> Features </router-link>
+        <router-link to="/features" exact-active-class="active-link">
+          Features
+        </router-link>
       </div>
       <div>
-        <router-link to="/faqs" exact-active-class="active-link">FAQS</router-link>
+        <router-link to="/faqs" exact-active-class="active-link"
+          >FAQS</router-link
+        >
       </div>
       <div>
-        <router-link to="/contact_us" exact-active-class="active-link"> Contact us </router-link>
+        <router-link to="/contact_us" exact-active-class="active-link">
+          Contact us
+        </router-link>
       </div>
       <div>
-        <router-link to="/demo" exact-active-class="active-link">Demo</router-link>
+        <router-link to="/demo" exact-active-class="active-link"
+          >Demo</router-link
+        >
       </div>
     </div>
 
@@ -153,7 +133,10 @@ const toggleModal = (modalName) => {
         </button>
         <form id="csrf-form" style="display: none">{% csrf_token %}</form>
         <button
-          @click="logout"
+          @click="
+            toggleModal('profile');
+            toggleModal('logout');
+          "
           class="text-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
         >
           Log Out
