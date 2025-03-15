@@ -91,19 +91,19 @@ const toggleModal = (modalName) => {
           </div>
 
           <!-- Subject Selector -->
-          <div class="flex flex-col">
-            <Subject_Selector
-                :placeholder="subject_placeholder"
-                @click="select_subject=!select_subject"
-                class="relative w-[263px]"/>
-            <Floating_Dropdown v-if="select_subject"
-                               :items="subjects"
-                               top="240px"
-                               right="365px"
-                               height="max-content"
-                               width="260px">
-            </Floating_Dropdown>
-          </div>
+<!--          <div class="flex flex-col">-->
+<!--            <Subject_Selector-->
+<!--                :placeholder="subject_placeholder"-->
+<!--                @click="select_subject=!select_subject"-->
+<!--                class="relative w-[263px]"/>-->
+<!--            <Floating_Dropdown v-if="select_subject"-->
+<!--                               :items="subjects"-->
+<!--                               top="240px"-->
+<!--                               right="365px"-->
+<!--                               height="max-content"-->
+<!--                               width="260px">-->
+<!--            </Floating_Dropdown>-->
+<!--          </div>-->
 
           <Date_Range_Selector/>
         </div>
