@@ -1,5 +1,51 @@
 <script setup>
-import { ref } from "vue";
+import {computed, ref} from "vue";
+
+const scores = ref([
+  { timestamp: "2024-03-03T12:45:00", score: 40 },
+  { timestamp: "2024-03-03T18:00:00", score: 80 },
+  { timestamp: "2024-03-04T01:00:00", score: 85 },
+  { timestamp: "2024-03-05T14:30:00", score: 90 },
+  { timestamp: "2024-03-05T14:30:00", score: 30 },
+  { timestamp: "2024-03-05T14:30:00", score: 90 },
+  { timestamp: "2024-03-05T14:30:00", score: 60 },
+]);
+
+// FIXME: Improve data formatting. Implement dictionaries instead of arrays.
+const chartData = computed(() => {
+  return {
+    labels: scores.value.map(entry =>
+        new Date(entry.timestamp).toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+    ),
+    datasets: [
+      {
+        label: "Pass (≥ 70%)",
+        data: scores.value.map(entry => (entry.score >= 70 ? entry.score : null)), // Show only passing scores
+        backgroundColor: "rgba(75, 192, 75, 0.6)", // Green
+        borderColor: "rgba(75, 192, 75, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Fail (< 70%)",
+        data: scores.value.map(entry => (entry.score < 70 ? entry.score : null)), // Show only failing scores
+        backgroundColor: "rgba(255, 99, 132, 0.6)", // Red
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+});
+
+
+const chartOptions = ref({
+  responsive: true,
+});
 
 // Reactive Variables
 const study_set_placeholder = ref("Choose a Study Set");
@@ -14,6 +60,7 @@ const subjects = ['Arts', 'Technology', 'Relationships'];
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
+import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
 
 // Methods
 const toggleModal = (modalName) => {
@@ -60,6 +107,14 @@ const toggleModal = (modalName) => {
 
           <Date_Range_Selector/>
         </div>
+      </div>
+
+      <div class="h-[400px] w-full flex justify-center">
+        <Bar_Chart
+            :options="chartOptions"
+            :data="chartData"
+            aria-label="Green bars indicate passing, achieved with a score of 70% or higher. Red bars represent failing scores"
+        />
       </div>
     </div>
   </div>
