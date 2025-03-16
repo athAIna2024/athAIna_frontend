@@ -75,7 +75,6 @@ const fetchFlashcards = async () => {
   const startTime = Date.now();
 
   try {
-    isLoading.value = true;
 
     const response = await axios.get(flashcard_url, {
       params: { studyset_id: studySetId }
