@@ -5,6 +5,7 @@ import { reactive } from 'vue';
 
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
+import Success_Message from "@/components/Success_Message.vue";
 
 const studyset_url = "/studyset/update/";
 
@@ -94,19 +95,20 @@ const updateStudySet = async () => {
     message_updated.value = request.data.message;
 
 
+    const updateStudySet = {
+      id: props.studySetId,
+      title: title.value,
+      description: description.value,
+      subject: subject.value,
+      updated_at: new Date()
+    };
+
+    await studySetDb.studysets.update(props.studySetId, updateStudySet);
+
+
     if (isSuccessful_updated.value) {
-      const updateStudySet = {
-        id: props.studySetId,
-        title: title.value,
-        description: description.value,
-        subject: subject.value,
-        updated_at: new Date()
-      };
-
-      await studySetDb.studysets.update(props.studySetId, updateStudySet);
-
+      location.reload(); //
       close();
-      location.reload();
     }
 
   } catch (error) {
@@ -129,6 +131,14 @@ const updateStudySet = async () => {
 
 </script>
 <template>
+
+  <Success_Message
+      :isVisible="isSuccessful_updated"
+      :successHeader="'Updating studyset'"
+      :successMessage="'Successfully updated the study set.'"
+      @close="isSuccessful_updated = false"
+  />
+
   <form @submit.prevent="updateStudySet">
     <div v-if="props.isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50">
       <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red z-50 p-[4px] w-[620px] rounded-[20px] shadow-lg w-96" style="background-color: white !important;">
