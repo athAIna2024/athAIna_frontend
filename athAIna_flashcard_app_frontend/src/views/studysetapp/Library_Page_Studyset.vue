@@ -5,7 +5,7 @@ import Subject_Selector from "@/components/Subject_Selector.vue";
 import Pagination from "@/components/Pagination.vue";
 import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
-
+import Loading_Modal from "@/components/Loading_Modal.vue";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { computed } from "vue";
@@ -29,6 +29,8 @@ const message_flashcard = ref("");
 const studySet_result = ref([]);
 const studySetCounts = ref(0);
 const studySet_db = ref([]);
+
+const isLoading = ref(false);
 
 const currentPage = ref(1);
 const itemsPerPage = 6;
@@ -110,8 +112,12 @@ const fetchFlashcardCount = async (studysetId) => {
   }
 };
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const fetchStudySet = async () => {
+  isLoading.value = true;
+  const minimumLoadingTime = 500; // Minimum loading time in milliseconds
+  const startTime = Date.now();
   try {
     // API Call
     const response = await axios.get(studyset_url, {
@@ -173,6 +179,14 @@ const fetchStudySet = async () => {
     studySetCounts.value = 0;
 
     return studySet_result;
+  } finally {
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = minimumLoadingTime - elapsedTime;
+
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    isLoading.value = false;
   }
 };
 
@@ -270,6 +284,13 @@ onMounted(() => {
         @close="closeModal"
     >
     </Create_Studyset>
+
+    <Loading_Modal
+        :condition="isSuccessful_studyset"
+        :isVisible="isLoading"
+        :loadingHeader="'Fetching study sets...'"
+        :loadingMessage="'Please wait for a couple of seconds'"
+    />
 
 
     </div>
