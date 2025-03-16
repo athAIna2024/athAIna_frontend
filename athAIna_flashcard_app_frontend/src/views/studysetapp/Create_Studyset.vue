@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { watch } from 'vue';
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
+import Success_Message from "@/components/Success_Message.vue";
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
@@ -87,6 +88,14 @@ const saveStudySet = async () => {
 </script>
 
 <template>
+
+  <Success_Message
+    :isVisible="isSuccessful"
+    :successHeader="'Saving studyset'"
+    :successMessage="'Successfully created a study set.'"
+    @close="isSuccessful = false"
+  />
+
   <form @submit.prevent="saveStudySet">
     <div v-if="props.isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50">
       <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red z-50 p-[4px] w-[620px] rounded-[20px] shadow-lg w-96" style="background-color: white !important;">

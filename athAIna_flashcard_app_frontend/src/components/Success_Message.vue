@@ -28,7 +28,7 @@ watchEffect(() => {
     // Set a new timeout
     timeoutId = setTimeout(() => {
       emit("close");
-    }, 3000);
+    }, 1000); // 3000 is too long
   }
 });
 
