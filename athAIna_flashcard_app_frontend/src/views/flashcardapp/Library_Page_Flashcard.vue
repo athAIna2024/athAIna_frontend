@@ -8,7 +8,6 @@ import Search_Bar from "@/components/Search_Bar.vue";
 import Flashcard_Card from "@/components/Flashcard_Card.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 import Pagination from "@/components/Pagination.vue";
-
 import { useRouter } from 'vue-router';
 import { onBeforeRouteLeave}   from "vue-router";
 import {useStudysetStore} from "../../../stores/studySetStore.js";
@@ -37,7 +36,6 @@ const studySetId = Number(studySetStore.studySetId);
 const isSuccessful = ref(false);
 const message = ref("");
 const flashcard_db = ref([]);
-
 
 const itemsPerPage = 6;
 
@@ -94,7 +92,6 @@ const fetchFlashcardsFromDb = async () => {
       isSuccessful.value = true;
       message.value = "Flashcards retrieved successfully.";
     }
-
   } catch (error) {
     isSuccessful.value = false;
     message.value = "An error occurred. Please try again later.";
@@ -115,9 +112,11 @@ onMounted( () => {
 const navigateToLibraryPage = () => {
   router.push({ name: 'Library_Page_Studyset' });
 };
+
 </script>
 
 <template>
+
   <div class="m-4">
     <div class="athAIna-border-outer p-1 shadow-xl">
       <div class="athAIna-border-inner py-4">
