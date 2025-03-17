@@ -5,7 +5,9 @@ import axios from "@/axios";
 import { useAuthStore } from "../../../stores/authStore";
 import axiosInstance from "@/axiosConfig";
 import Cookies from "js-cookie";
+import Loading_Modal from "@/components/Loading_Modal.vue";
 
+const isLoading = ref(false);
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -21,7 +23,6 @@ const oldPassword = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
 const success = ref(null);
-const isSubmitting = ref(false);
 
 // Replace single error with field-specific errors
 const errors = reactive({
@@ -64,65 +65,63 @@ const updatePassword = async () => {
     }
   });
   success.value = null;
-  isSubmitting.value = true;
 
   // Client-side validation
   if (!oldPassword.value) {
     errors.old_password = "Old password is required";
-    isSubmitting.value = false;
     return;
   }
 
   if (!newPassword.value) {
     errors.new_password = "New password is required";
-    isSubmitting.value = false;
+
     return;
   }
 
   if (!confirmPassword.value) {
     errors.confirm_new_password = "Please confirm your new password";
-    isSubmitting.value = false;
+
     return;
   }
 
   if (newPassword.value !== confirmPassword.value) {
     errors.general = "New passwords do not match";
-    isSubmitting.value = false;
+
     return;
   }
 
   // Add validation to check new password isn't the same as old password
   if (newPassword.value === oldPassword.value) {
     errors.new_password = "New password cannot be the same as the old password";
-    isSubmitting.value = false;
+
     return;
   }
 
   // Password complexity validation
   if (newPassword.value.length < 8) {
     errors.new_password = "Password must be longer than 8 characters";
-    isSubmitting.value = false;
+
     return;
   }
 
   // Check if password is entirely numeric
   if (/^\d+$/.test(newPassword.value)) {
     errors.new_password = "Password cannot be entirely numeric";
-    isSubmitting.value = false;
+
     return;
   }
 
   // Check for at least one number
   if (!/\d/.test(newPassword.value)) {
     errors.new_password = "Password must contain at least one number";
-    isSubmitting.value = false;
+
     return;
   }
 
   // Check for at least one uppercase letter
   if (!/[A-Z]/.test(newPassword.value)) {
     errors.new_password = "Password must contain at least one uppercase letter";
-    isSubmitting.value = false;
+
     return;
   }
 
@@ -130,9 +129,10 @@ const updatePassword = async () => {
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword.value)) {
     errors.new_password =
       "Password must contain at least one special character";
-    isSubmitting.value = false;
+
     return;
   }
+  isLoading.value = true;
 
   try {
     const response = await axiosInstance.patch(
@@ -150,12 +150,10 @@ const updatePassword = async () => {
     );
 
     if (response.status === 200) {
-      success.value = "Password has been changed successfully";
-
       // Redirect to login page after successful password reset
       setTimeout(() => {
         router.push("/login");
-      }, 2000);
+      });
     }
   } catch (err) {
     console.log(err.response?.data);
@@ -163,12 +161,19 @@ const updatePassword = async () => {
       err.response?.data?.error ||
       "An error occurred while resetting your password";
   } finally {
-    isSubmitting.value = false;
+    // Set loading state back to false after API call completes
+    isLoading.value = false;
   }
 };
 </script>
 
 <template>
+  <Loading_Modal
+    :loadingMessage="'Password Updated Successfully'"
+    :loadingHeader="'Redirecting to Log in ...'"
+    :isVisible="isLoading"
+    :condition="!isLoading"
+  />
   <div
     class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center"
   >
@@ -415,12 +420,8 @@ const updatePassword = async () => {
 
         <!-- Change Password Button -->
         <div class="flex m-10 justify-center">
-          <button
-            @click="updatePassword"
-            class="btn w-full"
-            :disabled="isSubmitting"
-          >
-            {{ isSubmitting ? "Changing Password..." : "Change Password" }}
+          <button @click="updatePassword" class="btn w-full">
+            {{ "Change Password" }}
           </button>
         </div>
       </div>

@@ -85,7 +85,7 @@ const verifyOTP = async () => {
           name: "Forgot_password_page",
           params: { uidb64, token },
         });
-      }, 2000);
+      });
     }
   } catch (err) {
     error.value = err.response?.data?.message || "Invalid OTP code";

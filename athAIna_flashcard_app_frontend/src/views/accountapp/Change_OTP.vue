@@ -124,7 +124,7 @@ watch(step, (newValue) => {
       } catch (err) {
         console.error("Error redirecting to Forgot page", err);
       }
-    }, 2000);
+    });
   }
 });
 
