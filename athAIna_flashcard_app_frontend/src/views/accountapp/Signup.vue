@@ -15,6 +15,8 @@ const router = useRouter();
 const isOTPVisible = ref(false);
 
 const openOTP = () => {
+  // Store email in localStorage for OTP resending functionality
+  localStorage.setItem("signupEmail", email.value);
   isOTPVisible.value = true;
 };
 
@@ -257,7 +259,13 @@ const createUser = async () => {
       </div>
     </div>
 
-    <OTP :is-visible="isOTPVisible" @close="closeOTP" />
+    <!-- Pass email prop to OTP component -->
+    <OTP :is-visible="isOTPVisible" :email="email" @close="closeOTP" />
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.btn {
+  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  color: white;
+}
+</style>
