@@ -14,6 +14,10 @@ const isSubmitting = ref(false);
 // Store email in OTP component
 const storedEmail = ref("");
 
+const goBackToLibrary = () => {
+  router.push("/login");
+};
+
 const openOTP = () => {
   storedEmail.value = email.value; // Store email for OTP component
   isOTPVisible.value = true;
@@ -54,19 +58,19 @@ const sendResetEmail = async () => {
 
   try {
     const response = await axios.post(
-        "/account/change-password-request/",
-        { email: email.value },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      "/account/change-password-request/",
+      { email: email.value },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
     if (response.data.successful) {
       success.value =
-          response.data.message ||
-          "Password reset instructions sent to your email";
+        response.data.message ||
+        "Password reset instructions sent to your email";
       openOTP(); // Show OTP component on success
     } else {
       error.value = response.data.message || "Failed to send reset email";
@@ -74,9 +78,9 @@ const sendResetEmail = async () => {
   } catch (err) {
     console.error("Error:", err);
     error.value =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "Error sending reset email. Please try again later.";
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      "Error sending reset email. Please try again later.";
   } finally {
     isSubmitting.value = false;
   }
@@ -92,14 +96,36 @@ const handleOTPSuccess = () => {
 <template>
   <div class="min-h-screen">
     <div
-        class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+      class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
     ></div>
     <div
-        class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+      class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
     ></div>
     <div
-        class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10 py-20"
+      class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10 py-20"
     >
+      <div class="absolute top-8 left-8 z-10">
+        <button
+          @click="goBackToLibrary"
+          class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="w-6 h-6 mr-1"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
+          </svg>
+          <span class="font-medium">Back to Log in</span>
+        </button>
+      </div>
       <div class="w-full flex flex-row justify-center items-center">
         <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
       </div>
@@ -116,39 +142,39 @@ const handleOTPSuccess = () => {
       </div>
 
       <div
-          class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
+        class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
       >
         <div class="relative flex flex-row items-center">
           <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
           >
             <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
             />
           </svg>
           <input
-              v-model="email"
-              type="email"
-              placeholder="Email"
-              :disabled="isSubmitting || isOTPVisible"
-              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
-              @keyup.enter="!isSubmitting && !isOTPVisible && sendResetEmail()"
+            v-model="email"
+            type="email"
+            placeholder="Email"
+            :disabled="isSubmitting || isOTPVisible"
+            class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+            @keyup.enter="!isSubmitting && !isOTPVisible && sendResetEmail()"
           />
         </div>
       </div>
 
       <div class="flex m-10 justify-center">
         <button
-            @click="sendResetEmail"
-            class="btn w-full"
-            :disabled="isSubmitting || isOTPVisible"
+          @click="sendResetEmail"
+          class="btn w-full"
+          :disabled="isSubmitting || isOTPVisible"
         >
           <span v-if="isSubmitting">Sending...</span>
           <span v-else>Send Reset Email</span>
@@ -159,11 +185,11 @@ const handleOTPSuccess = () => {
 
   <!-- OTP Component -->
   <OTP
-      :is-visible="isOTPVisible"
-      :email="storedEmail"
-      title="OTP Verification"
-      @close="closeOTP"
-      @verification-success="handleOTPSuccess"
+    :is-visible="isOTPVisible"
+    :email="storedEmail"
+    title="OTP Verification"
+    @close="closeOTP"
+    @verification-success="handleOTPSuccess"
   />
 </template>
 

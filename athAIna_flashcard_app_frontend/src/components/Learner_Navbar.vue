@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Delete_Account from "@/components/Delete_Account.vue";
 import Logout from "@/views/accountapp/Logout.vue";
+import { useUserStore } from "../../stores/userStore";
 
 const modals = ref({
   profile: false,
@@ -9,6 +10,8 @@ const modals = ref({
   Delete_Account: false,
   logout: false,
 });
+
+const userStore = useUserStore();
 
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
@@ -33,8 +36,8 @@ const toggleModal = (modalName) => {
         <div class="flex flex-col items-center justify-between p-5">
           <span class="font-semibold">User Profile</span>
           <div class="flex flex-col">
-            <span> adamsandler@athaina.com </span>
-            <span> ************ </span>
+            <span> {{ userStore.getEmail() || "Not logged in " }} </span>
+            <span> {{}} </span>
           </div>
           <button
             @click="toggleModal('accSettings')"
@@ -74,6 +77,11 @@ const toggleModal = (modalName) => {
       <router-link to="/"
         ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
       /></router-link>
+      <div>
+        <router-link to="/" exact-active-class="active-link">
+          Landing Page
+        </router-link>
+      </div>
       <div>
         <router-link to="/features" exact-active-class="active-link">
           Features

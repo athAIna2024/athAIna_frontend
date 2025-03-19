@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
 
@@ -14,6 +14,10 @@ const props = defineProps({
     type: String,
     default: "Modal Title",
   },
+  email: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["close"]);
@@ -24,6 +28,71 @@ const isVerified = ref("false");
 
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
+
+// Countdown and OTP resend functionality
+const countdown = ref(5);
+const isCountdownActive = ref(false);
+let countdownInterval = null;
+
+const startCountdown = () => {
+  isCountdownActive.value = true;
+  countdown.value = 5;
+
+  countdownInterval = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(countdownInterval);
+      isCountdownActive.value = false;
+    }
+  }, 1000);
+};
+
+const resendOTP = async () => {
+  try {
+    error.value = "";
+    // Use the correct payload format for your backend
+    const response = await axios.post("/account/resend-otp/", {
+      email: props.email, // Email must be passed from parent component
+      purpose: "forgot_password", // Using the purpose defined in your serializer
+    });
+
+    if (response.data.successful) {
+      // Clear the current OTP input fields
+      otpValue.value = "";
+      displayOTP.value = ["", "", "", "", "", ""];
+      // Start countdown again
+      startCountdown();
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || "Failed to resend OTP";
+    console.error("Error resending OTP", err);
+  }
+};
+
+onMounted(() => {
+  // Start countdown when component is mounted
+  if (props.isVisible) {
+    startCountdown();
+  }
+});
+
+onBeforeUnmount(() => {
+  // Clear interval when component is unmounted
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+});
+
+watch(
+  () => props.isVisible,
+  (newValue) => {
+    if (newValue) {
+      startCountdown();
+    } else if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+  }
+);
 
 const handleOTPChange = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, (otpValue.value = value));
@@ -41,7 +110,7 @@ const handleBoxInput = (boxIndex, event) => {
   otpValue.value = displayOTP.value.join("");
   if (value && boxIndex < 5) {
     event.target.nextElementSibling.focus();
-    const nextInput = input.parentElement.children[index + 1];
+    const nextInput = input.parentElement.children[boxIndex + 1]; // Fixed 'index' to 'boxIndex'
     if (nextInput) {
       nextInput.focus();
     }
@@ -85,7 +154,7 @@ const verifyOTP = async () => {
           name: "Forgot_password_page",
           params: { uidb64, token },
         });
-      }, 2000);
+      });
     }
   } catch (err) {
     error.value = err.response?.data?.message || "Invalid OTP code";
@@ -99,6 +168,12 @@ const close = () => {
   error.value = "";
   otpValue.value = "";
   displayOTP.value = ["", "", "", "", "", ""];
+
+  // Clear countdown interval when closing
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    isCountdownActive.value = false;
+  }
 };
 
 const nextStep = () => {
@@ -180,37 +255,22 @@ const buttonText = computed(() => {
               class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
             />
           </div>
-          <!-- <input
-            type="text"
-            maxlength="1"
-            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
-          />
-          <input
-            type="text"
-            maxlength="1"
-            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
-          />
-          <input
-            type="text"
-            maxlength="1"
-            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
-          />
-          <input
-            type="text"
-            maxlength="1"
-            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
-          />
-          <input
-            type="text"
-            maxlength="1"
-            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
-          />
-          <input
-            type="text"
-            maxlength="1"
-            class="text-[24px] font-bold border-2 border-athAIna-violet text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring- ring-athAIna-yellow w-[50px] rounded-[15px] m-[4px] h-[50px] text-center"
-          /> -->
         </div>
+
+        <!-- Resend OTP section -->
+        <div class="mt-4 mb-2 text-sm text-athAIna-violet">
+          <span v-if="isCountdownActive"
+            >Resend OTP in {{ countdown }} seconds</span
+          >
+          <button
+            v-else
+            @click="resendOTP"
+            class="text-athAIna-red hover:underline focus:outline-none"
+          >
+            Resend OTP
+          </button>
+        </div>
+
         <div class="m-8 flex justify-center">
           <button
             @click="nextStep"

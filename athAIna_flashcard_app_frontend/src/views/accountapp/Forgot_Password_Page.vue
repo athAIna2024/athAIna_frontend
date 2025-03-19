@@ -2,9 +2,11 @@
 import { ref, onMounted, reactive } from "vue"; // Add reactive import
 import { useRoute, useRouter } from "vue-router";
 import axios from "@/axiosConfig";
-
+import Loading_Modal from "@/components/Loading_Modal.vue";
 const route = useRoute();
 const router = useRouter();
+
+const isLoading = ref(false);
 
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -90,6 +92,7 @@ const resetPassword = async () => {
     errors.password = "Password must contain at least one special character";
     return;
   }
+  isLoading.value = true;
 
   try {
     const response = await axios.patch(
@@ -100,22 +103,30 @@ const resetPassword = async () => {
       }
     );
 
-    success.value = "Password has been reset successfully";
-
     // Redirect to login page after successful password reset
     setTimeout(() => {
       router.push("/login");
-    }, 2000);
+    });
   } catch (err) {
     console.log(err.response?.data);
     errors.value =
       err.response?.data?.error ||
       "An error occurred while resetting your password";
+  } finally {
+    // Set loading state back to false after API call completes
+    isLoading.value = false;
   }
 };
 </script>
 
 <template>
+  <Loading_Modal
+    :loadingMessage="'Password Reset successfully'"
+    :loadingHeader="'Redirecting to Log in ...'"
+    :isVisible="isLoading"
+    :condition="!isLoading"
+  />
+
   <div
     class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center"
   >
