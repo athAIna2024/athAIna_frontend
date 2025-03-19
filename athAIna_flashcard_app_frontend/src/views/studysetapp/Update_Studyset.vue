@@ -82,12 +82,16 @@ const fetchStudySetData = async () => {
 
 const updateStudySet = async () => {
   try {
-    const request = await axios.put(`${studyset_url}${props.studySetId}/`, {
+    const requestData = {
       title: title.value,
-      description: description.value,
       subject: subject.value,
-    });
+    };
 
+    if (description.value !== null && description.value !== '') {
+      requestData.description = description.value;
+    }
+
+    const request = await axios.put(`${studyset_url}${props.studySetId}/`, requestData);
 
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
@@ -98,7 +102,7 @@ const updateStudySet = async () => {
     const updateStudySet = {
       id: Number(request.data.data.id),
       title: String(request.data.data.title),
-      description: String(request.data.data.description),
+      description: request.data.data.description === null ? "" : String(request.data.data.description),
       subject: String(request.data.data.subject),
       updated_at: Date(request.data.data.updated_at),
     };
@@ -106,7 +110,6 @@ const updateStudySet = async () => {
     await studySetDb.studysets.update(props.studySetId, updateStudySet);
 
     if (isSuccessful_updated.value) {
-      location.reload(); //
       close();
     }
 
