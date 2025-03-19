@@ -40,12 +40,17 @@ watch(() => props.isVisible, (newValue) => {
 
 const saveStudySet = async () => {
   try {
-    const request = await axios.post(studyset_url, {
+    const requestData = {
       learner_instance: Number(learnerId.value), // Ensure this is an integer
       title: title.value,
-      description: description.value,
       subject: subject.value // Ensure this matches the field name in your serializer
-    });
+    };
+
+    if (description.value !== null && description.value !== '') {
+      requestData.description = description.value;
+    }
+
+    const request = await axios.post(studyset_url, requestData);
 
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
