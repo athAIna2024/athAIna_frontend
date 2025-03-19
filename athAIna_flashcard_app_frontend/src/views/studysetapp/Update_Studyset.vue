@@ -21,6 +21,8 @@ const message_retrieved = ref("");
 const isSuccessful_updated = ref(false);
 const message_updated = ref("");
 
+const showSuccessMessage = ref(false);
+
 const props = defineProps({
   isVisible: {
     type: Boolean,
@@ -39,6 +41,10 @@ const props = defineProps({
 const emit = defineEmits(['close'], ['refreshLibrary']);
 const close = () => {
   emit('close');
+};
+
+const refreshLibrary = () => {
+  emit('refreshLibrary');
 };
 
 
@@ -110,6 +116,8 @@ const updateStudySet = async () => {
     await studySetDb.studysets.update(props.studySetId, updateStudySet);
 
     if (isSuccessful_updated.value) {
+      showSuccessMessage.value = true;
+      refreshLibrary();
       close();
     }
 
@@ -135,10 +143,10 @@ const updateStudySet = async () => {
 <template>
 
   <Success_Message
-      :isVisible="isSuccessful_updated"
+      :isVisible="showSuccessMessage"
       :successHeader="'Updating studyset'"
       :successMessage="'Successfully updated the study set.'"
-      @close="isSuccessful_updated = false"
+      @close="showSuccessMessage = false"
   />
 
   <form @submit.prevent="updateStudySet">

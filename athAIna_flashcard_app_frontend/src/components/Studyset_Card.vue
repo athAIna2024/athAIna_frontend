@@ -25,7 +25,7 @@ const props = defineProps({
   },
   description: {
     type: String,
-    required: true
+    required: false,
   },
   subject: {
     type: String,
@@ -162,6 +162,9 @@ const navigateToLibraryPageFlashcard = async () => {
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetTitle, studySetId: studySetId } });
 };
 
+const refreshLibrary =  () => {
+  location.reload();
+};
 </script>
 
 <template>
@@ -201,6 +204,7 @@ const navigateToLibraryPageFlashcard = async () => {
       :studySetId="studySetId"
       title="Update Studyset – athAIna"
       @close="closeUpdateModal"
+      @refreshLibrary="refreshLibrary"
   />
 
   <Delete_Studyset
