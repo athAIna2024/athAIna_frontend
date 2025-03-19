@@ -51,14 +51,14 @@ const saveStudySet = async () => {
     message.value = request.data.message;
 
     const newStudySet = {
-      id: request.data.data.id,
+      id: Number(request.data.data.id),
       learner_instance: Number(learnerId.value),
-      title: title.value,
-      description: description.value,
-      subject: subject.value,
+      title: String(request.data.data.title),
+      description: String(request.data.data.description),
+      subject: String(request.data.data.subject),
       flashcard_count: Number(0),
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: Date(request.data.data.created_at),
+      updated_at: Date(request.data.data.updated_at),
     }
 
     await studySetDb.studysets.add(newStudySet);
