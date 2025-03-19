@@ -63,8 +63,6 @@ const fetchStudySetData = async () => {
       isSuccessful_retrieved.value = response.data.successful;
       message_retrieved.value = response.data.message;
 
-      // Debugging
-      console.log("title", title.value);
     } else {
       isSuccessful_retrieved.value = false;
       message_retrieved.value = "There is no study set with the provided ID.";
@@ -94,17 +92,18 @@ const updateStudySet = async () => {
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
 
+    console.log(request.data);
+
 
     const updateStudySet = {
-      id: props.studySetId,
-      title: title.value,
-      description: description.value,
-      subject: subject.value,
-      updated_at: new Date()
+      id: Number(request.data.data.id),
+      title: String(request.data.data.title),
+      description: String(request.data.data.description),
+      subject: String(request.data.data.subject),
+      updated_at: Date(request.data.data.updated_at),
     };
 
     await studySetDb.studysets.update(props.studySetId, updateStudySet);
-
 
     if (isSuccessful_updated.value) {
       location.reload(); //
