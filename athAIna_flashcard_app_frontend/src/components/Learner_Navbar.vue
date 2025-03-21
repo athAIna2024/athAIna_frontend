@@ -78,11 +78,6 @@ const toggleModal = (modalName) => {
         ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
       /></router-link>
       <div>
-        <router-link to="/" exact-active-class="active-link">
-          Landing Page
-        </router-link>
-      </div>
-      <div>
         <router-link to="/features" exact-active-class="active-link">
           Features
         </router-link>

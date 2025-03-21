@@ -10,7 +10,9 @@ export default {
     style="box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.3)"
   >
     <div class="flex flex-row justify-between items-center space-x-20">
-      <img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14" />
+      <router-link to="/"
+        ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
+      /></router-link>
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-10">

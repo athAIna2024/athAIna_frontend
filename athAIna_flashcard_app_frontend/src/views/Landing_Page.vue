@@ -1,6 +1,17 @@
 <script>
 export default {
   name: "Landing_Page",
+  methods: {
+    scrollToFeatures() {
+      const featuresSection = document.getElementById("features-section");
+      if (featuresSection) {
+        featuresSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    },
+  },
 };
 </script>
 
@@ -10,7 +21,7 @@ export default {
       <div class="flex flex-col">
         <div class="mx-10">
           <span class="text-3xl font-semibold"
-            >Memorization made memorable</span
+            >Memorization Made Memorable</span
           >
           <br />
           <div class="text-2xl my-4">Now powered with AI</div>
@@ -26,8 +37,12 @@ export default {
           >
         </div>
         <div class="w-full md:w-1/2 flex flex-row">
-          <button class="btn w-full mx-4">Try now</button>
-          <button class="btn w-full">Learn more</button>
+          <RouterLink to="/signup" class="w-full mx-4">
+            <button class="btn w-full">Try now</button>
+          </RouterLink>
+          <button @click="scrollToFeatures" class="btn w-full">
+            Learn more
+          </button>
         </div>
       </div>
       <div class="invisible 2xl:visible w-full flex flex-row justify-end">
@@ -45,7 +60,7 @@ export default {
       </div>
     </div>
 
-    <div class="mx-10 my-52 text-2xl font-semibold">
+    <div id="features-section" class="mx-10 my-52 text-2xl font-semibold">
       Attain greater heights of excellence
     </div>
 
@@ -59,7 +74,9 @@ export default {
             Saves time with automated, smartly designed flashcards that make
             studying more efficient
           </div>
-          <button class="btn mt-10 w-full">Try it out!</button>
+          <RouterLink to="/signup" class="w-full mx-4">
+            <button class="btn mt-10 w-full">Try it out!</button>
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -73,7 +90,10 @@ export default {
           <div class="text-sm my-2">
             Uncovers your progress guiding your path to mastery
           </div>
-          <button class="btn mt-10 w-full">See your progress</button>
+
+          <RouterLink to="/signup" class="w-full mx-4">
+            <button class="btn mt-10 w-full">See your progress</button>
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -87,11 +107,18 @@ export default {
           <div class="text-sm my-2">
             Unlocks your wisdom, boosting your exam readiness
           </div>
-          <button class="btn mt-10 w-full">Take a test</button>
+          <RouterLink to="/signup" class="w-full mx-4">
+            <button class="btn mt-10 w-full">Take a test</button>
+          </RouterLink>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.btn {
+  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200;
+  color: white;
+}
+</style>
