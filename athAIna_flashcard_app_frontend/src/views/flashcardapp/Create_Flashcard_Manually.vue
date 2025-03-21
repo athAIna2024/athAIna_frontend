@@ -67,11 +67,11 @@ const saveFlashcard = async () => {
 
     const createFlashcard = {
       id: request.data.data.id,
-      question: question.value,
-      answer: answer.value,
+      question: String(request.data.data.question),
+      answer: String(request.data.data.answer),
       image: request.data.data.image,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: Date(request.data.data.created_at),
+      updated_at: Date(request.data.data.updated_at),
       studyset_id: Number(studySetId),
     };
 
