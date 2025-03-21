@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div
-    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 font-poppins font-light shadow-md"
+    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-auto sticky font-poppins font-light shadow-md bg-athAIna-white"
     style="box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.3)"
   >
     <div class="flex flex-row justify-between items-center space-x-20">

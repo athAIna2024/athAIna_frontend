@@ -43,7 +43,7 @@ export default {
 </script>
 
 <template>
-  <div class="text-center m-10 p-20 font-semibold -z-0">
+  <div class="text-center p-20 font-semibold min-h-screen">
     Frequently Asked Questions (FAQs)
 
     <!-- Loading State -->

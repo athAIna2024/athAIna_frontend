@@ -6,7 +6,7 @@ export default {
 
 <template>
   <div class="p-10">
-    <div class="flex flex-row">
+    <div class="flex flex-row justify-start min-h-screen">
       <div class="flex flex-col">
         <div class="mx-10">
           <span class="text-3xl font-semibold"
@@ -30,17 +30,19 @@ export default {
           <button class="btn w-full">Learn more</button>
         </div>
       </div>
-      <div class="invisible 2xl:visible w-full flex flex-row justify-end">
+      <div class="invisible 2xl:visible align-middle flex mr-[30rem]">
         <div
-          class="absolute transform -translate-x-[15rem] translate-y-10 shadow-md w-[360px] h-[480px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+          class="absolute transform -translate-x-[12rem] translate-y-14 rotate-[2deg] shadow-md w-[600px] h-[900px] rounded-lg bg-gradient-to-br from-athAIna-red via-athAIna-orange to-athAIna-yellow"
         ></div>
         <div
-          class="absolute transform -translate-x-[10rem] translate-y-6 rotate-[12deg] shadow-md w-[360px] h-[480px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+          class="absolute transform -translate-x-[10rem] translate-y-12 rotate-[4deg] shadow-md w-[600px] h-[900px] rounded-lg bg-gradient-to-br from-athAIna-red via-athAIna-orange to-athAIna-yellow"
         ></div>
         <div
-          class="absolute transform -translate-x-[5rem] w-[360px] h-[480px] rotate-[15deg] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
+          class="absolute transform justify-center align-middle -translate-x-[8rem] translate-y-10 w-[600px] h-[900px] rotate-[6deg] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
         >
+          <span class="text-athAIna-lg">
           What's the largest star in the universe??
+            </span>
         </div>
       </div>
     </div>
