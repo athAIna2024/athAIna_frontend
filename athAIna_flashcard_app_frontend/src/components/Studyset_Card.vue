@@ -63,12 +63,9 @@ const closeDeleteModal = () => {
 
 const isLoading = ref(false);
 
-const studySetId = Number(props.studySetId);
-const studySetTitle = props.title;
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const fetchFlashcards = async () => {
+const fetchFlashcards = async (id) => {
 
   isLoading.value = true;
   const minimumLoadingTime = 500; // Minimum loading time in milliseconds
@@ -77,7 +74,7 @@ const fetchFlashcards = async () => {
   try {
 
     const response = await axios.get(flashcard_url, {
-      params: { studyset_id: studySetId }
+      params: { studyset_id: id }
     });
 
     if (response.data.data.length > 0) {
@@ -144,13 +141,11 @@ const fetchFlashcards = async () => {
 }
 
 
-const fetchFlashcardsIfNotExisting = async (studySetId) => {
+const fetchFlashcardsIfNotExisting = async (id) => {
   try {
-    store.setStudySetId(studySetId);
-    store.setStudySetTitle(studySetTitle);
-    const studySet = await flashcardsDB.flashcards.where('studyset_id').equals(Number(studySetId)).toArray();
+    const studySet = await flashcardsDB.flashcards.where('studyset_id').equals(Number(id)).toArray();
     if (studySet.length === 0) {
-      await fetchFlashcards();
+      await fetchFlashcards(Number(id));
     }
   } catch (error) {
     console.error("An error occurred while fetching flashcards:", error);
@@ -158,8 +153,16 @@ const fetchFlashcardsIfNotExisting = async (studySetId) => {
 };
 
 const navigateToLibraryPageFlashcard = async () => {
-  await fetchFlashcardsIfNotExisting(studySetId);
-  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetTitle, studySetId: studySetId } });
+  // Fetch flashcards if they do not exist
+  await fetchFlashcardsIfNotExisting(props.studySetId);
+
+  // Store the props details in the store
+  store.setStudySetId(props.studySetId);
+  store.setStudySetTitle(props.title);
+
+  // Navigate to the Library Page Flashcard
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: props.title, studySetId: props.studySetId } });
+
 };
 
 const refreshLibrary =  () => {
