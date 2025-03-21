@@ -38,7 +38,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close'], ['refreshLibrary']);
+const emit = defineEmits(['close', 'refreshLibrary']);
 const close = () => {
   emit('close');
 };
