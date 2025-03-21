@@ -36,6 +36,11 @@ const logout = async () => {
       Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
 
+      let dbs = await indexedDB.databases();
+      dbs.forEach((db) => {
+        indexedDB.deleteDatabase(db.name);
+      });
+
       authStore.logout();
       router.push("/login");
       emit("close");

@@ -120,7 +120,7 @@ const handleFailedAttempt = (userId) => {
     lockedUsersStore.setLockedUsers(userId, lockoutEndTime);
     errors.value.general = "You are locked out. Please try again later.";
   } else {
-  }
+    }
 };
 </script>
 
