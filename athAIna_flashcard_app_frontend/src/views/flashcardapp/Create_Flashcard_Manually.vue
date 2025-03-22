@@ -4,9 +4,9 @@ import { useRoute } from 'vue-router';
 import { useStudysetStore} from "../../../stores/studySetStore.js";
 import { ref } from 'vue';
 import axios from '@/axios';
-import Library_Page_Flashcard from "@/views/flashcardapp/Library_Page_Flashcard.vue";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 import studySetDb from "@/views/studysetapp/dexie.js";
+import Success_Message from "@/components/Success_Message.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,6 +22,8 @@ const question = ref("");
 const answer = ref("");
 const image = ref("");
 const imageName = ref("");
+
+const showSuccessMessage = ref(false);
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
@@ -67,11 +69,11 @@ const saveFlashcard = async () => {
 
     const createFlashcard = {
       id: request.data.data.id,
-      question: question.value,
-      answer: answer.value,
+      question: String(request.data.data.question),
+      answer: String(request.data.data.answer),
       image: request.data.data.image,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: Date(request.data.data.created_at),
+      updated_at: Date(request.data.data.updated_at),
       studyset_id: Number(studySetId),
     };
 
@@ -85,6 +87,7 @@ const saveFlashcard = async () => {
         .modify({flashcard_count: studySet.flashcard_count + 1});
 
     if (isSuccessful) {
+      showSuccessMessage.value = true;
       smoothReload();
 
     }
@@ -110,6 +113,13 @@ const navigateToLibraryPage = () => {
 </script>
 
 <template>
+  <Success_Message
+      :isVisible="showSuccessMessage"
+      :successHeader="'Creating flashcard'"
+      :successMessage="'Successfully created a flashcard.'"
+      @close="showSuccessMessage = false"
+  />
+
   <div class="text-athAIna-violet text-athAIna-lg font-semibold mx-4 my-8">
     <div class="flex flex-row space-x-6 my-2 mx-8 items-center">
       <button @click="navigateToLibraryPage">

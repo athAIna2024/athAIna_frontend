@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import axios from '@/axios';
 import { onMounted } from 'vue';
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import Success_Message from "@/components/Success_Message.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -20,6 +21,8 @@ const message = ref("");
 
 const isSuccessful_retrieved = ref(false);
 const message_retrieved = ref("");
+
+const showSuccessMessage = ref(false);
 
 const question = ref("");
 const answer = ref("");
@@ -74,18 +77,18 @@ const updateFlashcard = async () => {
 
     const updateFlashcard = {
       id: Number(flashcardId),
-      question: question.value,
-      answer: answer.value,
+      question: String(response.data.data.question),
+      answer: String(response.data.data.answer),
       image: response.data.data.image,
-      updated_at: new Date(),
+      updated_at: Date(response.data.data.updated_at),
       studyset_id: studySetId,
     }
 
     await flashcardsDB.flashcards.update(Number(flashcardId), updateFlashcard);
-    console.log("UPDATE FRONTEND DB", updateFlashcard);
 
     if (isSuccessful.value) {
-      navigateToLibraryPageSmoothly();
+      showSuccessMessage.value = true;
+      smoothReload();
     }
 
   } catch (error) {
@@ -128,24 +131,32 @@ const fetchFlashcardData = async () => {
   }
 };
 
-function navigateToLibraryPageSmoothly() {
-
+function smoothReload() {
   document.body.classList.add('fade-out');
   setTimeout(() => {
-    location.reload(); // UPDATES THE FLASHCARD SUCCESSFULL, MUST INTEGRATE WATCH INSTEAD OF location.reload();
-    router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+    location.reload();
   }, 500); // Match the duration of the CSS transition
-
 }
+
+const navigateToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+};
 
 onMounted(() => {
   fetchFlashcardData();
 });
 </script>
 <template>
+  <Success_Message
+      :isVisible="showSuccessMessage"
+      :successHeader="'Updating flashcard'"
+      :successMessage="'Successfully updated the flashcard.'"
+      @close="showSuccessMessage = false"
+  />
+
   <div class="text-athAIna-violet text-athAIna-lg font-semibold mx-4 my-8">
     <div class="flex flex-row space-x-6 my-2 mx-8 items-center">
-      <button @click="navigateToLibraryPageSmoothly">
+      <button @click="navigateToLibraryPage">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
@@ -251,7 +262,7 @@ onMounted(() => {
     <div class="flex flex-row space-x-6 justify-end">
 
       <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
-        <button @click="navigateToLibraryPageSmoothly" class="athAIna-border-inner rounded-full"> Cancel </button>
+        <button @click="navigateToLibraryPage" class="athAIna-border-inner rounded-full"> Cancel </button>
       </div>
       <button class="btn mt-10 mx-2" type="submit"> Update </button>
     </div>

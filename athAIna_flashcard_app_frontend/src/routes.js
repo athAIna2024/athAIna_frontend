@@ -116,7 +116,7 @@ const routes = [
     component: Review_Mode,
   },
   {
-    path: "/:studySetTitle/:studySetId/test/",
+    path: "/:studySetTitle/:studySetId/test/:batchId",
     name: "Test_Mode",
     component: Test_mode,
   },
@@ -162,16 +162,22 @@ const router = createRouter({
   routes,
 });
 
+
 // Crucial for resetting the test mode store when leaving the test mode
 router.beforeEach((to, from, next) => {
   const testModeStore = useTestModeStore();
 
-  if (!to.path.includes('/test')) {
+  if (!to.path.includes('/test') ) {
     testModeStore.setNumberOfQuestions(null);
     testModeStore.setCurrentQuestionIndex(0);
+    testModeStore.setIsTestCompleted(false);
+    testModeStore.setTestModeQuestions([]);
+    testModeStore.setBatchId(null);
+    testModeStore.setCreatedAt(null);
   }
 
   next();
 });
+
 
 export default router;

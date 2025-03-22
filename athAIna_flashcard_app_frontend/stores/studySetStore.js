@@ -4,13 +4,9 @@ import { useRoute } from 'vue-router';
 
 export const useStudysetStore = defineStore('studyset', () => {
     const route = useRoute();
-    const searchResults = ref([]);
     const studySetId = ref(route.params.studySetId ? route.params.studySetId : null);
     const studySetTitle = ref(route.params.studySetTitle ? decodeURIComponent(route.params.studySetTitle) : null);
 
-    const setSearchResults = (results) => {
-        searchResults.value = results;
-    };
 
     const setStudySetId = (id) => {
         studySetId.value = id;
@@ -20,7 +16,7 @@ export const useStudysetStore = defineStore('studyset', () => {
         studySetTitle.value = title;
     };
 
-    return { searchResults, setSearchResults, studySetId, setStudySetId, studySetTitle, setStudySetTitle };
+    return { studySetId, setStudySetId, studySetTitle, setStudySetTitle };
 }, {
 
 });

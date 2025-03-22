@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { watch } from 'vue';
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
+import Success_Message from "@/components/Success_Message.vue";
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
@@ -39,25 +40,30 @@ watch(() => props.isVisible, (newValue) => {
 
 const saveStudySet = async () => {
   try {
-    const request = await axios.post(studyset_url, {
+    const requestData = {
       learner_instance: Number(learnerId.value), // Ensure this is an integer
       title: title.value,
-      description: description.value,
       subject: subject.value // Ensure this matches the field name in your serializer
-    });
+    };
+
+    if (description.value !== null && description.value !== '') {
+      requestData.description = description.value;
+    }
+
+    const request = await axios.post(studyset_url, requestData);
 
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
     const newStudySet = {
-      id: request.data.data.id,
+      id: Number(request.data.data.id),
       learner_instance: Number(learnerId.value),
-      title: title.value,
-      description: description.value,
-      subject: subject.value,
+      title: String(request.data.data.title),
+      description: request.data.data.description === null ? "" : String(request.data.data.description),
+      subject: String(request.data.data.subject),
       flashcard_count: Number(0),
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: Date(request.data.data.created_at),
+      updated_at: Date(request.data.data.updated_at),
     }
 
     await studySetDb.studysets.add(newStudySet);
@@ -87,6 +93,14 @@ const saveStudySet = async () => {
 </script>
 
 <template>
+
+  <Success_Message
+    :isVisible="isSuccessful"
+    :successHeader="'Saving studyset'"
+    :successMessage="'Successfully created a study set.'"
+    @close="isSuccessful = false"
+  />
+
   <form @submit.prevent="saveStudySet">
     <div v-if="props.isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50">
       <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red z-50 p-[4px] w-[620px] rounded-[20px] shadow-lg w-96" style="background-color: white !important;">

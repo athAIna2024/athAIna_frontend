@@ -2,11 +2,15 @@
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 import {useStudysetStore} from "../../stores/studySetStore.js";
-import {defineProps, onMounted} from 'vue';
+import {defineProps} from 'vue';
+import {useRouter} from 'vue-router';
 import { ref } from 'vue';
+import Loading_Modal from "@/components/Loading_Modal.vue";
+
 import axios from "@/axios.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
+const router = useRouter();
 const flashcard_url = "/flashcard/";
 const flashcard_result = ref([]);
 const flashcardCounts_backend = ref(0);
@@ -21,7 +25,7 @@ const props = defineProps({
   },
   description: {
     type: String,
-    required: true
+    required: false,
   },
   subject: {
     type: String,
@@ -57,13 +61,20 @@ const closeDeleteModal = () => {
   isDeleteModalVisible.value = false;
 };
 
-const studySetId = Number(props.studySetId);
-const studySetTitle = props.title;
+const isLoading = ref(false);
 
-const fetchFlashcards = async () => {
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const fetchFlashcards = async (id) => {
+
+  isLoading.value = true;
+  const minimumLoadingTime = 500; // Minimum loading time in milliseconds
+  const startTime = Date.now();
+
   try {
+
     const response = await axios.get(flashcard_url, {
-      params: { studyset_id: studySetId }
+      params: { studyset_id: id }
     });
 
     if (response.data.data.length > 0) {
@@ -99,13 +110,12 @@ const fetchFlashcards = async () => {
 
       await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
 
+      isSuccessful.value = response.data.successful;
+      message.value = response.data.message;
+
     } else {
       flashcard_result.value = [];
     }
-
-    isSuccessful.value = response.data.successful;
-    message.value = response.data.message;
-
     return flashcard_result;
 
   } catch (error) {
@@ -119,27 +129,58 @@ const fetchFlashcards = async () => {
     flashcard_result.value = [];
 
     return flashcard_result;
+  } finally {
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = minimumLoadingTime - elapsedTime;
+
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    isLoading.value = false;
   }
 }
 
 
-const fetchFlashcardsIfNotExisting = async (studySetId) => {
-  store.setStudySetId(studySetId);
-  store.setStudySetTitle(studySetTitle);
-  const studySet = await flashcardsDB.flashcards.where('studyset_id').equals(Number(studySetId)).toArray();
-  if (studySet.length === 0) {
-    await fetchFlashcards();
+const fetchFlashcardsIfNotExisting = async (id) => {
+  try {
+    const studySet = await flashcardsDB.flashcards.where('studyset_id').equals(Number(id)).toArray();
+    if (studySet.length === 0) {
+      await fetchFlashcards(Number(id));
+    }
+  } catch (error) {
+    console.error("An error occurred while fetching flashcards:", error);
   }
 };
 
+const navigateToLibraryPageFlashcard = async () => {
+  // Fetch flashcards if they do not exist
+  await fetchFlashcardsIfNotExisting(props.studySetId);
+
+  // Store the props details in the store
+  store.setStudySetId(props.studySetId);
+  store.setStudySetTitle(props.title);
+
+  // Navigate to the Library Page Flashcard
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: props.title, studySetId: props.studySetId } });
+
+};
+
+const refreshLibrary =  () => {
+  location.reload();
+};
 </script>
 
 <template>
+  <Loading_Modal
+      :loadingMessage="'Please wait for a couple of seconds'"
+      :loadingHeader="'Fetching flashcards...'"
+      :condition="isSuccessful"
+      :isVisible="isLoading"
+  />
+
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
-      <router-link :to="{ name: 'Library_Page_Flashcard', params: { studySetTitle: title, studySetId: studySetId } }">
-        <div @click="fetchFlashcardsIfNotExisting(studySetId)" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
-      </router-link>
+        <div @click="navigateToLibraryPageFlashcard" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px]">
         {{ description }}
@@ -166,6 +207,7 @@ const fetchFlashcardsIfNotExisting = async (studySetId) => {
       :studySetId="studySetId"
       title="Update Studyset – athAIna"
       @close="closeUpdateModal"
+      @refreshLibrary="refreshLibrary"
   />
 
   <Delete_Studyset

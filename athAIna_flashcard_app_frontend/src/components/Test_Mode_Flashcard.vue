@@ -1,18 +1,31 @@
 <script setup>
 
 import { ref } from 'vue';
-import { watch } from 'vue';
+import { computed } from 'vue';
 
 import { defineProps } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
+import {testModeDB} from "@/views/flashcardapp/dexie.js";
+import axios from '@/axios';
+
+const ai_validation_url = 'test/validate_learner_answer/';
+const save_test_results_url = 'test/save/'
+const isSuccessful = ref(false);
+const message = ref(null);
+
+const isSuccessful_save = ref(false);
+const message_save = ref(null);
 
 const testModeStore = useTestModeStore();
-const question = ref(true);
-const answer = ref(false);
-const result = ref(false);
 const learner_answer = ref(null);
 const showAnswer = ref(false);
 const showQuestion = ref(true);
+const batchId = ref(testModeStore.batchId);
+
+const is_correct = ref(false);
+const answerClass = computed(() => {
+  return is_correct.value ? 'text-athAIna-green' : 'text-athAIna-red';
+});
 
 const props = defineProps({
   question: {
@@ -23,40 +36,137 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  flashcardId: {
+    type: Number,
+    required: true,
+  }
 });
 
 
-const submitAnswer = () => {
+const submitAnswer = async () => {
+  is_correct.value = await validateAnswer();
+
+  const newTestField = {
+    flashcard_id: props.flashcardId,
+    batch_id: batchId.value,
+    created_at: testModeStore.created_at,
+    learner_answer: learner_answer.value,
+    is_correct: is_correct.value,
+    corrected_at: new Date(),
+  }
+
+  try
+  {
+    await testModeDB.test_field.add(newTestField);
+  } catch (error) {
+    console.error(error);
+  }
+
+
   displayAnswer();
+
 };
 
+
+const validateAnswer = async (correctAnswer) => {
+  if (!learner_answer.value) {
+    return false;
+  } else {
+    if (learner_answer.value.toLowerCase() === props.answer.toLowerCase()) {
+      return true;
+    } else {
+      return await validateLearnAnswerWithAi();
+    }
+  }
+}
+
+const validateLearnAnswerWithAi = async () => {
+  try {
+    const response = await axios.get(`${ai_validation_url}${Number(props.flashcardId)}/`, {
+      params: {
+        learner_answer: learner_answer.value
+      }
+    });
+
+    isSuccessful.value = response.data.successful;
+
+    if (isSuccessful.value) {
+      if (response.data.is_correct) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      isSuccessful.value = false;
+      message.value = response.data.message;
+    }
+  } catch (error) {
+    console.error("Error", error);
+    isSuccessful.value = false;
+    message.value = error.message;
+  }
+};
 
 const displayAnswer = () => {
   showAnswer.value = true;
   showQuestion.value = false;
-
-  setTimeout(() => {
-    transitionToNext();
-  }, 1000); // Adjust the delay as needed
-
 };
 
 const transitionToNext = () => {
-  showAnswer.value = false;
-  if (!showAnswer.value && testModeStore.currentQuestionIndex < testModeStore.numberOfQuestions) {
-    const increment = testModeStore.currentQuestionIndex + 1;
-    testModeStore.setCurrentQuestionIndex(increment);
-    showQuestion.value = true;
+  try {
+    showAnswer.value = false;
+    if (testModeStore.currentQuestionIndex + 1 < testModeStore.numberOfQuestions) {
+      const increment = testModeStore.currentQuestionIndex + 1;
+      testModeStore.setCurrentQuestionIndex(increment);
+
+      learner_answer.value = null; // Reset the learner's answer
+      showQuestion.value = true;
+    } else {
+      // Shows the summary of score in 500 milliseconds
+      showAnswer.value = true;
+      showQuestion.value = false;
+      testModeStore.setIsTestCompleted(true);
+
+      if (testModeStore.isTestCompleted) {
+        console.log("Test Completed");
+        saveTestResults();
+      }
+
+    }
+  } catch (error) {
+    console.error("Error during transition:", error);
   }
 };
 
-watch(() => showQuestion.value, (newValue) => {
-  if (newValue) {
-    console.log("Question is now being shown");
-  } else {
-    console.log("Question is now hidden");
+const saveTestResults = async () => {
+  try {
+    const testResults = await testModeDB.test_field.where('batch_id').equals(batchId.value).toArray();
+
+    const cleanTestResults = testResults.map((result) => {
+      return {
+        flashcard_instance: Number(result.flashcard_id), // Convert to number
+        batch_id: result.batch_id, // Keep as string since it's a UUID
+        created_at: new Date(result.created_at).toISOString(), // Convert to ISO string
+        learner_answer: String(result.learner_answer).trim(), // Convert to string and trim whitespace
+        is_correct: Boolean(result.is_correct), // Convert to boolean
+        corrected_at: new Date(result.corrected_at).toISOString() // Convert to ISO string
+      };
+    });
+    console.log("Clean Test Results", cleanTestResults);
+
+    const request = await axios.post(save_test_results_url, cleanTestResults);
+
+    isSuccessful_save.value = request.data.successful;
+    message_save.value = request.data.message;
+    console.log("Did it save successfully?", isSuccessful_save.value);
+
+  } catch (error) {
+    isSuccessful_save.value = false;
+    message_save.value = error.message;
+    console.error("Failed to save the data", error);
   }
-});
+};
+
 </script>
 
 <template>
@@ -98,8 +208,8 @@ watch(() => showQuestion.value, (newValue) => {
           <span class="text-athAIna-sm">
             Your answer
           </span>
-          <span class="text-athAIna-green text-athAIna-base">
-            insert learner answer
+          <span :class="[answerClass, 'text-athAIna-base']">
+            {{ learner_answer || 'You did not provide an answer' }}
           </span>
         </div>
 
@@ -116,6 +226,11 @@ watch(() => showQuestion.value, (newValue) => {
             {{ props.answer }}
           </span>
         </div>
+
+        <div class="px-10 py-8 flex items-center justify-end">
+          <button class="btn w-48" @click="transitionToNext">Next</button>
+        </div>
+
       </div>
     </div>
   </Transition>

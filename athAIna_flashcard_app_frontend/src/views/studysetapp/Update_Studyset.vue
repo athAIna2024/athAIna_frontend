@@ -5,6 +5,7 @@ import { reactive } from 'vue';
 
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
+import Success_Message from "@/components/Success_Message.vue";
 
 const studyset_url = "/studyset/update/";
 
@@ -19,6 +20,8 @@ const message_retrieved = ref("");
 
 const isSuccessful_updated = ref(false);
 const message_updated = ref("");
+
+const showSuccessMessage = ref(false);
 
 const props = defineProps({
   isVisible: {
@@ -35,9 +38,13 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close'], ['refreshLibrary']);
+const emit = defineEmits(['close', 'refreshLibrary']);
 const close = () => {
   emit('close');
+};
+
+const refreshLibrary = () => {
+  emit('refreshLibrary');
 };
 
 
@@ -62,8 +69,6 @@ const fetchStudySetData = async () => {
       isSuccessful_retrieved.value = response.data.successful;
       message_retrieved.value = response.data.message;
 
-      // Debugging
-      console.log("title", title.value);
     } else {
       isSuccessful_retrieved.value = false;
       message_retrieved.value = "There is no study set with the provided ID.";
@@ -83,30 +88,37 @@ const fetchStudySetData = async () => {
 
 const updateStudySet = async () => {
   try {
-    const request = await axios.put(`${studyset_url}${props.studySetId}/`, {
+    const requestData = {
       title: title.value,
-      description: description.value,
       subject: subject.value,
-    });
+    };
 
+    if (description.value !== null && description.value !== '') {
+      requestData.description = description.value;
+    }
+
+    const request = await axios.put(`${studyset_url}${props.studySetId}/`, requestData);
 
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
 
+    console.log(request.data);
+
+
+    const updateStudySet = {
+      id: Number(request.data.data.id),
+      title: String(request.data.data.title),
+      description: request.data.data.description === null ? "" : String(request.data.data.description),
+      subject: String(request.data.data.subject),
+      updated_at: Date(request.data.data.updated_at),
+    };
+
+    await studySetDb.studysets.update(props.studySetId, updateStudySet);
 
     if (isSuccessful_updated.value) {
-      const updateStudySet = {
-        id: props.studySetId,
-        title: title.value,
-        description: description.value,
-        subject: subject.value,
-        updated_at: new Date()
-      };
-
-      await studySetDb.studysets.update(props.studySetId, updateStudySet);
-
+      showSuccessMessage.value = true;
+      refreshLibrary();
       close();
-      location.reload();
     }
 
   } catch (error) {
@@ -129,6 +141,14 @@ const updateStudySet = async () => {
 
 </script>
 <template>
+
+  <Success_Message
+      :isVisible="showSuccessMessage"
+      :successHeader="'Updating studyset'"
+      :successMessage="'Successfully updated the study set.'"
+      @close="showSuccessMessage = false"
+  />
+
   <form @submit.prevent="updateStudySet">
     <div v-if="props.isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50">
       <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red z-50 p-[4px] w-[620px] rounded-[20px] shadow-lg w-96" style="background-color: white !important;">
