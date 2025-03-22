@@ -111,7 +111,7 @@ const routes = [
     component: Library_Page_Flashcard,
   },
   {
-    path: "/review/:id",
+    path: "/:studySetTitle/:studySetId/review/:id",
     name: "Review_Mode",
     component: Review_Mode,
   },
