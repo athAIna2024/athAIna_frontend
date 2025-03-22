@@ -2,6 +2,13 @@
 import { defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/authStore";
+import { useFlashcardSearchStore} from "../../../stores/flashcardSearchStore.js";
+import { useStudysetStore } from "../../../stores/studySetStore.js";
+import { useLockedUsersStore} from "../../../stores/lockedUsersStore.js";
+import { useStudySetSearchStore } from "../../../stores/studySetSearchStore.js";
+import {useUserStore} from "../../../stores/userStore.js";
+import {useTestModeStore} from "../../../stores/testModeStore.js";
+
 import Cookies from "js-cookie";
 import axiosInstance from "@/axiosConfig";
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
@@ -18,6 +25,13 @@ const props = defineProps({
 });
 
 const authStore = useAuthStore();
+const flashcardSearchStore = useFlashcardSearchStore();
+const studysetStore = useStudysetStore();
+const lockedUsersStore = useLockedUsersStore();
+const studySetSearchStore = useStudySetSearchStore();
+const userStore = useUserStore();
+const testModeStore = useTestModeStore();
+
 const router = useRouter();
 const emit = defineEmits(["close"]);
 
@@ -41,7 +55,17 @@ const logout = async () => {
         indexedDB.deleteDatabase(db.name);
       });
 
+
+
       authStore.logout();
+      flashcardSearchStore.clear();
+      studysetStore.clear();
+      studySetSearchStore.clear();
+      userStore.clear();
+      testModeStore.clear();
+
+
+
       router.push("/login");
       emit("close");
     } else {

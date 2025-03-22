@@ -12,7 +12,11 @@ export const useStudySetSearchStore = defineStore('studySetSearch', () => {
         return searchResults.value;
     }
 
-    return { searchResults, setSearchResults, getSearchResults };
+    const clear = () => {
+        searchResults.value = [];
+    }
+
+    return { searchResults, setSearchResults, getSearchResults, clear };
 }, {
 
 });

@@ -36,12 +36,12 @@ export const useLockedUsersStore = defineStore("lockedUsers", () => {
 
   loadLockedUsers();
 
-  persist: true;
-
   return {
     lockedUsers,
     setLockedUsers,
     removeLockedUser,
     isUserLocked,
   };
-});
+}, {
+    persist: true
+    });

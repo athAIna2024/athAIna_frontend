@@ -33,6 +33,15 @@ export const useTestModeStore = defineStore('testMode', () => {
         created_at.value = date;
     }
 
+    const clear = () => {
+        numberOfQuestions.value = null;
+        currentQuestionIndex.value = 0;
+        testModeQuestions.value = [];
+        isTestCompleted.value = false;
+        batchId.value = null;
+        created_at.value = null;
+    }
+
     return { numberOfQuestions,
         setNumberOfQuestions,
         currentQuestionIndex,
@@ -45,6 +54,7 @@ export const useTestModeStore = defineStore('testMode', () => {
         setBatchId,
         created_at,
         setCreatedAt,
+        clear,
     };
 }, {
     persist: true

@@ -16,7 +16,12 @@ export const useStudysetStore = defineStore('studyset', () => {
         studySetTitle.value = title;
     };
 
-    return { studySetId, setStudySetId, studySetTitle, setStudySetTitle };
+    const clear = () => {
+        studySetId.value = null;
+        studySetTitle.value = null;
+    }
+
+    return { studySetId, setStudySetId, studySetTitle, setStudySetTitle, clear };
 }, {
 
 });

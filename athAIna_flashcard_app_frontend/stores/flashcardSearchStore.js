@@ -12,10 +12,15 @@ export const useFlashcardSearchStore = defineStore('flashcardSearch', () => {
     return searchResults.value[studySetId] || [];
   };
 
+  const clear = () => {
+    searchResults.value = {};
+  };
+
   return {
     searchResults,
     setSearchResults,
     getSearchResults,
+    clear,
   };
 });
 
