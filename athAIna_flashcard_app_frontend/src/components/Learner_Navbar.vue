@@ -69,7 +69,7 @@ const toggleModal = (modalName) => {
   </div>
 
   <div
-    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 sticky font-poppins shadow-md"
+    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 bg-athAIna-white sticky font-poppins shadow-md"
   >
     <div
       class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"

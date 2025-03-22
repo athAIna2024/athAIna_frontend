@@ -7,7 +7,7 @@ import Footer_Navbar from "@/components/Footer_Navbar.vue";
 const authStore = useAuthStore();
 </script>
 
-<template>
+<template class="flex flex-col min-h-screen">
   <header>
     <!-- IN PROGRESS: Put logic here if the user is authenticated and is a learner or a guest-->
     <!-- Conditionally render Navbar based on authentication status -->
