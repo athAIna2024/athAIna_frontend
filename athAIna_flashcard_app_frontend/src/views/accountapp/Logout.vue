@@ -57,14 +57,15 @@ const logout = async () => {
 
 
 
+
+
+
       authStore.logout();
+
       flashcardSearchStore.clear();
       studysetStore.clear();
       studySetSearchStore.clear();
-      userStore.clear();
       testModeStore.clear();
-
-
 
       router.push("/login");
       emit("close");
@@ -73,6 +74,8 @@ const logout = async () => {
     }
   } catch (error) {
     console.log(error);
+  }finally {
+    userStore.clear();
   }
 };
 </script>
