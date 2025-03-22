@@ -5,25 +5,25 @@ import axios from "@/axios";
 import Cookies from "js-cookie";
 import { useUserStore } from "../../../stores/userStore";
 import { useAuthStore } from "../../../stores/authStore";
+import { useLockedUsersStore } from "../../../stores/lockedUsersStore";
 
 import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
-console.log(userStore.getUserID());
-
 const isLoading = ref(false);
+
+const lockedUsersStore = useLockedUsersStore();
+const failedAttempts = ref(0);
+const maxAttempts = 3;
+
+console.log(userStore.getUserID());
 
 const router = useRouter();
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
-const locked = ref(false);
-const lockedTime = ref(0);
-const failedAttempts = ref(0);
-const maxAttempts = 5;
-const lockoutDuration = 60;
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
@@ -36,15 +36,17 @@ const errors = ref({
 });
 
 const login = async () => {
-  if (locked.value) {
-    errors.value.general = `You are locked out. Please try again in ${Math.ceil(
-      lockedTime.value / 60
-    )} minutes.`;
-    return;
-  }
-
   isLoading.value = true;
   console.log("Logging in...", isLoading.value);
+
+  const userId = email.value;
+
+  if (lockedUsersStore.isUserLocked(userId)) {
+    errors.value.general = "You are locked out. Please try again later.";
+    isLoading.value = false;
+    console.log("user is locked out :", isLoading.value);
+    return;
+  }
 
   try {
     const response = await axios.post(
@@ -89,11 +91,14 @@ const login = async () => {
       console.log(response.data.error);
     }
   } catch (error) {
-    handleFailedAttempt();
     console.log(error.value);
     if (error.response.status === 400) {
       errors.value.email = error.response.data.email || [];
-      errors.value.password = error.response.data.password || [];
+
+      if (errors.value.password) {
+        handleFailedAttempt(userId);
+        errors.value.password = error.response.data.password || [];
+      }
       if (error.response.data.non_field_errors) {
         errors.value.email.push(...error.response.data.non_field_errors);
       }
@@ -106,52 +111,17 @@ const login = async () => {
   }
 };
 
-const handleFailedAttempt = () => {
+const handleFailedAttempt = (userId) => {
+  // Add this function at the end
   failedAttempts.value += 1;
+  console.log("Failed attempts: ", failedAttempts.value);
   if (failedAttempts.value >= maxAttempts) {
-    lockUserOut();
+    const lockoutEndTime = Date.now() + 60 * 1000; // Lock out for 1 minute
+    lockedUsersStore.setLockedUsers(userId, lockoutEndTime);
+    errors.value.general = "You are locked out. Please try again later.";
   } else {
-    errors.value.general = "Invalid email or password.";
-  }
-};
-
-const lockUserOut = () => {
-  locked.value = true;
-  const lockoutEndTime = Date.now() + lockoutDuration * 1000;
-  localStorage.setItem("lockoutEndTime", lockoutEndTime);
-  localStorage.setItem("locked", true);
-  updateLockedTime();
-};
-
-const updateLockedTime = () => {
-  const lockoutEndTime = localStorage.getItem("lockoutEndTime");
-  if (lockoutEndTime) {
-    const remainingTime = Math.max(0, lockoutEndTime - Date.now());
-    lockedTime.value = Math.floor(remainingTime / 1000);
-    if (remainingTime > 0) {
-      setTimeout(updateLockedTime, 1000);
-    } else {
-      locked.value = false;
-      failedAttempts.value = 0;
-      localStorage.removeItem("lockoutEndTime");
-      localStorage.removeItem("locked");
     }
-  }
 };
-
-onMounted(() => {
-  const storedLocked = localStorage.getItem("locked");
-  const storedLockedTime = localStorage.getItem("lockoutEndTime");
-
-  if (storedLocked && storedLockedTime) {
-    locked.value = storedLocked === "true";
-    const remainingTime = Math.max(0, storedLockedTime - Date.now());
-    lockedTime.value = Math.floor(remainingTime / 1000);
-    if (locked.value) {
-      updateLockedTime();
-    }
-  }
-});
 </script>
 
 <template>
@@ -288,6 +258,11 @@ onMounted(() => {
           {{ error }}
         </div>
       </div>
+      <div v-if="errors.general.length" class="text-athAIna-red ml-7 mt-1">
+        <div>
+          {{ errors.general }}
+        </div>
+      </div>
 
       <!-- Forgot Password -->
       <div class="w-full flex justify-end mt-5 mr-5 text-[16px] font-medium">
@@ -309,7 +284,7 @@ onMounted(() => {
         </span>
       </div>
 
-      <div
+      <!-- <div
         v-if="locked"
         class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
       >
@@ -325,7 +300,7 @@ onMounted(() => {
             <p class="m-8 text-athAIna-md">Try logging in again later</p>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/authStore";
 import Cookies from "js-cookie";
 import axiosInstance from "@/axiosConfig";
+import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 
 const props = defineProps({
   isVisible: {
@@ -35,6 +36,11 @@ const logout = async () => {
       Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
 
+      let dbs = await indexedDB.databases();
+      dbs.forEach((db) => {
+        indexedDB.deleteDatabase(db.name);
+      });
+
       authStore.logout();
       router.push("/login");
       emit("close");
@@ -47,22 +53,12 @@ const logout = async () => {
 };
 </script>
 <template>
-  <div
-    v-if="isVisible"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
-  >
-    <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
-      <div class="athAIna-border-inner p-4 text-center">
-        <div class="flex justify-start m-8 pl-4 text-athAIna-lg">
-          Are you sure you want to log out?
-        </div>
-        <div class="mb-8 flex justify-center">
-          <button @click="$emit('close')" class="btn-alt w-48 mr-5">No</button>
-          <button @click="logout" class="btn w-48">Yes</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <Confirmation_Prompt
+    :isVisible="isVisible"
+    confirmQuestion="Are you sure you want to log out?"
+    @close="$emit('close')"
+    @confirm="logout"
+  />
 </template>
 
 <style scoped></style>
