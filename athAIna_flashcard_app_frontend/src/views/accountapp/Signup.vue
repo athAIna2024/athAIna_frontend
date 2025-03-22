@@ -3,12 +3,14 @@ import { reactive, ref } from "vue";
 import OTP from "@/views/accountapp/Email_OTP.vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
+import Loading_Modal from "@/components/Loading_Modal.vue"; // Import the Loading_Modal component
 
 const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const error = ref("");
 const isSuccessful = ref(false);
+const isLoading = ref(false); // Loading state for modal
 
 const router = useRouter();
 
@@ -57,6 +59,9 @@ const createUser = async () => {
     return;
   }
 
+  // Show loading modal before API call
+  isLoading.value = true;
+
   try {
     const response = await axios.post("/account/register/", {
       email: email.value,
@@ -85,6 +90,9 @@ const createUser = async () => {
         errors.general = err.response.data.non_field_errors[0];
       }
     }
+  } finally {
+    // Hide loading modal when process completes
+    isLoading.value = false;
   }
 };
 </script>
@@ -150,11 +158,12 @@ const createUser = async () => {
               type="email"
               placeholder="Email"
               class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+              :disabled="isLoading"
             />
           </div>
-          <span class="text-athAIna-red text-sm" v-if="invalidEmail"
-            >Invalid Email</span
-          >
+          <div class="text-athAIna-red text-xs mt-1 ml-4" v-if="errors.email">
+            {{ errors.email }}
+          </div>
         </div>
 
         <!-- Password Field -->
@@ -183,13 +192,56 @@ const createUser = async () => {
             </svg>
             <input
               v-model="password"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               placeholder="Password"
               class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+              :disabled="isLoading"
             />
+            <button
+              @click="togglePassword"
+              type="button"
+              class="absolute right-4 text-athAIna-violet"
+              :disabled="isLoading"
+            >
+              <svg
+                v-if="showPassword"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </button>
           </div>
           <div
-            v-if="errors.password[0]"
+            v-if="errors.password && errors.password[0]"
             class="text-athAIna-red text-xs mt-1 ml-4"
           >
             {{ errors.password[0] }}
@@ -222,13 +274,56 @@ const createUser = async () => {
             </svg>
             <input
               v-model="password2"
-              type="password"
+              :type="showPassword2 ? 'text' : 'password'"
               placeholder="Confirm Password"
               class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+              :disabled="isLoading"
             />
+            <button
+              @click="togglePassword2"
+              type="button"
+              class="absolute right-4 text-athAIna-violet"
+              :disabled="isLoading"
+            >
+              <svg
+                v-if="showPassword2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </button>
           </div>
           <div
-            v-if="errors.password2[0]"
+            v-if="errors.password2 && errors.password2[0]"
             class="text-athAIna-red text-xs mt-1 ml-4"
           >
             {{ errors.password2[0] }}
@@ -243,9 +338,10 @@ const createUser = async () => {
             <button
               class="btn w-full"
               @click="createUser"
-              :disabled="isOTPVisible"
+              :disabled="isOTPVisible || isLoading"
             >
-              Sign Up
+              <span v-if="isLoading">Creating account...</span>
+              <span v-else>Sign Up</span>
             </button>
           </div>
 
@@ -257,6 +353,19 @@ const createUser = async () => {
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div
+      class="fixed inset-0 flex items-center justify-center z-50"
+      v-if="isLoading"
+    >
+      <Loading_Modal
+        :loadingMessage="'Please wait while we create your account'"
+        :loadingHeader="'Creating Account...'"
+        :isVisible="true"
+        :condition="false"
+      />
     </div>
 
     <!-- Pass email prop to OTP component -->

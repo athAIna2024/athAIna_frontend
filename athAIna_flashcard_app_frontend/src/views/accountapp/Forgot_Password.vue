@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axios from "@/axios"; // Make sure this is your configured axios instance
 import OTP from "@/views/accountapp/Forgot_OTP.vue";
+import Loading_Modal from "@/components/Loading_Modal.vue"; // Import the Loading_Modal component
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -10,6 +11,7 @@ const error = ref("");
 const success = ref("");
 const isOTPVisible = ref(false);
 const isSubmitting = ref(false);
+const isLoading = ref(false); // State for loading modal
 
 // Store email in OTP component
 const storedEmail = ref("");
@@ -42,17 +44,20 @@ const sendResetEmail = async () => {
   error.value = "";
   success.value = "";
   isSubmitting.value = true;
+  isLoading.value = true; // Show loading modal
 
   // Validate email
   if (!email.value) {
     error.value = "Email is required";
     isSubmitting.value = false;
+    isLoading.value = false; // Hide loading modal
     return;
   }
 
   if (!validateEmail(email.value)) {
     error.value = "Please enter a valid email address";
     isSubmitting.value = false;
+    isLoading.value = false; // Hide loading modal
     return;
   }
 
@@ -83,6 +88,7 @@ const sendResetEmail = async () => {
       "Error sending reset email. Please try again later.";
   } finally {
     isSubmitting.value = false;
+    isLoading.value = false; // Hide loading modal on completion
   }
 };
 
@@ -182,6 +188,14 @@ const handleOTPSuccess = () => {
       </div>
     </div>
   </div>
+
+  <!-- Use the Loading_Modal component -->
+  <Loading_Modal
+    :loadingMessage="'Please wait while we send the reset email'"
+    :loadingHeader="'Processing...'"
+    :isVisible="isLoading"
+    :condition="!isLoading"
+  />
 
   <!-- OTP Component -->
   <OTP
