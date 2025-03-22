@@ -25,6 +25,7 @@ const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
 
+
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
@@ -64,6 +65,7 @@ const login = async () => {
 
     if (response.data.successful) {
       userStore.setUserID(response.data.user_id);
+      userStore.setEmail(response.data.email);
       Cookies.set("access_token", `${response.data.access}`, {
         secure: true,
         sameSite: "Strict",
@@ -81,6 +83,8 @@ const login = async () => {
       });
 
       authStore.setUserID(response.data.user_id);
+      userStore.setEmail(response.data.email);
+      console.log(userStore.getEmail());
 
       authStore.login();
 

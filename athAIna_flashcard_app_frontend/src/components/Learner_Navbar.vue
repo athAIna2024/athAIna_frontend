@@ -36,7 +36,7 @@ const toggleModal = (modalName) => {
         <div class="flex flex-col items-center justify-between p-5">
           <span class="font-semibold">User Profile</span>
           <div class="flex flex-col">
-            <span> {{ userStore.getEmail() || "Not logged in " }} </span>
+            <span> {{ userStore.getEmail()}} </span>
             <span> {{}} </span>
           </div>
           <button
