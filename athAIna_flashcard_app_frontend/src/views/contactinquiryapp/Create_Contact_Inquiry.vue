@@ -40,9 +40,9 @@ const submitInquiry = async () => {
 </script>
 
 <template>
-  <div class="flex flex-row justify-between">
-    <div class="flex flex-col justify-center items-center min-h-screen mx-10">
-      <h1 class="text-athAIna-violet font-semibold w-full p-10">
+  <div class="flex flex-row justify-between min-h-screen">
+    <div class="flex flex-col items-center mx-10 justify-center">
+      <h1 class="text-athAIna-violet font-semibold w-full p-10 text-center lg:text-left">
         Welcome Back!
       </h1>
 
@@ -63,7 +63,7 @@ const submitInquiry = async () => {
       </div>
 
       <div
-          class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-[700px]"
+          class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full md:w-[700px]"
       >
         <div class="relative flex flex-row items-center">
           <svg
@@ -126,7 +126,7 @@ const submitInquiry = async () => {
               viewBox="0 0 24 24"
               stroke-width="2"
               stroke="currentColor"
-              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet -mt-12 ml-2 mr-3"
           >
             <path
                 stroke-linecap="round"
@@ -137,7 +137,7 @@ const submitInquiry = async () => {
           <textarea
               v-model="formData.message"
               placeholder="Inquiry"
-              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[128px] flex flex-row items-center pl-[50px]"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[128px] flex flex-row items-center pl-[50px]"
           ></textarea>
         </div>
 
@@ -153,7 +153,7 @@ const submitInquiry = async () => {
       </div>
     </div>
 
-    <div class="mt-40 mr-40 pr-40 flex justify-center">
+    <div class="invisible 2xl:visible items-center flex justify-center mr-96">
       <div
           class="absolute rotate-[12deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
       ></div>
