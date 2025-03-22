@@ -85,11 +85,10 @@ const updateFlashcard = async () => {
     }
 
     await flashcardsDB.flashcards.update(Number(flashcardId), updateFlashcard);
-
     if (isSuccessful.value) {
-      showSuccessMessage.value = true;
-      smoothReload();
+      navigateToLibraryPage();
     }
+
 
   } catch (error) {
     if (error.status  === 400) {
@@ -100,6 +99,8 @@ const updateFlashcard = async () => {
           Object.entries(error.response.data.errors).map(([key, value]) => [key, value[0]])
       );
     }
+  } finally {
+    showSuccessMessage.value = true;
   }
 };
 
