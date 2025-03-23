@@ -23,5 +23,5 @@ export const useStudysetStore = defineStore('studyset', () => {
 
     return { studySetId, setStudySetId, studySetTitle, setStudySetTitle, clear };
 }, {
-
+    persist: true,
 });
