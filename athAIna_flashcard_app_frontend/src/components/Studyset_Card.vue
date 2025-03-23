@@ -182,8 +182,13 @@ const refreshLibrary =  () => {
     <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
         <div @click="navigateToLibraryPageFlashcard" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
-      <div class="text-[14px] mt-[12px]">
+      <div v-if="description !== 'null'" class="text-[14px] mt-[12px]">
         {{ description }}
+      </div>
+      <div v-else>
+        <div class="text-[14px] mt-[12px]">
+          No description available.
+        </div>
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
