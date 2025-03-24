@@ -2,6 +2,7 @@
 import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
+import Success_Message from "@/components/Success_Message.vue";
 
 const props = defineProps({
   isVisible: {
@@ -23,6 +24,7 @@ const router = useRouter();
 const step = ref(1);
 const error = ref("");
 const isVerified = ref("false");
+const isSuccessful = ref(false);
 
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
@@ -147,6 +149,7 @@ const verifyOTP = async () => {
     });
 
     console.log(response.data);
+    showSuccessMessage();
 
     if (response.data.successful) {
       isVerified.value = true;
@@ -193,6 +196,10 @@ const previousStep = () => {
   }
 };
 
+const showSuccessMessage = () => {
+  isSuccessful.value = true;
+};
+
 watch(step, (newValue) => {
   if (newValue === 3) {
     setTimeout(() => {
@@ -228,6 +235,12 @@ const buttonText = computed(() => {
 </script>
 
 <template>
+  <Success_Message
+    :successHeader="'Account Created'"
+    :successMessage="'Redirecting to Log In page...'"
+    :isVisible="isSuccessful"
+    class="toFront"
+  />
   <div
     v-if="isVisible"
     class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
@@ -292,5 +305,8 @@ const buttonText = computed(() => {
 .btn {
   @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   color: white;
+}
+.toFront {
+  z-index: 1000;
 }
 </style>
