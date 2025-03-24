@@ -10,21 +10,27 @@ import axios from '@/axios';
 
 const ai_validation_url = 'test/validate_learner_answer/';
 const save_test_results_url = 'test/save/'
+const save_test_batch_url = 'test/save_batch/'
 const isSuccessful = ref(false);
 const message = ref(null);
 
 const isSuccessful_save = ref(false);
 const message_save = ref(null);
 
+const isSuccessful_save_batch = ref(false);
+const message_save_batch = ref(null);
+
 const testModeStore = useTestModeStore();
 const learner_answer = ref(null);
 const showAnswer = ref(false);
 const showQuestion = ref(true);
 const batchId = ref(testModeStore.batchId);
+const batch_pk = ref(null); // Primary Key of the batch
 
 const emit = defineEmits(['showScore']);
 
 const is_correct = ref(false);
+
 const answerClass = computed(() => {
   return is_correct.value ? 'text-athAIna-green' : 'text-athAIna-red';
 });
@@ -144,12 +150,19 @@ const transitionToNext = () => {
 
 const saveTestResults = async () => {
   try {
+    // Ensure saveTestBatch completes successfully before proceeding
+    await saveTestBatch();
+
+    if (!batch_pk.value) {
+      throw new Error('Batch primary key is not set.');
+    }
+
     const testResults = await testModeDB.test_field.where('batch_id').equals(batchId.value).toArray();
 
     const cleanTestResults = testResults.map((result) => {
       return {
         flashcard_instance: Number(result.flashcard_id), // Convert to number
-        batch_id: result.batch_id, // Keep as string since it's a UUID
+        batch: Number(batch_pk.value), // Convert to number
         created_at: new Date(result.created_at).toISOString(), // Convert to ISO string
         learner_answer: String(result.learner_answer).trim(), // Convert to string and trim whitespace
         is_correct: Boolean(result.is_correct), // Convert to boolean
@@ -160,6 +173,8 @@ const saveTestResults = async () => {
 
     const request = await axios.post(save_test_results_url, cleanTestResults);
 
+    console.log(request.data);
+
     isSuccessful_save.value = request.data.successful;
     message_save.value = request.data.message;
     console.log("Did it save successfully?", isSuccessful_save.value);
@@ -168,6 +183,24 @@ const saveTestResults = async () => {
     isSuccessful_save.value = false;
     message_save.value = error.message;
     console.error("Failed to save the data", error);
+  }
+};
+
+const saveTestBatch = async () => {
+  try {
+    const request = await axios.post(save_test_batch_url, {
+      batch_id: batchId.value,
+    });
+
+    console.log(request.data);
+    batch_pk.value = request.data.data.id;
+    isSuccessful_save_batch.value = request.data.successful;
+    message_save_batch.value = request.data.message;
+
+  } catch (error) {
+    isSuccessful_save_batch.value = false;
+    message_save_batch.value = error.message;
+    console.log("Failed to save the data", error);
   }
 };
 
@@ -213,7 +246,7 @@ const saveTestResults = async () => {
             Your answer
           </span>
           <span :class="[answerClass, 'text-athAIna-base']">
-            {{ learner_answer || 'You did not provide an answer' }}
+            {{ learner_answer }}
           </span>
         </div>
 
