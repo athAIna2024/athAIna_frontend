@@ -168,12 +168,7 @@ router.beforeEach((to, from, next) => {
   const testModeStore = useTestModeStore();
 
   if (!to.path.includes('/test') ) {
-    testModeStore.setNumberOfQuestions(null);
-    testModeStore.setCurrentQuestionIndex(0);
-    testModeStore.setIsTestCompleted(false);
-    testModeStore.setTestModeQuestions([]);
-    testModeStore.setBatchId(null);
-    testModeStore.setCreatedAt(null);
+    testModeStore.clear();
   }
 
   next();
