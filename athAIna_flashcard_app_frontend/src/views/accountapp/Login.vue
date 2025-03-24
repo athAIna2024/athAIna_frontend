@@ -25,7 +25,6 @@ const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
 
-
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
@@ -66,6 +65,7 @@ const login = async () => {
     if (response.data.successful) {
       userStore.setUserID(response.data.user_id);
       userStore.setEmail(response.data.email);
+      userStore.setLoginTime(response.data.login_date);
       Cookies.set("access_token", `${response.data.access}`, {
         secure: true,
         sameSite: "Strict",
@@ -124,7 +124,7 @@ const handleFailedAttempt = (userId) => {
     lockedUsersStore.setLockedUsers(userId, lockoutEndTime);
     errors.value.general = "You are locked out. Please try again later.";
   } else {
-    }
+  }
 };
 </script>
 
