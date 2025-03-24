@@ -3,14 +3,17 @@ import { reactive, ref } from "vue";
 import OTP from "@/views/accountapp/Email_OTP.vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
-import Loading_Modal from "@/components/Loading_Modal.vue"; // Import the Loading_Modal component
+import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const email = ref("");
 const password = ref("");
 const password2 = ref("");
 const error = ref("");
 const isSuccessful = ref(false);
-const isLoading = ref(false); // Loading state for modal
+
+// States for loading and modals
+const isLoading = ref(false);
+const isLoadingModalVisible = ref(false);
 
 const router = useRouter();
 
@@ -19,6 +22,9 @@ const isOTPVisible = ref(false);
 const openOTP = () => {
   // Store email in localStorage for OTP resending functionality
   localStorage.setItem("signupEmail", email.value);
+
+  // Hide loading modal and show OTP with success flag
+  isLoadingModalVisible.value = false;
   isOTPVisible.value = true;
 };
 
@@ -61,6 +67,7 @@ const createUser = async () => {
 
   // Show loading modal before API call
   isLoading.value = true;
+  isLoadingModalVisible.value = true;
 
   try {
     const response = await axios.post("/account/register/", {
@@ -90,10 +97,16 @@ const createUser = async () => {
         errors.general = err.response.data.non_field_errors[0];
       }
     }
+    // Hide loading modal if there's an error
+    isLoadingModalVisible.value = false;
   } finally {
-    // Hide loading modal when process completes
+    // Set loading state back to false after API call completes
     isLoading.value = false;
   }
+};
+
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
 };
 </script>
 
@@ -340,8 +353,7 @@ const createUser = async () => {
               @click="createUser"
               :disabled="isOTPVisible || isLoading"
             >
-              <span v-if="isLoading">Creating account...</span>
-              <span v-else>Sign Up</span>
+              Sign Up
             </button>
           </div>
 
@@ -356,22 +368,24 @@ const createUser = async () => {
     </div>
 
     <!-- Loading Modal -->
-    <div
-      class="fixed inset-0 flex items-center justify-center z-50"
-      v-if="isLoading"
-    >
-      <Loading_Modal
-        :loadingMessage="'Please wait while we create your account'"
-        :loadingHeader="'Creating Account...'"
-        :isVisible="true"
-        :condition="false"
-      />
-    </div>
+    <Loading_Modal
+      :loadingMessage="'Please wait while we create your account'"
+      :loadingHeader="'Creating Account...'"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
 
-    <!-- Pass email prop to OTP component -->
-    <OTP :is-visible="isOTPVisible" :email="email" @close="closeOTP" />
+    <!-- Pass email prop to OTP component with flag for displaying success message -->
+    <OTP
+      :is-visible="isOTPVisible"
+      :email="email"
+      :show-success="isSuccessful"
+      @close="closeOTP"
+    />
   </div>
 </template>
+
 <style scoped>
 .btn {
   @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;

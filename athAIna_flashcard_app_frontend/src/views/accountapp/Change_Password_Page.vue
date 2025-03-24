@@ -6,8 +6,16 @@ import { useAuthStore } from "../../../stores/authStore";
 import axiosInstance from "@/axiosConfig";
 import Cookies from "js-cookie";
 import Loading_Modal from "@/components/Loading_Modal.vue";
+import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
+
+const goBackToLibrary = () => {
+  router.push("/library_of_studysets");
+};
 
 const isLoading = ref(false);
+const isLoadingModalVisible = ref(false); // Add this for loading modal visibility
+const isSuccessMessageVisible = ref(false); // Add this for success message visibility
+
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -132,7 +140,10 @@ const updatePassword = async () => {
 
     return;
   }
+
+  // Show loading modal and set loading state
   isLoading.value = true;
+  isLoadingModalVisible.value = true;
 
   try {
     const response = await axiosInstance.patch(
@@ -150,30 +161,36 @@ const updatePassword = async () => {
     );
 
     if (response.status === 200) {
+      // Hide loading modal and show success message
+      isLoadingModalVisible.value = false;
+      isSuccessMessageVisible.value = true;
+
       // Redirect to login page after successful password reset
       setTimeout(() => {
         router.push("/login");
-      });
+      }, 2000);
     }
   } catch (err) {
     console.log(err.response?.data);
-    errors.value =
+    errors.general =
       err.response?.data?.error ||
-      "An error occurred while resetting your password";
+      "An error occurred while updating your password";
   } finally {
     // Set loading state back to false after API call completes
     isLoading.value = false;
   }
 };
-</script>
 
+// Add these functions for modal control
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
+
+const closeSuccessMessage = () => {
+  isSuccessMessageVisible.value = false;
+};
+</script>
 <template>
-  <Loading_Modal
-    :loadingMessage="'Password Updated Successfully'"
-    :loadingHeader="'Redirecting to Log in ...'"
-    :isVisible="isLoading"
-    :condition="!isLoading"
-  />
   <div
     class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center"
   >
@@ -194,6 +211,28 @@ const updatePassword = async () => {
       <div
         class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
       >
+        <div class="absolute top-8 left-8 z-10">
+          <button
+            @click="goBackToLibrary"
+            class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-6 h-6 mr-1"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              />
+            </svg>
+            <span class="font-medium">Back to Library</span>
+          </button>
+        </div>
         <!-- Logo -->
         <div class="mt-5 w-auto flex flex-row justify-center items-center">
           <img
@@ -426,5 +465,19 @@ const updatePassword = async () => {
         </div>
       </div>
     </div>
+    <Loading_Modal
+      :loadingMessage="'Processing your password change'"
+      :loadingHeader="'Please wait'"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+
+    <Success_Message
+      :successHeader="'Password Change Successful'"
+      :successMessage="'Your password has been updated. Redirecting to login page...'"
+      :isVisible="isSuccessMessageVisible"
+      @close="closeSuccessMessage"
+    />
   </div>
 </template>

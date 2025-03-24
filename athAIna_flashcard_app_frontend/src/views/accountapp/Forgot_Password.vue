@@ -16,7 +16,7 @@ const isLoading = ref(false); // State for loading modal
 // Store email in OTP component
 const storedEmail = ref("");
 
-const goBackToLibrary = () => {
+const goBackToLogin = () => {
   router.push("/login");
 };
 
@@ -112,7 +112,7 @@ const handleOTPSuccess = () => {
     >
       <div class="absolute top-8 left-8 z-10">
         <button
-          @click="goBackToLibrary"
+          @click="goBackToLogin"
           class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
         >
           <svg
