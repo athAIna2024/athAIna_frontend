@@ -6,7 +6,7 @@ import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { useTestModeStore } from '../../../stores/testModeStore.js';
 import { useStudysetStore } from '../../../stores/studySetStore.js';
-import flashcardsDB from '@/views/flashcardapp/dexie.js';
+import flashcardsDB, {testModeDB} from '@/views/flashcardapp/dexie.js';
 import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
@@ -31,6 +31,10 @@ const studySetId = studySetStore.studySetId;
 const batchId = ref(testModeStore.batchId);
 
 const showConfirmation = ref(false);
+
+const correctAnswersCount = ref(0);
+const scorePercentage = ref(0);
+const feedbackMessage = ref("");
 
 const navigateToLibraryPage = () => {
   showConfirmation.value = true;
@@ -79,6 +83,18 @@ const loadQuestion = async () => {
   }
 };
 
+const showSummaryOfScore = async () => {
+  const testResults = await testModeDB.test_field.where('batch_id').equals(batchId.value).toArray();
+  correctAnswersCount.value = testResults.filter(result => result.is_correct).length;
+  scorePercentage.value = ((correctAnswersCount.value / questionLength.value) * 100).toFixed(1);
+
+  if (scorePercentage.value >= 70) {
+    feedbackMessage.value = "You've done well! Keep it up!";
+  } else {
+    feedbackMessage.value = "Don't give up! Keep practicing!";
+  }
+};
+
 watch(() => testModeStore.currentQuestionIndex, async (newValue, oldValue) => {
   console.log("Question index changed from", oldValue, "to", newValue);
   if (progress.value < questionLength.value) {
@@ -115,7 +131,7 @@ onMounted(() => {
         <span class="font-bold"> {{progress}} / {{questionLength}} </span>
       </div>
 
-      <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" :flashcardId="flashcardId" />
+      <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
 
       <div v-if="testModeStore.isTestCompleted">
         <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">
@@ -128,9 +144,11 @@ onMounted(() => {
                 </svg>
               </button>
 
-              <h1 class="m-8 text-athAIna-lg font-semibold"> You've done well! Keep it up!! </h1>
-              <h1 class="m-8 text-2xl text-athAIna-green font-semibold"> 90% </h1>
-              <p class="m-8 text-athAIna-md"> 9/10 questions answered correctly </p>
+              <h1 class="m-8 text-athAIna-lg font-semibold"> {{ feedbackMessage }} </h1>
+              <h1 v-if="scorePercentage >= 70" class="m-8 text-2xl text-athAIna-green font-semibold"> {{ scorePercentage }}% </h1>
+              <h1 v-else class="m-8 text-2xl text-athAIna-red font-semibold"> {{ scorePercentage }}% </h1>
+
+              <p class="m-8 text-athAIna-md"> {{ correctAnswersCount }}/{{ questionLength }} questions answered correctly </p>
               <div class="m-8 flex justify-center">
                 <button class="btn w-48" @click="openTest_Mode"> Start New Test </button>
               </div>
@@ -139,9 +157,8 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
-
     </div>
+
   </div>
   <Test_Mode_Number_Of_Questions_Prompt
     :is-visible="isTestModeVisible"

@@ -22,10 +22,13 @@ const showAnswer = ref(false);
 const showQuestion = ref(true);
 const batchId = ref(testModeStore.batchId);
 
+const emit = defineEmits(['showScore']);
+
 const is_correct = ref(false);
 const answerClass = computed(() => {
   return is_correct.value ? 'text-athAIna-green' : 'text-athAIna-red';
 });
+
 
 const props = defineProps({
   question: {
@@ -130,6 +133,7 @@ const transitionToNext = () => {
       if (testModeStore.isTestCompleted) {
         console.log("Test Completed");
         saveTestResults();
+        emit('showScore')
       }
 
     }
