@@ -185,11 +185,6 @@ const refreshLibrary =  () => {
       <div v-if="description !== 'null'" class="text-[14px] mt-[12px]">
         {{ description }}
       </div>
-      <div v-else>
-        <div class="text-[14px] mt-[12px]">
-          No description available.
-        </div>
-      </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>
           <span class="font-bold"> {{ flashcardCount }} </span>

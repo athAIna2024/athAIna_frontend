@@ -8,6 +8,7 @@ export const useTestModeStore = defineStore('testMode', () => {
     const isTestCompleted = ref(false);
     const batchId = ref(null);
     const created_at = ref(null);
+    const batchPk = ref(null);
 
     const setNumberOfQuestions = (num) => {
         numberOfQuestions.value = num;
@@ -33,6 +34,13 @@ export const useTestModeStore = defineStore('testMode', () => {
         created_at.value = date;
     }
 
+    const setBatchPk = (id) => {
+        batchPk.value = id;
+    }
+
+    const getBatchPk = () => {
+        return batchPk.value;
+    }
     const clear = () => {
         numberOfQuestions.value = null;
         currentQuestionIndex.value = 0;
@@ -40,6 +48,7 @@ export const useTestModeStore = defineStore('testMode', () => {
         isTestCompleted.value = false;
         batchId.value = null;
         created_at.value = null;
+        batchPk.value = null;
     }
 
     return { numberOfQuestions,
@@ -55,6 +64,8 @@ export const useTestModeStore = defineStore('testMode', () => {
         created_at,
         setCreatedAt,
         clear,
+        batchPk,
+        setBatchPk,
     };
 }, {
     persist: true

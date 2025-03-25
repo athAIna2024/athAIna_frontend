@@ -59,7 +59,7 @@ const saveStudySet = async () => {
       id: Number(request.data.data.id),
       learner_instance: Number(learnerId.value),
       title: String(request.data.data.title),
-      description: request.data.data.description === null ? "" : String(request.data.data.description),
+      description: String(request.data.data.description),
       subject: String(request.data.data.subject),
       flashcard_count: Number(0),
       created_at: Date(request.data.data.created_at),
