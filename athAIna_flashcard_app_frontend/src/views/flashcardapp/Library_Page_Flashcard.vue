@@ -85,6 +85,8 @@ const fetchFlashcardsFromDb = async () => {
         .sortBy('updated_at')
         .then(array => array.reverse());
 
+    console.log(flashcard_db);
+
     if (flashcard_db.value.length === 0) {
       isSuccessful.value = false;
       message.value = "There are no flashcards in this study set.";
@@ -93,6 +95,7 @@ const fetchFlashcardsFromDb = async () => {
       message.value = "Flashcards retrieved successfully.";
     }
   } catch (error) {
+    console.log(error)
     isSuccessful.value = false;
     message.value = "An error occurred. Please try again later.";
   }
@@ -104,14 +107,27 @@ const currentFlashcards = computed(() => {
   return flashcard_db.value.slice(startIndex, endIndex);
 });
 
+
+
+const navigateToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Studyset' });
+};
+
+const redirectToReviewMode = async () => {
+  const flashcards = await flashcardsDB.flashcards
+      .where("studyset_id")
+      .equals(studySetId)
+      .toArray();
+  const filteredFlashcards = flashcards.filter((f) => f.id !== studySetId);
+  const randomFlashcard = filteredFlashcards[Math.floor(Math.random() * filteredFlashcards.length)];
+  await router.push(`/${studySetTitle}/${studySetId}/review/${randomFlashcard.id}`);
+};
+
 onMounted( () => {
   fetchFlashcardsFromDb();
   document.title = `${studySetTitle} - Flashcards`;
 });
 
-const navigateToLibraryPage = () => {
-  router.push({ name: 'Library_Page_Studyset' });
-};
 
 </script>
 
@@ -138,8 +154,11 @@ const navigateToLibraryPage = () => {
               <Search_Bar v-model="input" />
               <button class="relative btn w-60 text-[16px] font-semibold" @click="toggleModal('learningMode')"> Learning Mode </button>
               <div v-if="modals.learningMode" class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5">
-                <button class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm">
-                  <router-link to="review/1"> Review Mode </router-link>
+                <button
+                    @click="redirectToReviewMode"
+                    class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                >
+                  Review Mode
                 </button>
                 <button class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
                         @click="openTest_Mode">

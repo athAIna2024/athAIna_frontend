@@ -5,27 +5,47 @@ import { computed } from 'vue';
 
 import { defineProps } from 'vue';
 import { useTestModeStore} from "../../stores/testModeStore.js";
+import { useStudysetStore } from "../../stores/studySetStore.js";
 import {testModeDB} from "@/views/flashcardapp/dexie.js";
 import axios from '@/axios';
+import {useRoute} from "vue-router";
 
 const ai_validation_url = 'test/validate_learner_answer/';
 const save_test_results_url = 'test/save/'
+const save_test_batch_url = 'test/save_batch/'
 const isSuccessful = ref(false);
 const message = ref(null);
 
 const isSuccessful_save = ref(false);
 const message_save = ref(null);
 
+const isSuccessful_save_batch = ref(false);
+const message_save_batch = ref(null);
+
 const testModeStore = useTestModeStore();
+const studySetStore = useStudysetStore();
 const learner_answer = ref(null);
 const showAnswer = ref(false);
 const showQuestion = ref(true);
-const batchId = ref(testModeStore.batchId);
+
+const batchId = testModeStore.batchId; // Originally has ref but for testing atm it is gonna removed
+const batch_pk = ref(null); // Primary Key of the batch
+
+const test_score_url = 'report/save/';
+const questionLength = testModeStore.numberOfQuestions;
+const correctAnswersCount = ref(0);
+const studySetId = studySetStore.studySetId; // It is set to Test Mode vue template
+const isSuccessful_save_score = ref(false);
+const message_save_score = ref(null);
+
+const emit = defineEmits(['showScore']);
 
 const is_correct = ref(false);
+
 const answerClass = computed(() => {
   return is_correct.value ? 'text-athAIna-green' : 'text-athAIna-red';
 });
+
 
 const props = defineProps({
   question: {
@@ -48,7 +68,7 @@ const submitAnswer = async () => {
 
   const newTestField = {
     flashcard_id: props.flashcardId,
-    batch_id: batchId.value,
+    batch_id: batchId,
     created_at: testModeStore.created_at,
     learner_answer: learner_answer.value,
     is_correct: is_correct.value,
@@ -130,6 +150,7 @@ const transitionToNext = () => {
       if (testModeStore.isTestCompleted) {
         console.log("Test Completed");
         saveTestResults();
+        emit('showScore')
       }
 
     }
@@ -140,12 +161,21 @@ const transitionToNext = () => {
 
 const saveTestResults = async () => {
   try {
-    const testResults = await testModeDB.test_field.where('batch_id').equals(batchId.value).toArray();
+    // Ensure saveTestBatch completes successfully before proceeding
+    await saveTestBatch();
+
+    if (!batch_pk.value) {
+      throw new Error('Batch primary key is not set.');
+    }
+
+    const testResults = await testModeDB.test_field.where('batch_id').equals(batchId).toArray();
+    correctAnswersCount.value = testResults.filter(result => result.is_correct).length;
+    console.log("Correct Answers Count", correctAnswersCount.value);
 
     const cleanTestResults = testResults.map((result) => {
       return {
         flashcard_instance: Number(result.flashcard_id), // Convert to number
-        batch_id: result.batch_id, // Keep as string since it's a UUID
+        batch: Number(batch_pk.value), // Convert to number
         created_at: new Date(result.created_at).toISOString(), // Convert to ISO string
         learner_answer: String(result.learner_answer).trim(), // Convert to string and trim whitespace
         is_correct: Boolean(result.is_correct), // Convert to boolean
@@ -156,13 +186,71 @@ const saveTestResults = async () => {
 
     const request = await axios.post(save_test_results_url, cleanTestResults);
 
+    console.log(request.data);
+
     isSuccessful_save.value = request.data.successful;
     message_save.value = request.data.message;
     console.log("Did it save successfully?", isSuccessful_save.value);
 
+
+    await saveTestScore();
+
   } catch (error) {
     isSuccessful_save.value = false;
     message_save.value = error.message;
+    console.error("Failed to save the data", error);
+  }
+};
+
+const saveTestBatch = async () => {
+  try {
+    const request = await axios.post(save_test_batch_url, {
+      batch_id: batchId,
+    });
+
+    console.log("SAVE BATCH ID", request.data.data.id);
+
+    batch_pk.value = request.data.data.id;
+    testModeStore.setBatchPk(batch_pk.value);
+
+    isSuccessful_save_batch.value = request.data.successful;
+    message_save_batch.value = request.data.message;
+
+  } catch (error) {
+    isSuccessful_save_batch.value = false;
+    message_save_batch.value = error.message;
+  }
+};
+
+// Have to move probably at test mode flashcard because batch Pk was set there.
+const saveTestScore = async () => {
+
+  try {
+    const newTestScore = {
+      batch: batch_pk.value,
+      studyset_instance: studySetId,
+      score: correctAnswersCount.value,
+      number_of_questions: questionLength,
+      submitted_at: new Date().toISOString(),
+    };
+
+    console.log("Saving test score for report", newTestScore);
+    const request = await axios.post(test_score_url, newTestScore);
+
+    console.log(request.data);
+
+    isSuccessful_save_score.value = request.data.successful;
+    message_save_score.value = request.data.message;
+
+    if (isSuccessful_save_score.value) {
+      console.log("Test score saved successfully");
+      console.log(request.data);
+    } else {
+      console.error("Error saving test score:", message_save_score.value);
+    }
+  } catch (error) {
+    isSuccessful_save_score.value = false;
+    message_save_score.value = error.message;
     console.error("Failed to save the data", error);
   }
 };
@@ -209,7 +297,7 @@ const saveTestResults = async () => {
             Your answer
           </span>
           <span :class="[answerClass, 'text-athAIna-base']">
-            {{ learner_answer || 'You did not provide an answer' }}
+            {{ learner_answer }}
           </span>
         </div>
 
