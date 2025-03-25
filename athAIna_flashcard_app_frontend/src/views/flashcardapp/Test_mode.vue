@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { watch } from 'vue';
-import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { useTestModeStore } from '../../../stores/testModeStore.js';
 import { useStudysetStore } from '../../../stores/studySetStore.js';
@@ -11,12 +10,15 @@ import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
 import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
 
-const route = useRoute();
 const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
-const progress = ref(testModeStore.currentQuestionIndex + 1);
 
+const studySetName = studySetStore.studySetTitle;
+const studySetId = studySetStore.studySetId;
+const batchId = testModeStore.batchId; // originally has ref but for testing atm it is gonna removed
+
+const progress = ref(testModeStore.currentQuestionIndex + 1);
 const flashcardId = ref(0);
 const flashcardIds = ref(testModeStore.testModeQuestions);
 const questionIndex = ref(testModeStore.currentQuestionIndex);
@@ -25,10 +27,6 @@ const questionLength = ref(Number(testModeStore.numberOfQuestions));
 const flashcard = ref(null);
 const flashcardQuestion = ref('');
 const flashcardAnswer = ref('');
-
-const studySetName = studySetStore.studySetTitle;
-const studySetId = studySetStore.studySetId;
-const batchId = ref(testModeStore.batchId);
 
 const showConfirmation = ref(false);
 
@@ -84,16 +82,11 @@ const loadQuestion = async () => {
 };
 
 const showSummaryOfScore = async () => {
-  const testResults = await testModeDB.test_field.where('batch_id').equals(batchId.value).toArray();
+  const testResults = await testModeDB.test_field.where('batch_id').equals(batchId).toArray();
   correctAnswersCount.value = testResults.filter(result => result.is_correct).length;
   scorePercentage.value = ((correctAnswersCount.value / questionLength.value) * 100).toFixed(1);
-
-  if (scorePercentage.value >= 70) {
-    feedbackMessage.value = "You've done well! Keep it up!";
-  } else {
-    feedbackMessage.value = "Don't give up! Keep practicing!";
-  }
 };
+
 
 watch(() => testModeStore.currentQuestionIndex, async (newValue, oldValue) => {
   console.log("Question index changed from", oldValue, "to", newValue);
@@ -144,7 +137,13 @@ onMounted(() => {
                 </svg>
               </button>
 
-              <h1 class="m-8 text-athAIna-lg font-semibold"> {{ feedbackMessage }} </h1>
+              <h1 v-if="scorePercentage >= 70" class="m-8 text-athAIna-lg font-semibold">
+                You have done well! Keep it up!
+              </h1>
+              <h1 v-else class="m-8 text-athAIna-lg font-semibold">
+                Don't give up! Keep practicing!
+              </h1>
+
               <h1 v-if="scorePercentage >= 70" class="m-8 text-2xl text-athAIna-green font-semibold"> {{ scorePercentage }}% </h1>
               <h1 v-else class="m-8 text-2xl text-athAIna-red font-semibold"> {{ scorePercentage }}% </h1>
 

@@ -38,6 +38,9 @@ export const useTestModeStore = defineStore('testMode', () => {
         batchPk.value = id;
     }
 
+    const getBatchPk = () => {
+        return batchPk.value;
+    }
     const clear = () => {
         numberOfQuestions.value = null;
         currentQuestionIndex.value = 0;
