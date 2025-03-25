@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch, computed } from "vue";
-import Dexie from "dexie";
 import { useRouter, useRoute } from "vue-router";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 import studySetDb from "@/views/studysetapp/dexie.js";
@@ -17,6 +16,7 @@ const router = useRouter();
 const route = useRoute();
 const currentFlashcard = ref(props.flashcard);
 const flashcardHistory = ref([]);
+const isNavigatingBack = ref(false);
 
 const flipCard = () => {
   isFlipped.value = !isFlipped.value;
@@ -42,6 +42,24 @@ watch(
     if (newFlashcard) {
       currentFlashcard.value = newFlashcard;
       fetchStudysetName(newFlashcard.studyset_id);
+
+      // Only add to history if not navigating back
+      if (!isNavigatingBack.value) {
+        flashcardHistory.value.push(newFlashcard.id);
+        console.log(
+          "Added to history:",
+          newFlashcard.id,
+          "New history:",
+          flashcardHistory.value
+        );
+      } else {
+        // Reset the flag after navigation is complete
+        isNavigatingBack.value = false;
+        console.log("Backtracking - not adding to history");
+      }
+
+      // Reset flip state when flashcard changes
+      isFlipped.value = false;
     }
   },
   { immediate: true }
@@ -54,7 +72,6 @@ watch(
       try {
         const flashcard = await flashcardsDB.flashcards.get(Number(newId));
         if (flashcard) {
-          flashcardHistory.value.push(currentFlashcard.value); // Add current flashcard to history
           currentFlashcard.value = flashcard;
           fetchStudysetName(flashcard.studyset_id);
         }
@@ -75,6 +92,8 @@ const isValidImage = computed(() => {
 });
 
 const navigateToRandomFlashcard = async () => {
+  console.log("history ", flashcardHistory.value);
+
   try {
     fetchStudysetName(currentFlashcard.value.studyset_id);
     const flashcards = await flashcardsDB.flashcards
@@ -89,8 +108,20 @@ const navigateToRandomFlashcard = async () => {
         filteredFlashcards[
           Math.floor(Math.random() * filteredFlashcards.length)
         ];
-      router.push(
-        `/${studysetName.value}/${currentFlashcard.value.studyset_id}/review/${randomFlashcard.id}`
+
+      flashcardHistory.value.push(randomFlashcard.id);
+      router.replace(
+        {
+          name: "Review_Mode",
+          params: {
+            studySetTitle: studysetName.value,
+            studySetId: currentFlashcard.value.studyset_id,
+            id: randomFlashcard.id,
+          },
+        },
+        () => {
+          isFlipped.value = false;
+        }
       );
     }
   } catch (error) {
@@ -99,10 +130,28 @@ const navigateToRandomFlashcard = async () => {
 };
 
 const navigateToPreviousFlashcard = () => {
-  if (flashcardHistory.value.length > 0) {
-    const previousFlashcard = flashcardHistory.value.pop();
+  console.log("Current history before backtracking:", flashcardHistory.value);
+
+  if (flashcardHistory.value.length > 1) {
+    flashcardHistory.value.pop();
+
+    const previousFlashcardId =
+      flashcardHistory.value[flashcardHistory.value.length - 1];
+    console.log("Navigating to previous flashcard:", previousFlashcardId);
+
+    isNavigatingBack.value = true;
     isFlipped.value = false;
-    router.push(`/review/${previousFlashcard.id}`);
+
+    router.push({
+      name: "Review_Mode",
+      params: {
+        studySetTitle: studysetName.value,
+        studySetId: currentFlashcard.value.studyset_id,
+        id: previousFlashcardId,
+      },
+    });
+  } else {
+    console.warn("No previous flashcards in history");
   }
 };
 </script>

@@ -3,10 +3,19 @@ import { ref, onMounted, reactive } from "vue"; // Add reactive import
 import { useRoute, useRouter } from "vue-router";
 import axios from "@/axiosConfig";
 import Loading_Modal from "@/components/Loading_Modal.vue";
+import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
+
 const route = useRoute();
 const router = useRouter();
 
+const goBackToLogin = () => {
+  router.push("/login");
+};
+
+// States for loading and modals
 const isLoading = ref(false);
+const isLoadingModalVisible = ref(false);
+const isSuccessMessageVisible = ref(false); // Fix variable naming
 
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -92,7 +101,10 @@ const resetPassword = async () => {
     errors.password = "Password must contain at least one special character";
     return;
   }
+
+  // Show loading modal and set loading state
   isLoading.value = true;
+  isLoadingModalVisible.value = true;
 
   try {
     const response = await axios.patch(
@@ -103,13 +115,17 @@ const resetPassword = async () => {
       }
     );
 
+    // Hide loading modal and show success message
+    isLoadingModalVisible.value = false;
+    isSuccessMessageVisible.value = true;
+
     // Redirect to login page after successful password reset
     setTimeout(() => {
       router.push("/login");
-    });
+    }, 2000);
   } catch (err) {
     console.log(err.response?.data);
-    errors.value =
+    errors.general =
       err.response?.data?.error ||
       "An error occurred while resetting your password";
   } finally {
@@ -117,16 +133,17 @@ const resetPassword = async () => {
     isLoading.value = false;
   }
 };
+
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
+
+const closeSuccessMessage = () => {
+  isSuccessMessageVisible.value = false;
+};
 </script>
 
 <template>
-  <Loading_Modal
-    :loadingMessage="'Password Reset successfully'"
-    :loadingHeader="'Redirecting to Log in ...'"
-    :isVisible="isLoading"
-    :condition="!isLoading"
-  />
-
   <div
     class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center"
   >
@@ -147,6 +164,29 @@ const resetPassword = async () => {
       <div
         class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
       >
+        <div class="absolute top-8 left-8 z-10">
+          <button
+            @click="goBackToLogin"
+            class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-6 h-6 mr-1"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              />
+            </svg>
+            <span class="font-medium">Back to Log in</span>
+          </button>
+        </div>
+
         <!-- Logo -->
         <div class="mt-5 w-auto flex flex-row justify-center items-center">
           <img
@@ -309,5 +349,22 @@ const resetPassword = async () => {
         </div>
       </div>
     </div>
+
+    <!-- Loading Modal -->
+    <Loading_Modal
+      :loadingMessage="'Processing your password reset'"
+      :loadingHeader="'Please wait'"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+
+    <!-- Success Message -->
+    <Success_Message
+      :successHeader="'Password Reset Successful'"
+      :successMessage="'Your password has been reset. Redirecting to login page...'"
+      :isVisible="isSuccessMessageVisible"
+      @close="closeSuccessMessage"
+    />
   </div>
 </template>
