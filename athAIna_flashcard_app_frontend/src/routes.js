@@ -32,6 +32,7 @@ import Delete_studyset from "@/views/studysetapp/Delete_Studyset.vue";
 import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue";
 
 import { useTestModeStore } from "../stores/testModeStore.js";
+import { useAuthStore } from "../stores/authStore.js";
 
 const routes = [
   {
@@ -162,17 +163,29 @@ const router = createRouter({
   routes,
 });
 
+// Navigation guard to check if the user is logged in
+// add meta: { requiresAuth: true }, to the routes that require authentication
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !authStore.isLoggedIn
+  ) {
+    next({ path: "/login" });
+  } else {
+    next();
+  }
+});
 
 // Crucial for resetting the test mode store when leaving the test mode
 router.beforeEach((to, from, next) => {
   const testModeStore = useTestModeStore();
 
-  if (!to.path.includes('/test') ) {
+  if (!to.path.includes("/test")) {
     testModeStore.clear();
   }
 
   next();
 });
-
 
 export default router;
