@@ -223,19 +223,22 @@ onMounted(() => {
       <Search_Bar_Studyset
           v-model="input"
           class="w-[700px]" />
-      <Subject_Selector
-        @click="toggleModal('subjectSelectModal')"
-        class="relative w-[350px]"
-      />
-      <Floating_Dropdown
-        v-if="modals.subjectSelectModal"
-        :items="dropdownOptions"
-        top="230px"
-        right="360px"
-        height="max-content"
-        width="350px"
-      >
-      </Floating_Dropdown>
+      <div class="relative">
+        <Subject_Selector
+            @click="toggleModal('subjectSelectModal')"
+            class="relative w-[350px] mb-3"
+            :placeholder="'Choose Subject'"
+        />
+        <Floating_Dropdown
+          v-if="modals.subjectSelectModal"
+          :items="dropdownOptions"
+          top="50px"
+          right="0px"
+          height="max-content"
+          width="350px"
+        >
+        </Floating_Dropdown>
+      </div>
       <div
         @click="openModal"
         class="btn hover:cursor-pointer w-[250px] font-semibold"
