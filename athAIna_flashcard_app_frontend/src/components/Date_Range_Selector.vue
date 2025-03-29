@@ -3,7 +3,9 @@ import { ref } from "vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-const date = ref(null);
+const date = ref(null)
+
+console.log("REPORT DATE AT DATE RANGE SELECTOR", date);
 </script>
 
 <template>
@@ -11,7 +13,7 @@ const date = ref(null);
     <div class="athAIna-border-inner rounded-[15px] relative flex flex-row items-center justify-between px-3 text-sm">
       <VueDatePicker
           class="h-auto w-full font-regular"
-          v-model="date" range hide-input-icon :enable-time-picker="false"
+          v-model="date" range hide-input-icon :enable-time-picker="true"
           placeholder="Set Date Range"
           :ui="{ input: 'custom-datepicker-input' }"
       />
