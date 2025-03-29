@@ -35,7 +35,7 @@ const confirmAction = () => {
       <div
         class="flex flex-col justify-center items-center bg-athAIna-white p-[15px] rounded-[15px]"
       >
-        <p class="text-[16px] m-[40px]">{{ confirmQuestion }}</p>
+        <p class="text-[16px] m-[40px] text-center">{{ confirmQuestion }}</p>
         <div class="flex justify-between space-x-5 mb-[30px]">
           <div
             class="flex bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red p-[4px] rounded-[20px]"
