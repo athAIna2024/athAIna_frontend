@@ -4,6 +4,8 @@ import { watch } from 'vue';
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import Success_Message from "@/components/Success_Message.vue";
+import Subject_Selector from "@/components/Subject_Selector.vue";
+import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
@@ -13,6 +15,7 @@ const title = ref("");
 const description = ref("");
 const subject = ref("");
 const learnerId = ref(1); // For testing purposes, REMOVE IT AND USE THE USER ID
+const modals = ref({ subjectSelectModal: false });
 
 const props = defineProps({
   isVisible: {
@@ -36,6 +39,27 @@ watch(() => props.isVisible, (newValue) => {
   } else {
     document.title = `Library – athAIna`;
   }
+});
+
+const toggleModal = (modalName) => {
+  modals.value[modalName] = !modals.value[modalName];
+};
+
+const dropdownOptions = ref({
+  ARTS: "Arts",
+  BUS: "Business",
+  GEO: "Geography",
+  ENGR: "Engineering",
+  HEALTH_MED: "Health and Medicine",
+  HIST: "History",
+  LAW_POL: "Law and Politics",
+  LANG_CULT: "Languages and Cultures",
+  MATH: "Mathematics",
+  PHIL: "Philosophy",
+  SCI: "Science",
+  SOC_SCI: "Social Sciences",
+  TECH: "Technology",
+  WRIT_LIT: "Writing and Literature"
 });
 
 const saveStudySet = async () => {
@@ -131,22 +155,30 @@ const saveStudySet = async () => {
 
           <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
             <p> Subject </p>
-            <div class="flex justify-end border-athAIna-violet border-[3px] rounded-[20px] p-[5px] pr-[14px]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-[20px] hover:cursor-pointer">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </div>
+            <Subject_Selector
+                @click="toggleModal('subjectSelectModal')"
+                class="relative w-full"
+            />
+            <Floating_Dropdown
+                v-if="modals.subjectSelectModal"
+                :items="dropdownOptions"
+                top="400px"
+                right="484px"
+                height="max-content"
+                width="553px"
+            >
+            </Floating_Dropdown>
 
-            TEMPORARY INPUT FOR NOW UNTIL WE HAVE A SUBJECT SELECTOR
-            <input
-                type="text"
-                placeholder="Subject"
-                class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"
-                v-model="subject" />
+<!--            TEMPORARY INPUT FOR NOW UNTIL WE HAVE A SUBJECT SELECTOR-->
+<!--            <input-->
+<!--                type="text"-->
+<!--                placeholder="Subject"-->
+<!--                class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"-->
+<!--                v-model="subject" />-->
 
-            <div v-if="field_errors.subject" class="text-athAIna-red text-[14px] font-medium">
-              {{ field_errors.subject }}
-            </div>
+<!--            <div v-if="field_errors.subject" class="text-athAIna-red text-[14px] font-medium">-->
+<!--              {{ field_errors.subject }}-->
+<!--            </div>-->
           </div>
 
 
