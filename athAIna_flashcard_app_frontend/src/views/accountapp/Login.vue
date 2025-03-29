@@ -100,7 +100,9 @@ const login = async () => {
       errors.value.email = error.response.data.email || [];
 
       if (errors.value.password) {
-        handleFailedAttempt(userId);
+        if (!error.response.data.email) {
+          handleFailedAttempt(userId);
+        }
         errors.value.password = error.response.data.password || [];
       }
       if (error.response.data.non_field_errors) {
