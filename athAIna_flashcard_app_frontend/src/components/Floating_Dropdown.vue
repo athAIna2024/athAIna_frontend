@@ -3,7 +3,7 @@ import { defineProps, ref } from "vue";
 // import studySetDb from "@/views/studysetapp/dexie.js";
 
 const props = defineProps({
-  items: Array,
+  items: Object,
   top: Number,
   right: Number,
   height: Number,
@@ -26,7 +26,7 @@ const updateValue = (event) => {
 
 <template>
   <div
-    class="absolute h-[150px] w-[250px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col gap-y-3 justify-between p-5 shadow-md items-center"
+    class="max-h-[150px] overflow-y-auto absolute h-[150px] w-[250px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col gap-y-3 justify-between p-5 shadow-md items-center"
     :style="{
       top: `${top}`,
       right: `${right}`,
@@ -34,20 +34,30 @@ const updateValue = (event) => {
       width: `${width}`,
     }"
   >
-    <div v-for="item in items" :key="item" class="w-full">
-      <button
-        class="text-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full"
-        :class="
-          item.active
+    <div class="max-h-[150px] overflow-y-auto no-scrollbar flex flex-col gap-y-3 p-3 w-full">
+      <div v-for="[key, value] in Object.entries(items)" :key="key" class="w-full">
+        <button
+            class="text-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full"
+            :class="value.active
             ? 'bg-athAIna-orange text-athAIna-white'
-            : 'border-athAIna-orange border-[3.5px]'
-        "
-        @click="filterStudySets"
-      >
-        {{ item }}
-      </button>
+            : 'border-athAIna-orange border-[3.5px]'"
+            @click="updateValue(value)"
+        >
+          {{ value }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+</style>
