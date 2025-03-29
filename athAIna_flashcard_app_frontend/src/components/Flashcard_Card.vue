@@ -3,11 +3,13 @@ import { ref } from "vue";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStudysetStore } from "../../stores/studySetStore.js";
+import {useFlashcardSearchStore} from "../../stores/flashcardSearchStore.js";
 import Update_Flashcard from "@/views/flashcardapp/Update_Flashcard.vue";
 import Delete_Flashcard from "@/views/flashcardapp/Delete_Flashcard.vue";
 import AI_Flashcard from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
 
 const store = useStudysetStore();
+const flashcardSearchStore = useFlashcardSearchStore();
 const studySetName = store.studySetTitle;
 const studySetId = store.studySetId;
 const router = useRouter();
@@ -59,6 +61,9 @@ const closeAI_Flashcard = () => {
 };
 
 const navigateToUpdateFlashcard = () => {
+
+  resetSearchResults();
+
   router.push({
     name: "Update_Flashcard",
     params: {
@@ -68,6 +73,11 @@ const navigateToUpdateFlashcard = () => {
     },
   });
 };
+
+const resetSearchResults = () => {
+  flashcardSearchStore.clear();
+};
+
 </script>
 
 <template>
@@ -82,6 +92,7 @@ const navigateToUpdateFlashcard = () => {
 
             <router-link
               :to="{ name: 'Review_Mode', params: { id: props.flashcardId } }"
+              @click="resetSearchResults"
             >
               <div v-if="question.length > 100">
                 {{ question.substring(0, 100) + "..." }}
