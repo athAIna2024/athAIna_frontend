@@ -155,30 +155,22 @@ const saveStudySet = async () => {
 
           <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
             <p> Subject </p>
-            <Subject_Selector
-                @click="toggleModal('subjectSelectModal')"
-                class="relative w-full"
-            />
-            <Floating_Dropdown
-                v-if="modals.subjectSelectModal"
-                :items="dropdownOptions"
-                top="400px"
-                right="484px"
-                height="max-content"
-                width="553px"
-            >
-            </Floating_Dropdown>
-
-<!--            TEMPORARY INPUT FOR NOW UNTIL WE HAVE A SUBJECT SELECTOR-->
-<!--            <input-->
-<!--                type="text"-->
-<!--                placeholder="Subject"-->
-<!--                class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"-->
-<!--                v-model="subject" />-->
-
-<!--            <div v-if="field_errors.subject" class="text-athAIna-red text-[14px] font-medium">-->
-<!--              {{ field_errors.subject }}-->
-<!--            </div>-->
+            <div class="relative">
+              <Subject_Selector
+                  @click="toggleModal('subjectSelectModal')"
+                  class="w-full"
+                  :placeholder="'Choose Subject'"
+              />
+              <Floating_Dropdown
+                  v-if="modals.subjectSelectModal"
+                  :items="dropdownOptions"
+                  top="50px"
+                  right="0px"
+                  height="max-content"
+                  width="553px"
+              >
+              </Floating_Dropdown>
+            </div>
           </div>
 
 
