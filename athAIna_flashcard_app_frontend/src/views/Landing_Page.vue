@@ -17,9 +17,9 @@ export default {
 
 <template>
   <div class="p-10">
-    <div class="flex flex-row justify-start min-h-screen">
+    <div class="flex flex-row justify-start min-h-screen mt-10">
       <div class="flex flex-col">
-        <div class="mx-10">
+        <div class="ml-3">
           <span class="text-3xl font-semibold"
             >Memorization Made Memorable</span
           >
@@ -27,7 +27,7 @@ export default {
           <div class="text-2xl my-4">Now powered with AI</div>
           <br />
         </div>
-        <div class="text-xl m-10 md:w-2/3 text-justify">
+        <div class="text-lg ml-3 mb-10 md:w-2/3 text-justify">
           <span>
             athAIna offers the best flashcard software service, seamlessly
             integrated with advanced AI technology. Create personalized
@@ -36,11 +36,11 @@ export default {
             master new concepts with athAIna!</span
           >
         </div>
-        <div class="w-full md:w-1/2 flex flex-row">
-          <RouterLink to="/signup" class="w-full mx-4">
-            <button class="btn w-full">Try now</button>
+        <div class="w-full md:w-1/2 flex flex-row justify-between gap-x-3">
+          <RouterLink to="/signup" class="w-full mx-3">
+            <button class="btn !rounded-full w-full">Try now</button>
           </RouterLink>
-          <button @click="scrollToFeatures" class="btn w-full">
+          <button @click="scrollToFeatures" class="btn-alt font-semibold w-full">
             Learn more
           </button>
         </div>
