@@ -22,8 +22,6 @@ const message = ref("");
 const isSuccessful_retrieved = ref(false);
 const message_retrieved = ref("");
 
-const showSuccessMessage = ref(false);
-
 const question = ref("");
 const answer = ref("");
 const image = ref("");
@@ -48,8 +46,19 @@ const clearImage = () => {
 
 };
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const showSuccessMessage = ref(false);
+
 const updateFlashcard = async () => {
+
+
+  showSuccessMessage.value = true;
+  const minimumLoadingTime = 500; // Minimum loading time in milliseconds
+  const startTime = Date.now();
+
   try {
+
+
     const formData = new FormData();
     formData.append('studyset_instance', studySetId);
     formData.append('question', question.value);
@@ -86,6 +95,7 @@ const updateFlashcard = async () => {
 
     await flashcardsDB.flashcards.update(Number(flashcardId), updateFlashcard);
     if (isSuccessful.value) {
+
       navigateToLibraryPage();
     }
 
@@ -100,7 +110,14 @@ const updateFlashcard = async () => {
       );
     }
   } finally {
-    showSuccessMessage.value = true;
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = minimumLoadingTime - elapsedTime;
+
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    showSuccessMessage.value = false;
+
   }
 };
 
@@ -131,13 +148,6 @@ const fetchFlashcardData = async () => {
     }
   }
 };
-
-function smoothReload() {
-  document.body.classList.add('fade-out');
-  setTimeout(() => {
-    location.reload();
-  }, 500); // Match the duration of the CSS transition
-}
 
 const navigateToLibraryPage = () => {
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });

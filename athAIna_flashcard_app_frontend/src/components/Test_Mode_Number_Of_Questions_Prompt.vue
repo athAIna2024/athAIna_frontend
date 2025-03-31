@@ -6,6 +6,7 @@ import { useStudysetStore} from "../../stores/studySetStore.js";
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import { v4 as uuidv4 } from 'uuid';
+import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const props = defineProps({
   isVisible: Boolean,
@@ -41,6 +42,10 @@ const errorMessage = ref({
 });
 
 const randomizeTestUrl = '/test/randomize/'
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const isLoading = ref(false);
+
 const randomizeTestModeFlashcards = async () => {
 
   const numberOfQuestions = Number(testModeStore.numberOfQuestions);
@@ -63,49 +68,74 @@ const randomizeTestModeFlashcards = async () => {
     message_test.value = "An error occurred while randomizing flashcards for test mode.";
   }
 };
-const redirectToTestMode = async () => {
 
+
+const redirectToTestMode = async () => {
   await fetchFlashcardCounts();
 
   if (numberOfQuestions.value <= 0 || numberOfQuestions.value === null || isNaN(numberOfQuestions.value)) {
     errors.value.numberOfQuestions = true;
-    errorMessage.value.numberOfQuestions = "You cannot test yourself with empty questions."
+    errorMessage.value.numberOfQuestions = "You cannot test yourself with empty questions.";
   } else if (numberOfQuestions.value > flashcardCounts.value) {
     errors.value.numberOfQuestions = true;
-    errorMessage.value.numberOfQuestions = "It is not possible to take more questions beyond the available flashcards."
+    errorMessage.value.numberOfQuestions = "It is not possible to take more questions beyond the available flashcards.";
   } else {
     errors.value.numberOfQuestions = false;
     errorMessage.value.numberOfQuestions = null;
     testModeStore.setNumberOfQuestions(numberOfQuestions.value);
 
     emit('close');
+  }
 
+  await randomizeTestQuestions();
+}
+
+const randomizeTestQuestions = async () => {
+  // Loading animation for test mode
+  isLoading.value = true;
+  const minimumLoadingTime = 500; // Minimum loading time in milliseconds
+  const startTime = Date.now();
+
+  try {
     await randomizeTestModeFlashcards();
 
-    if (isSuccessful_test.value)
-    {
+    if (isSuccessful_test.value) {
       const newUuid = uuidv4();
       testModeStore.setBatchId(newUuid);
 
-      if (testModeStore.isTestCompleted)
-      {
+      if (testModeStore.isTestCompleted) {
         testModeStore.setCurrentQuestionIndex(0);
         testModeStore.setIsTestCompleted(false);
         testModeStore.setCreatedAt(null);
       }
 
       testModeStore.setCreatedAt(new Date());
-      await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId } });
     }
+  } catch (error) {
+    console.error("An error occurred while randomizing test mode flashcards:", error);
+  } finally {
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = minimumLoadingTime - elapsedTime;
 
-    router.go(0); // Refresh the page (alternative for location.reload();
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    isLoading.value = false;
 
+    await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId } });
+    router.go(0); // Refresh the page (alternative for location.reload);
   }
 };
 
-
 </script>
 <template>
+  <Loading_Modal
+      :loadingMessage="'Please wait for a couple of seconds'"
+      :loadingHeader="'Preparing test questions...'"
+      :condition="isSuccessful_test"
+      :isVisible="isLoading"
+  />
+
   <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">

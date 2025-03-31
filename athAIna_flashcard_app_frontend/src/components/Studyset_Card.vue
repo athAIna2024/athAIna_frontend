@@ -2,6 +2,7 @@
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 import {useStudysetStore} from "../../stores/studySetStore.js";
+import {useStudySetSearchStore} from "../../stores/studySetSearchStore.js";
 import {defineProps} from 'vue';
 import {useRouter} from 'vue-router';
 import { ref } from 'vue';
@@ -18,6 +19,7 @@ const isSuccessful = ref(false);
 const message = ref("");
 
 const store = useStudysetStore();
+const studySetSearchStore = useStudySetSearchStore();
 const props = defineProps({
   title: {
     type: String,
@@ -159,6 +161,9 @@ const navigateToLibraryPageFlashcard = async () => {
   // Store the props details in the store
   store.setStudySetId(props.studySetId);
   store.setStudySetTitle(props.title);
+
+  // Reset Search Study Set Search Results
+  studySetSearchStore.clear();
 
   // Navigate to the Library Page Flashcard
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: props.title, studySetId: props.studySetId } });
