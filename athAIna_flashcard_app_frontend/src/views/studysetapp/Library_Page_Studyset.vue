@@ -4,17 +4,18 @@ import Studyset_Card from "@/components/Studyset_Card.vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Pagination from "@/components/Pagination.vue";
 import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
-import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 import Loading_Modal from "@/components/Loading_Modal.vue";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { computed } from "vue";
 import axios from '@/axios'; // Import the configured Axios instance
 import studySetDb from "@/views/studysetapp/dexie.js";
-
 import { useStudySetSearchStore} from "../../../stores/studySetSearchStore.js";
+import { useStudySetFilterStore } from "../../../stores/studySetFilterStore.js";
+import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
 
 const studySetSearchStore = useStudySetSearchStore();
+const studySetFilterStore = useStudySetFilterStore();
 
 
 const studyset_url = "/studyset/";
@@ -25,6 +26,8 @@ const isSuccessful_studyset = ref(false);
 const message_studyset = ref("");
 const isSuccessful_flashcard = ref(false);
 const message_flashcard = ref("");
+const isSuccessful_filterSearchStudySet = ref(false);
+const message_filterSearchStudySet = ref("");
 
 const studySet_result = ref([]);
 const studySetCounts = ref(0);
@@ -70,8 +73,22 @@ const closeModal = async () => {
   isModalVisible.value = false;
 };
 
-
 const currentStudySets = computed(() => {
+  const filterResults = studySetFilterStore.getFilterResults();
+  const searchResults = studySetSearchStore.getSearchResults();
+  const isFilterActive = studySetFilterStore.getFilterActiveStatus();
+  const isSearchActive = studySetSearchStore.getSearchActiveStatus();
+
+  if (isFilterActive) {
+    console.log("IsFilterActive", isFilterActive);
+    return filterResults;
+  }
+
+  if (isSearchActive) {
+    console.log("IsSearchActive", isSearchActive);
+    return searchResults;
+  }
+
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   return studySet_db.value.slice(startIndex, endIndex);
@@ -223,19 +240,23 @@ onMounted(() => {
       <Search_Bar_Studyset
           v-model="input"
           class="w-[700px]" />
-      <Subject_Selector
-        @click="toggleModal('subjectSelectModal')"
-        class="relative w-[350px]"
-      />
-      <Floating_Dropdown
-        v-if="modals.subjectSelectModal"
-        :items="dropdownOptions"
-        top="230px"
-        right="360px"
-        height="max-content"
-        width="350px"
-      >
-      </Floating_Dropdown>
+      <div class="relative">
+        <Subject_Selector
+            @click="toggleModal('subjectSelectModal')"
+            class="relative w-[350px] mb-3"
+            :placeholder="'Choose Subject'"
+        />
+        <Filter_Bar_Studyset
+            v-if="modals.subjectSelectModal"
+            :items="dropdownOptions"
+            top="50px"
+            right="0px"
+            height="max-content"
+            width="350px"
+        >
+        </Filter_Bar_Studyset>
+      </div>
+
       <div
         @click="openModal"
         class="btn hover:cursor-pointer w-[250px] font-semibold"
@@ -258,7 +279,7 @@ onMounted(() => {
 
     <div v-if="isSuccessful_studyset">
       <div class="grid mt-[60px] mb-[60px] gap-14 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="(s, index) in studySetSearchStore.getSearchResults().length ? studySetSearchStore.getSearchResults() : currentStudySets" :key="index">
+        <div v-for="(s, index) in currentStudySets" :key="index">
           <Studyset_Card
             :title="s.title"
             :description="s.description"
