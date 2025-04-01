@@ -2,11 +2,11 @@
 import { defineProps, ref } from "vue";
 import studySetDb from "@/views/studysetapp/dexie.js";
 import {useStudySetFilterStore} from "../../stores/studySetFilterStore.js";
+import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
 
 const studySetFilterStore = useStudySetFilterStore();
 const filterResults = ref([]);
 const props = defineProps({
-  items: Object,
   top: String,
   right: String,
   height: String,
@@ -44,7 +44,7 @@ const filterStudySets = async (query) => {
     }"
   >
     <div class="max-h-[150px] overflow-y-auto minimalistic-scrollbar flex flex-col gap-y-3 p-3 w-full">
-      <div v-for="[key, value] in Object.entries(items)" :key="key" class="w-full">
+      <div v-for="[key, value] in Object.entries(dropdownOptions)" :key="key" class="w-full">
         <button
             class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full"
             :class="value.active

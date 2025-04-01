@@ -1,22 +1,6 @@
 <script setup>
 import { defineProps, ref } from "vue";
-
-const dropdownOptions = ref({
-  ARTS: "Arts",
-  BUS: "Business",
-  GEO: "Geography",
-  ENGR: "Engineering",
-  HEALTH_MED: "Health and Medicine",
-  HIST: "History",
-  LAW_POL: "Law and Politics",
-  LANG_CULT: "Languages and Cultures",
-  MATH: "Mathematics",
-  PHIL: "Philosophy",
-  SCI: "Science",
-  SOC_SCI: "Social Sciences",
-  TECH: "Technology",
-  WRIT_LIT: "Writing and Literature"
-});
+import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
 
 const props = defineProps({
   top: String,
