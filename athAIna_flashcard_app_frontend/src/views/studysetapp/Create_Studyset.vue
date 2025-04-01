@@ -14,7 +14,7 @@ const isSuccessful = ref(false);
 const message = ref("");
 const title = ref("");
 const description = ref("");
-const subject = ref("");
+const subject = ref({ key: "", value: "" });
 
 const userStore = useUserStore();
 const learnerId = userStore.getUserID();
@@ -39,11 +39,11 @@ const modals = ref({ subjectSelectModal: false });
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
-const updateSubject = (value) => {
-  subject.value = value;
+
+const updateSubject = (key, value) => {
+  subject.value = { key, value };
   toggleModal('subjectSelectModal');
 };
-
 
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
@@ -58,7 +58,7 @@ const saveStudySet = async () => {
     const requestData = {
       learner_instance: Number(learnerId), // Ensure this is an integer
       title: title.value,
-      subject: subject.value // Ensure this matches the field name in your serializer
+      subject: subject.value.key // Ensure this matches the field name in your serializer
     };
 
     if (description.value !== null && description.value !== '') {
@@ -153,7 +153,7 @@ const saveStudySet = async () => {
                   :placeholder="'Choose Subject'"
                   :outerClass="''"
                   :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
-                  v-model="subject"
+                  v-model="subject.value"
               />
 
               <Floating_Dropdown
@@ -162,7 +162,7 @@ const saveStudySet = async () => {
                   right="0px"
                   height="max-content"
                   width="553px"
-                  @update:modelValue="updateSubject"
+                  @update:modelValue="({ key, value }) => updateSubject(key, value)"
               />
 
             </div>

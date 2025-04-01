@@ -28,8 +28,7 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 const updateValue = async (key, value) => {
-  const query = key;
-  emit("update:modelValue", key);
+  emit("update:modelValue", { key, value });
 };
 
 
