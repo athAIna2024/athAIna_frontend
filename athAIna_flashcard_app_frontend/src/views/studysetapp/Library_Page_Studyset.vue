@@ -245,10 +245,11 @@ onMounted(() => {
             @click="toggleModal('subjectSelectModal')"
             class="relative w-[350px] mb-3"
             :placeholder="'Choose Subject'"
+            :outerClass="'athAIna-border-outer'"
+            :innerClass="'athAIna-border-inner'"
         />
         <Filter_Bar_Studyset
             v-if="modals.subjectSelectModal"
-            :items="dropdownOptions"
             top="50px"
             right="0px"
             height="max-content"

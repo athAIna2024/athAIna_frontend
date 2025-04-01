@@ -6,12 +6,29 @@ import {useStudySetFilterStore} from "../../stores/studySetFilterStore.js";
 const studySetFilterStore = useStudySetFilterStore();
 const filterResults = ref([]);
 const props = defineProps({
-  items: Object,
   top: String,
   right: String,
   height: String,
   width: String,
 });
+
+const dropdownOptions = ref({
+  ARTS: "Arts",
+  BUS: "Business",
+  GEO: "Geography",
+  ENGR: "Engineering",
+  HEALTH_MED: "Health and Medicine",
+  HIST: "History",
+  LAW_POL: "Law and Politics",
+  LANG_CULT: "Languages and Cultures",
+  MATH: "Mathematics",
+  PHIL: "Philosophy",
+  SCI: "Science",
+  SOC_SCI: "Social Sciences",
+  TECH: "Technology",
+  WRIT_LIT: "Writing and Literature"
+});
+
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -43,9 +60,9 @@ const filterStudySets = async (query) => {
     }"
   >
     <div class="max-h-[150px] overflow-y-auto minimalistic-scrollbar flex flex-col gap-y-3 p-3 w-full">
-      <div v-for="[key, value] in Object.entries(items)" :key="key" class="w-full">
+      <div v-for="[key, value] in Object.entries(dropdownOptions)" :key="key" class="w-full">
         <button
-            class="text-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full"
+            class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full"
             :class="value.active
             ? 'bg-athAIna-orange text-athAIna-white'
             : 'border-athAIna-orange border-[3.5px]'"
