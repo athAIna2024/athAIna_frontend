@@ -11,9 +11,15 @@ const props = defineProps({
     type: String,
     required: true
   },
+  modelValue: {
+    type: String,
+    default: ""
+  }
 
 
 });
+const emit = defineEmits(['update:modelValue', 'click']);
+
 
 </script>
 
@@ -21,8 +27,9 @@ const props = defineProps({
 <div :class="outerClass + ' p-1 rounded-[20px] h-[40px]'">
   <div
       :class="innerClass + ' rounded-[15px] relative flex flex-row items-center justify-between px-3 text-sm'"
+      @click="$emit('click')"
   >
-    <span class="text-athAIna-orange">{{ placeholder }}</span>
+    <span class="text-athAIna-orange">{{ modelValue || placeholder }}</span>
     <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

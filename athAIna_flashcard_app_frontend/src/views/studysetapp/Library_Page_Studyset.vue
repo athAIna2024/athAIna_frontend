@@ -26,8 +26,6 @@ const isSuccessful_studyset = ref(false);
 const message_studyset = ref("");
 const isSuccessful_flashcard = ref(false);
 const message_flashcard = ref("");
-const isSuccessful_filterSearchStudySet = ref(false);
-const message_filterSearchStudySet = ref("");
 
 const studySet_result = ref([]);
 const studySetCounts = ref(0);
@@ -64,6 +62,12 @@ const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
 
+const subject = ref("");
+const updateSubject = (value) => {
+  subject.value = value;
+  toggleModal('subjectSelectModal');
+};
+
 const openModal = () => {
   isModalVisible.value = true;
 };
@@ -74,19 +78,19 @@ const closeModal = async () => {
 };
 
 const currentStudySets = computed(() => {
-  const filterResults = studySetFilterStore.getFilterResults();
-  const searchResults = studySetSearchStore.getSearchResults();
   const isFilterActive = studySetFilterStore.getFilterActiveStatus();
   const isSearchActive = studySetSearchStore.getSearchActiveStatus();
 
   if (isFilterActive) {
     console.log("IsFilterActive", isFilterActive);
-    return filterResults;
+    return studySetFilterStore.getFilterResults();
   }
 
   if (isSearchActive) {
     console.log("IsSearchActive", isSearchActive);
-    return searchResults;
+    subject.value = "Choose Subject"; // Reset subject when search is active
+
+    return studySetSearchStore.getSearchResults();
   }
 
   const startIndex = (currentPage.value - 1) * itemsPerPage;
@@ -247,13 +251,16 @@ onMounted(() => {
             :placeholder="'Choose Subject'"
             :outerClass="'athAIna-border-outer'"
             :innerClass="'athAIna-border-inner'"
+            v-model="subject"
         />
         <Filter_Bar_Studyset
             v-if="modals.subjectSelectModal"
+            :items=dropdownOptions
             top="50px"
             right="0px"
             height="max-content"
             width="350px"
+            @update:modelValue="updateSubject"
         >
         </Filter_Bar_Studyset>
       </div>
@@ -290,6 +297,7 @@ onMounted(() => {
           />
         </div>
       </div>
+
 
       <Pagination
           :total-items="studySetCounts"
