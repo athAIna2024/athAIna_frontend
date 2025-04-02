@@ -63,6 +63,10 @@ const login = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
+      const sessionTime = new Date();
+
+      sessionStorage.setItem("session", sessionTime);
+
       userStore.setUserID(response.data.user_id);
       userStore.setEmail(response.data.email);
       userStore.setLoginTime(response.data.login_date);
