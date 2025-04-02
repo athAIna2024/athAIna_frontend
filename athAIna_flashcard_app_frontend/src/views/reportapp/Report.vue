@@ -1,6 +1,37 @@
 <script setup>
-import {computed, ref} from "vue";
+import { computed } from "vue";
+import { ref } from "vue";
+import { onMounted } from "vue";
+import Subject_Selector from "@/components/Subject_Selector.vue";
+import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
+import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
 import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
+import axios from '@/axios';
+
+const isSuccessful = ref(false);
+const message = ref("");
+
+const fetchTestReport = async () => {
+  try {
+    const url = 'report';
+    const response = await axios.get(url, {
+      params: {
+        id: 1,
+        studyset_id: 2,
+        start_date: "2025-03-28 10:50:31.546000",
+        end_date: "2025-03-28 11:50:31.546000"
+      }
+    });
+
+    isSuccessful.value = response.data.successful;
+    message.value = "Fetch test scores successfully";
+
+  } catch (error) {
+    isSuccessful.value = false;
+    message.value = error.value;
+    console.error(error.value);
+  }
+};
 
 const scores = ref([
   { timestamp: "2024-03-03T12:45:00", score: 40 },
@@ -12,7 +43,6 @@ const scores = ref([
   { timestamp: "2024-03-05T14:30:00", score: 60 },
 ]);
 
-// FIXME: Improve data formatting. Implement dictionaries instead of arrays.
 const chartData = computed(() => {
   return {
     labels: scores.value.map(entry =>
@@ -54,16 +84,18 @@ const title = ref("Study Set Title");
 const select_study_set = ref(false);
 const studysets = ['Networking', 'Man, Church, Society']; // To be fetched from DB
 
-// Components
-import Subject_Selector from "@/components/Subject_Selector.vue";
-import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
-import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
-import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
-
+const modals = ref({
+  studySetModal: false,
+})
 // Methods
 const toggleModal = (modalName) => {
-  modalName.value = !modalName.value;
-}
+  modals.value[modalName] = !modals.value[modalName];
+};
+
+// onMounted(() => {
+//   fetchTestReport();
+// });
+
 </script>
 
 <template>
@@ -76,19 +108,20 @@ const toggleModal = (modalName) => {
           <div class="flex flex-col">
             <Subject_Selector
                 :placeholder="study_set_placeholder"
-                @click="select_study_set=!select_study_set"
+                @click="toggleModal('studySetModal')"
                 class="relative w-[350px]"
                 :innerClass="'athAIna-border-inner'"
                 :outerClass="'athAIna-border-outer'"
 
             />
-            <Floating_Dropdown_Studysets v-if="select_study_set"
+            <Floating_Dropdown_Studysets v-if="modals.studySetModal"
                                :items="studysets"
                                top="240px"
                                right="max-content"
                                height="max-content"
-                               width="350px">
-            </Floating_Dropdown_Studysets>
+                               width="350px"
+            />
+
           </div>
 
           <Date_Range_Selector/>
