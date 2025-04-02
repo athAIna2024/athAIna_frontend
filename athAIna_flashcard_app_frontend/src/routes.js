@@ -13,6 +13,7 @@ import Change_Password from "@/views/accountapp/Change_Password.vue";
 import Forgot_Password from "@/views/accountapp/Forgot_Password.vue";
 import Forgot_Password_Page from "./views/accountapp/Forgot_Password_Page.vue";
 import Change_Password_Page from "./views/accountapp/Change_Password_Page.vue";
+import OTP_Page from "./views/accountapp/OTP_Page.vue";
 
 import Create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
 import Generate_Flashcard_with_AI from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
@@ -75,6 +76,11 @@ const routes = [
     path: "/signup/",
     name: "Signup",
     component: Signup,
+  },
+  {
+    path: "/verify_email/",
+    name: "Verify Email",
+    component: OTP_Page,
   },
   {
     path: "/change_password/",
