@@ -8,6 +8,10 @@ import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
 import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
+import {useUserStore} from "../../../stores/userStore.js";
+
+const userStore = useUserStore();
+// const userDateJoined = userStore;
 
 const isSuccessful = ref(false);
 const message = ref("");
@@ -149,7 +153,11 @@ onMounted(() => {
 
           </div>
 
-          <Date_Range_Selector/>
+          <Date_Range_Selector
+              :minDate="new Date('2025-01-01')"
+              :maxDate="new Date('2025-12-31')"
+          />
+
         </div>
       </div>
 

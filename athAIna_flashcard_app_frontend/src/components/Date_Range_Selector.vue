@@ -5,7 +5,17 @@ import '@vuepic/vue-datepicker/dist/main.css';
 
 const date = ref(null)
 
-console.log("REPORT DATE AT DATE RANGE SELECTOR", date);
+const props = defineProps({
+  minDate: {
+    type: Date,
+    // default: () => new Date()
+  },
+  maxDate: {
+    type: Date,
+    // default: () => new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+  },
+})
+
 </script>
 
 <template>
@@ -13,9 +23,13 @@ console.log("REPORT DATE AT DATE RANGE SELECTOR", date);
     <div class="athAIna-border-inner rounded-[15px] relative flex flex-row items-center justify-between px-3 text-sm">
       <VueDatePicker
           class="h-auto w-full font-regular"
-          v-model="date" range hide-input-icon :enable-time-picker="true"
+          v-model="date" range hide-input-icon :enable-time-picker="false"
           placeholder="Set Date Range"
           :ui="{ input: 'custom-datepicker-input' }"
+          :start-date="props.minDate"
+          :min-date="props.minDate"
+          :max-date="props.maxDate"
+          ignore-time-validation
       />
     </div>
   </div>
