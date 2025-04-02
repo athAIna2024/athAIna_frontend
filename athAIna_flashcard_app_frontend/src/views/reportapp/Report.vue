@@ -7,9 +7,50 @@ import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
 import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
 import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
 import axios from '@/axios';
+import studySetDb from "@/views/studysetapp/dexie.js";
 
 const isSuccessful = ref(false);
 const message = ref("");
+
+const chartOptions = ref({
+  responsive: true,
+});
+
+// Reactive Variables
+const study_set_placeholder = ref("Choose a Study Set");
+const title = ref("Study Set Title");
+
+const studySets = ref({});
+
+const addStudySet = (id, title) => {
+  studySets.value[id] = title;
+};
+
+const fetchStudySets = async () => {
+  try {
+    const studySetsArray = await studySetDb.studysets.toArray();
+    studySetsArray.forEach((studySet) => {
+      addStudySet(studySet.id, studySet.title);
+    });
+  } catch (error) {
+    console.error('Error fetching study sets:', error);
+  }
+};
+
+const updateStudySet = (id, title) => {
+  studySetSelected.value = { id, title };
+  toggleModal('studySetModal');
+};
+
+const modals = ref({
+  studySetModal: false,
+})
+// Methods
+const toggleModal = (modalName) => {
+  modals.value[modalName] = !modals.value[modalName];
+};
+
+const studySetSelected = ref({ id: 0, title: ""});
 
 const fetchTestReport = async () => {
   try {
@@ -28,8 +69,8 @@ const fetchTestReport = async () => {
 
   } catch (error) {
     isSuccessful.value = false;
-    message.value = error.value;
-    console.error(error.value);
+    message.value = error.message;
+    console.error(error.message);
   }
 };
 
@@ -74,27 +115,9 @@ const chartData = computed(() => {
 });
 
 
-const chartOptions = ref({
-  responsive: true,
+onMounted(() => {
+  fetchStudySets();
 });
-
-// Reactive Variables
-const study_set_placeholder = ref("Choose a Study Set");
-const title = ref("Study Set Title");
-const select_study_set = ref(false);
-const studysets = ['Networking', 'Man, Church, Society']; // To be fetched from DB
-
-const modals = ref({
-  studySetModal: false,
-})
-// Methods
-const toggleModal = (modalName) => {
-  modals.value[modalName] = !modals.value[modalName];
-};
-
-// onMounted(() => {
-//   fetchTestReport();
-// });
 
 </script>
 
@@ -112,14 +135,16 @@ const toggleModal = (modalName) => {
                 class="relative w-[350px]"
                 :innerClass="'athAIna-border-inner'"
                 :outerClass="'athAIna-border-outer'"
+                v-model="studySetSelected.title"
 
             />
             <Floating_Dropdown_Studysets v-if="modals.studySetModal"
-                               :items="studysets"
+                               :items="studySets"
                                top="240px"
                                right="max-content"
                                height="max-content"
                                width="350px"
+                               @update:modelValue="({ id, title }) => updateStudySet(id, title)"
             />
 
           </div>
