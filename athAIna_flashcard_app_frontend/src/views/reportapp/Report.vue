@@ -1,5 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
+import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
 
 const scores = ref([
   { timestamp: "2024-03-03T12:45:00", score: 40 },
@@ -49,12 +50,9 @@ const chartOptions = ref({
 
 // Reactive Variables
 const study_set_placeholder = ref("Choose a Study Set");
-const subject_placeholder = ref("Filter by Subject");
 const title = ref("Study Set Title");
 const select_study_set = ref(false);
-const select_subject = ref(false);
 const studysets = ['Networking', 'Man, Church, Society']; // To be fetched from DB
-const subjects = ['Arts', 'Technology', 'Relationships'];
 
 // Components
 import Subject_Selector from "@/components/Subject_Selector.vue";
@@ -75,35 +73,23 @@ const toggleModal = (modalName) => {
         <p class="font-semibold text-lg">{{ title }}</p>
         <div class="flex flex-row justify-between items-center gap-x-10">
 
-          <!-- Study Set Selector-->
           <div class="flex flex-col">
             <Subject_Selector
                 :placeholder="study_set_placeholder"
                 @click="select_study_set=!select_study_set"
-                class="relative w-[263px]"/>
-            <Floating_Dropdown v-if="select_study_set"
+                class="relative w-[350px]"
+                :innerClass="'athAIna-border-inner'"
+                :outerClass="'athAIna-border-outer'"
+
+            />
+            <Floating_Dropdown_Studysets v-if="select_study_set"
                                :items="studysets"
                                top="240px"
-                               right="667px"
+                               right="max-content"
                                height="max-content"
-                               width="max-content">
-            </Floating_Dropdown>
+                               width="350px">
+            </Floating_Dropdown_Studysets>
           </div>
-
-          <!-- Subject Selector -->
-          <!--          <div class="flex flex-col">-->
-          <!--            <Subject_Selector-->
-          <!--                :placeholder="subject_placeholder"-->
-          <!--                @click="select_subject=!select_subject"-->
-          <!--                class="relative w-[263px]"/>-->
-          <!--            <Floating_Dropdown v-if="select_subject"-->
-          <!--                               :items="subjects"-->
-          <!--                               top="240px"-->
-          <!--                               right="365px"-->
-          <!--                               height="max-content"-->
-          <!--                               width="260px">-->
-          <!--            </Floating_Dropdown>-->
-          <!--          </div>-->
 
           <Date_Range_Selector/>
         </div>
