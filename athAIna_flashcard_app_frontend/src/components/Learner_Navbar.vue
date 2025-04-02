@@ -1,14 +1,195 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import Delete_Account from "@/components/Delete_Account.vue";
 import Logout from "@/views/accountapp/Logout.vue";
 import { useUserStore } from "../../stores/userStore";
+import axiosInstance from "@/axiosConfig";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/authStore";
+import Cookies from "js-cookie";
+import { useFlashcardSearchStore } from "../../stores/flashcardSearchStore.js";
+import { useStudysetStore } from "../../stores/studySetStore.js";
+import { useStudySetSearchStore } from "../../stores/studySetSearchStore.js";
+import { useTestModeStore } from "../../stores/testModeStore.js";
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const flashcardSearchStore = useFlashcardSearchStore();
+const studysetStore = useStudysetStore();
+const studySetSearchStore = useStudySetSearchStore();
+const testModeStore = useTestModeStore();
 
 const modals = ref({
   profile: false,
   accSettings: false,
   Delete_Account: false,
   logout: false,
+});
+// Auto-logout settings
+const INACTIVITY_CHECK_INTERVAL = 1800 * 1000; // Check every 30 mins 
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 60 minute timeout for testing
+const activityInterval = ref(null);
+const lastActivity = ref(Date.now());
+const isRefreshing = ref(false);
+const inactivityWarningShown = ref(false); // Added this missing ref
+
+// Track user activity
+const updateLastActivity = () => {
+  lastActivity.value = Date.now();
+  console.log(
+    `[Activity Tracker] Activity detected at ${new Date().toLocaleTimeString()}`
+  );
+};
+
+// Add debounced version to avoid excessive updates
+const throttledUpdateActivity = (() => {
+  let lastCall = 0;
+  return () => {
+    const now = Date.now();
+    if (now - lastCall > 5000) {
+      // Only update every 5 seconds max
+      lastCall = now;
+      updateLastActivity();
+    }
+  };
+})();
+
+// Check token status and user activity
+const checkActivity = async () => {
+  try {
+    // Skip if already in the process of refreshing
+    if (isRefreshing.value) {
+      return;
+    }
+
+    // Check for inactivity
+    const currentTime = Date.now();
+    const inactiveTime = currentTime - lastActivity.value;
+    const inactiveSeconds = Math.floor(inactiveTime / 1000);
+
+    // Log every check with seconds of inactivity
+    console.log(
+      `[Activity Checker] User inactive for ${inactiveSeconds} seconds`
+    );
+
+    // Show warning when approaching timeout
+    if (
+      inactiveTime > INACTIVITY_TIMEOUT * 0.75 &&
+      !inactivityWarningShown.value
+    ) {
+      console.warn(
+        `[Activity Warning] User will be logged out in ${Math.floor(
+          (INACTIVITY_TIMEOUT - inactiveTime) / 1000
+        )} seconds due to inactivity`
+      );
+      inactivityWarningShown.value = true;
+    }
+
+    if (inactiveTime > INACTIVITY_TIMEOUT) {
+      console.log(
+        `[Activity Checker] Inactivity threshold of ${
+          INACTIVITY_TIMEOUT / 1000
+        } seconds exceeded, logging out`
+      );
+      await handleLogout("Session expired due to inactivity");
+      return;
+    }
+  } catch (error) {
+    console.error("[Activity Checker] Error during check:", error);
+  }
+};
+// Handle logout
+const handleLogout = async (reason) => {
+  console.log(`[Logout] Logging out: ${reason}`);
+
+  try {
+    const response = await axiosInstance.post("/account/logout/", {});
+
+    console.log("response: ", response);
+    console.log("response data: ", response.data);
+    console.log("response status: ", response.status);
+    console.log("response error: ", response.error);
+    console.log("response message: ", response.message);
+
+    if (response.status === 204) {
+      Cookies.remove("access_token");
+      Cookies.remove("refresh_token");
+      Cookies.remove("athAIna_csrfToken");
+
+      let dbs = await indexedDB.databases();
+      dbs.forEach((db) => {
+        indexedDB.deleteDatabase(db.name);
+      });
+
+      authStore.logout();
+
+      flashcardSearchStore.clear();
+      studysetStore.clear();
+      studySetSearchStore.clear();
+      testModeStore.clear();
+
+      router.push("/login");
+      emit("close");
+    } else {
+      console.log(response.error);
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    userStore.clear();
+  }
+};
+
+// Set up activity tracking and periodic checks
+onMounted(() => {
+  console.log("[Activity Tracker] Setting up activity monitoring");
+
+  // Add event listeners for user activity
+  document.addEventListener("mousemove", throttledUpdateActivity);
+  document.addEventListener("keydown", updateLastActivity);
+  document.addEventListener("click", updateLastActivity);
+
+  // Initialize last activity time
+  updateLastActivity();
+
+  // Clear any existing intervals first
+  if (activityInterval.value) {
+    clearInterval(activityInterval.value);
+  }
+
+  // Set interval for checking token and activity status
+  console.log(
+    `[Activity Tracker] Setting check interval: ${INACTIVITY_CHECK_INTERVAL}ms`
+  );
+  activityInterval.value = setInterval(
+    checkActivity,
+    INACTIVITY_CHECK_INTERVAL
+  );
+
+  // Add focus handler to update last activity when user returns
+  window.addEventListener("focus", updateLastActivity);
+
+  console.log(
+    `[Activity Tracker] Setup complete - inactivity timeout: ${
+      INACTIVITY_TIMEOUT / 1000
+    } seconds`
+  );
+});
+
+// Clean up event listeners and intervals
+onBeforeUnmount(() => {
+  console.log("[Activity Tracker] Cleaning up resources");
+  document.removeEventListener("mousemove", throttledUpdateActivity);
+  document.removeEventListener("keydown", updateLastActivity);
+  document.removeEventListener("click", updateLastActivity);
+  window.removeEventListener("focus", updateLastActivity);
+
+  if (activityInterval.value) {
+    clearInterval(activityInterval.value);
+    activityInterval.value = null;
+    console.log("[Activity Tracker] Interval cleared");
+  }
 });
 
 const userStore = useUserStore();
@@ -36,7 +217,7 @@ const toggleModal = (modalName) => {
         <div class="flex flex-col items-center justify-between p-5">
           <span class="font-semibold">User Profile</span>
           <div class="flex flex-col">
-            <span> {{ userStore.getEmail()}} </span>
+            <span> {{ userStore.getEmail() }} </span>
             <span> {{}} </span>
           </div>
           <button
