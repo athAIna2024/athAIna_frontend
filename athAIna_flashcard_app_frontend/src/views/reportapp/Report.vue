@@ -21,7 +21,6 @@ const chartOptions = ref({
 });
 
 // Reactive Variables
-const study_set_placeholder = ref("Choose a Study Set");
 const title = ref("Study Set Title");
 
 const studySets = ref({});
@@ -54,7 +53,7 @@ const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
 
-const studySetSelected = ref({ id: 0, title: ""});
+const studySetSelected = ref({ id: null, title: null});
 
 const fetchTestReport = async () => {
   try {
@@ -134,7 +133,7 @@ onMounted(() => {
 
           <div class="flex flex-col">
             <Subject_Selector
-                :placeholder="study_set_placeholder"
+                :placeholder="'Choose Study Set'"
                 @click="toggleModal('studySetModal')"
                 class="relative w-[350px]"
                 :innerClass="'athAIna-border-inner'"
@@ -148,7 +147,7 @@ onMounted(() => {
                                right="max-content"
                                height="max-content"
                                width="350px"
-                               @update:modelValue="({ id, title }) => updateStudySet(id, title)"
+                               @update:modelValue="({ key, value }) => updateStudySet(key, value)"
             />
 
           </div>
