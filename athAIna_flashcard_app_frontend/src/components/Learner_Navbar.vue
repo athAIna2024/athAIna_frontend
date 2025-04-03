@@ -74,6 +74,20 @@ const userStore = useUserStore();
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
+
+// Function to check session and log out if no session exists
+const checkSessionAndLogout = () => {
+  const session = sessionStorage.getItem("session"); // Replace "userSession" with your session key
+  if (!session) {
+    handleLogout(); // Assuming `logout` is a method in your auth store
+    router.push("/login"); // Redirect to login page
+  }
+};
+
+// Call the function when the component is mounted
+onMounted(() => {
+  checkSessionAndLogout();
+});
 </script>
 
 <template>
