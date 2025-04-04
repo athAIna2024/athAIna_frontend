@@ -14,7 +14,6 @@ import {useUserStore} from "../../../stores/userStore.js";
 
 const userStore = useUserStore();
 const learnerId = userStore.getUserID();
-// const userDateJoined = userStore;
 
 const isSuccessful = ref(false);
 const message = ref("");
@@ -58,7 +57,7 @@ const toggleModal = (modalName) => {
 
 const studySetSelected = ref({ id: null, title: null});
 
-const minDate = ref(new Date("2025-01-30")); // Date user first joined
+const minDate = userStore.getDateJoined();
 const maxDate = ref(new Date()); // Current date (always the current, not the date user login);
 
 const startDate = ref(new Date());
