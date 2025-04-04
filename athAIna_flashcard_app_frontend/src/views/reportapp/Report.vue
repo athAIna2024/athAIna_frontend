@@ -59,7 +59,7 @@ const toggleModal = (modalName) => {
 const studySetSelected = ref({ id: null, title: null});
 
 const startDate = ref(new Date("2025-01-30")); // Date user first joined
-const endDate = ref(new Date(userStore.getLoginTime())); // Date user last logged in
+const endDate = ref(new Date()); // Current date (always the current, not the date user login);
 
 const testScores = ref([]);
 
@@ -79,7 +79,9 @@ const fetchTestReport = async () => {
     message.value = "Fetch test scores successfully";
     console.log(response.data);
 
-    if (Array.isArray(response.data.data)) {
+    if (isSuccessful)
+    {
+      console.log("THERE IS TEST SCORES");
       testScores.value = response.data.data.map(entry => ({
         timestamp: entry.submitted_at,
         score: (entry.score / entry.number_of_questions) * 100,
