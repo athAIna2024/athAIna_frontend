@@ -67,7 +67,9 @@ export const useUserStore = defineStore(
       setEmail,
       getEmail,
       setLoginTime,
+      getLoginTime,
       setDateJoined,
+      getDateJoined,
       clearEmail,
       clear,
     };
