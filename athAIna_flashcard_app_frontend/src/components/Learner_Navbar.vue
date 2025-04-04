@@ -1,8 +1,24 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import Delete_Account from "@/components/Delete_Account.vue";
 import Logout from "@/views/accountapp/Logout.vue";
 import { useUserStore } from "../../stores/userStore";
+import axiosInstance from "@/axiosConfig";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/authStore";
+import Cookies from "js-cookie";
+import { useFlashcardSearchStore } from "../../stores/flashcardSearchStore.js";
+import { useStudysetStore } from "../../stores/studySetStore.js";
+import { useStudySetSearchStore } from "../../stores/studySetSearchStore.js";
+import { useTestModeStore } from "../../stores/testModeStore.js";
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const flashcardSearchStore = useFlashcardSearchStore();
+const studysetStore = useStudysetStore();
+const studySetSearchStore = useStudySetSearchStore();
+const testModeStore = useTestModeStore();
 
 const modals = ref({
   profile: false,
@@ -11,11 +27,67 @@ const modals = ref({
   logout: false,
 });
 
+// Handle logout
+const handleLogout = async (reason) => {
+  console.log(`[Logout] Logging out: ${reason}`);
+
+  try {
+    const response = await axiosInstance.post("/account/logout/", {});
+
+    console.log("response: ", response);
+    console.log("response data: ", response.data);
+    console.log("response status: ", response.status);
+    console.log("response error: ", response.error);
+    console.log("response message: ", response.message);
+
+    if (response.status === 204) {
+      Cookies.remove("access_token");
+      Cookies.remove("refresh_token");
+      Cookies.remove("athAIna_csrfToken");
+
+      let dbs = await indexedDB.databases();
+      dbs.forEach((db) => {
+        indexedDB.deleteDatabase(db.name);
+      });
+
+      authStore.logout();
+
+      flashcardSearchStore.clear();
+      studysetStore.clear();
+      studySetSearchStore.clear();
+      testModeStore.clear();
+
+      router.push("/login");
+      emit("close");
+    } else {
+      console.log(response.error);
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    userStore.clear();
+  }
+};
+
 const userStore = useUserStore();
 
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
+
+// Function to check session and log out if no session exists
+const checkSessionAndLogout = () => {
+  const session = sessionStorage.getItem("session"); // Replace "userSession" with your session key
+  if (!session) {
+    handleLogout(); // Assuming `logout` is a method in your auth store
+    router.push("/login"); // Redirect to login page
+  }
+};
+
+// Call the function when the component is mounted
+onMounted(() => {
+  checkSessionAndLogout();
+});
 </script>
 
 <template>
@@ -36,7 +108,7 @@ const toggleModal = (modalName) => {
         <div class="flex flex-col items-center justify-between p-5">
           <span class="font-semibold">User Profile</span>
           <div class="flex flex-col">
-            <span> {{ userStore.getEmail()}} </span>
+            <span> {{ userStore.getEmail() }} </span>
             <span> {{}} </span>
           </div>
           <button

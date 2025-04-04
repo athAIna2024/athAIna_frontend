@@ -63,7 +63,12 @@ const login = async () => {
     console.log(response.data);
 
     if (response.data.successful) {
+      const sessionTime = new Date();
+
+      sessionStorage.setItem("session", sessionTime);
+
       userStore.setUserID(response.data.user_id);
+      userStore.setDateJoined(response.data.user_date_joined);
       userStore.setEmail(response.data.email);
       userStore.setLoginTime(response.data.login_date);
       Cookies.set("access_token", `${response.data.access}`, {
