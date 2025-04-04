@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from "vue";
 import { ref } from "vue";
+import { watch } from "vue";
+
 import { onMounted } from "vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
@@ -11,6 +13,7 @@ import studySetDb from "@/views/studysetapp/dexie.js";
 import {useUserStore} from "../../../stores/userStore.js";
 
 const userStore = useUserStore();
+const learnerId = userStore.getUserID();
 // const userDateJoined = userStore;
 
 const isSuccessful = ref(false);
@@ -55,69 +58,51 @@ const toggleModal = (modalName) => {
 
 const studySetSelected = ref({ id: null, title: null});
 
+const startDate = ref(new Date("2025-01-30")); // Date user first joined
+const endDate = ref(new Date(userStore.getLoginTime())); // Date user last logged in
+
+const testScores = ref([]);
+
 const fetchTestReport = async () => {
   try {
     const url = 'report';
     const response = await axios.get(url, {
       params: {
-        id: 1,
-        studyset_id: 2,
-        start_date: "2025-03-28 10:50:31.546000",
-        end_date: "2025-03-28 11:50:31.546000"
+        id: learnerId,
+        studyset_id: Number(studySetSelected.value.id),
+        start_date: startDate.value.toISOString(),
+        end_date: endDate.value.toISOString(),
       }
     });
 
     isSuccessful.value = response.data.successful;
     message.value = "Fetch test scores successfully";
+    console.log(response.data);
+
+    if (Array.isArray(response.data.data)) {
+      testScores.value = response.data.data.map(entry => ({
+        timestamp: entry.submitted_at,
+        score: (entry.score / entry.number_of_questions) * 100,
+      }));
+      console.log("TEST SCORES COMPUTED", testScores.value);
+    } else {
+      testScores.value = [];
+      message.value = response.data.message;
+      console.error(response.data.message);
+    }
 
   } catch (error) {
+    testScores.value = [];
     isSuccessful.value = false;
-    message.value = error.message;
-    console.error(error.message);
+    message.value = "An error occurred while fetching test scores.";
   }
 };
 
-const scores = ref([
-  { timestamp: "2024-03-03T12:45:00", score: 40 },
-  { timestamp: "2024-03-03T18:00:00", score: 80 },
-  { timestamp: "2024-03-04T01:00:00", score: 85 },
-  { timestamp: "2024-03-05T14:30:00", score: 90 },
-  { timestamp: "2024-03-05T14:30:00", score: 30 },
-  { timestamp: "2024-03-05T14:30:00", score: 90 },
-  { timestamp: "2024-03-05T14:30:00", score: 60 },
-]);
-
-const chartData = computed(() => {
-  return {
-    labels: scores.value.map(entry =>
-        new Date(entry.timestamp).toLocaleString("en-US", {
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        })
-    ),
-    datasets: [
-      {
-        label: "Pass (≥ 70%)",
-        data: scores.value.map(entry => (entry.score >= 70 ? entry.score : null)), // Show only passing scores
-        backgroundColor: "rgba(75, 192, 75, 0.6)", // Green
-        borderColor: "rgba(75, 192, 75, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Fail (< 70%)",
-        data: scores.value.map(entry => (entry.score < 70 ? entry.score : null)), // Show only failing scores
-        backgroundColor: "rgba(255, 99, 132, 0.6)", // Red
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+watch([studySetSelected, startDate, endDate], ([newStudySet, newStartDate, newEndDate]) => {
+  if (newStudySet.id !== null) {
+    fetchTestReport();
+  }
 });
-
-
 onMounted(() => {
   fetchStudySets();
 });
@@ -153,8 +138,8 @@ onMounted(() => {
           </div>
 
           <Date_Range_Selector
-              :minDate="new Date('2025-01-01')"
-              :maxDate="new Date('2025-12-31')"
+              :minDate=startDate
+              :maxDate=endDate
           />
 
         </div>
@@ -162,9 +147,7 @@ onMounted(() => {
 
       <div class="h-[400px] w-full flex justify-center">
         <Bar_Chart
-            :options="chartOptions"
-            :data="chartData"
-            aria-label="Green bars indicate passing, achieved with a score of 70% or higher. Red bars represent failing scores"
+            :scores="testScores"
         />
       </div>
     </div>
