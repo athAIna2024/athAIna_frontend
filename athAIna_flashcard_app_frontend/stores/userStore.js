@@ -41,6 +41,14 @@ export const useUserStore = defineStore(
       dateJoined.value = date;
     };
 
+    const getLoginTime = () => {
+      return loginTime.value;
+    };
+
+    const getDateJoined = () => {
+        return dateJoined.value;
+    }
+
     const clear = () => {
       userID.value = null;
       email.value = null;
