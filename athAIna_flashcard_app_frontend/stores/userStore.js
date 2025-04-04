@@ -36,6 +36,10 @@ export const useUserStore = defineStore(
       loginTime.value = time;
     };
 
+    const getLoginTime = () => {
+        return loginTime.value;
+    };
+
     const clear = () => {
       userID.value = null;
       email.value = null;
@@ -52,6 +56,7 @@ export const useUserStore = defineStore(
       setEmail,
       getEmail,
       setLoginTime,
+      getLoginTime,
       clearEmail,
       clear,
     };
