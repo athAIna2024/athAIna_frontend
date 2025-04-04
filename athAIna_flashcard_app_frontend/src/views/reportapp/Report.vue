@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { provide } from "vue";
 import { ref } from "vue";
 import { watch } from "vue";
 
@@ -58,20 +58,32 @@ const toggleModal = (modalName) => {
 
 const studySetSelected = ref({ id: null, title: null});
 
-const startDate = ref(new Date("2025-01-30")); // Date user first joined
-const endDate = ref(new Date()); // Current date (always the current, not the date user login);
+const minDate = ref(new Date("2025-01-30")); // Date user first joined
+const maxDate = ref(new Date()); // Current date (always the current, not the date user login);
+
+const startDate = ref(new Date());
+const endDate = ref(new Date());
+
+provide('startDate', startDate); // along with inject, allows to pass data between components
+provide('endDate', endDate); // along with inject, allows to pass data between components
 
 const testScores = ref([]);
 
 const fetchTestReport = async () => {
   try {
     const url = 'report';
+    const start = new Date(startDate.value);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate.value);
+    end.setHours(23, 59, 59, 999);
+
     const response = await axios.get(url, {
       params: {
         id: learnerId,
         studyset_id: Number(studySetSelected.value.id),
-        start_date: startDate.value.toISOString(),
-        end_date: endDate.value.toISOString(),
+        start_date: start.toISOString(),
+        end_date: end.toISOString(),
       }
     });
 
@@ -100,13 +112,16 @@ const fetchTestReport = async () => {
   }
 };
 
-watch([studySetSelected, startDate, endDate], ([newStudySet, newStartDate, newEndDate]) => {
-  if (newStudySet.id !== null) {
+watch([startDate, endDate, studySetSelected], () => {
+  if (studySetSelected.value.id !== null && startDate.value && endDate.value) {
     fetchTestReport();
   }
 });
+
 onMounted(() => {
   fetchStudySets();
+  console.log("START DATE ", startDate.value);
+  console.log("END DATE ", endDate.value);
 });
 
 </script>
@@ -140,8 +155,10 @@ onMounted(() => {
           </div>
 
           <Date_Range_Selector
-              :minDate=startDate
-              :maxDate=endDate
+              :minDate=minDate
+              :maxDate=maxDate
+              @update:startDate="(date) => startDate.value = date"
+              @update:endDate="(date) => endDate.value = date"
           />
 
         </div>
