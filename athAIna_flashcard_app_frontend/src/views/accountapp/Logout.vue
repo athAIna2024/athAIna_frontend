@@ -49,7 +49,6 @@ const logout = async () => {
       Cookies.remove("access_token");
       Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
-      Cookies.remove("session_cookie");
 
       sessionStorage.clear();
 
