@@ -172,7 +172,7 @@ const routes = [
     component: Delete_studyset,
   },
   {
-    path: "/view_learning_progress/",
+    path: "/report/",
     name: "View_Learning_Progress",
     component: View_Learning_Progress,
   },

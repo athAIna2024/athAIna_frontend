@@ -226,7 +226,12 @@ onMounted(() => {
       <router-link to="/library_of_studysets" exact-active-class="active-link">
         <div>Library</div>
       </router-link>
-      <div>Reports</div>
+
+      <router-link :to="{ name: 'View_Learning_Progress' }" exact-active-class="active-link">
+        <div>
+          Reports
+        </div>
+      </router-link>
       <button class="" @click="toggleModal('profile')">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -275,6 +280,5 @@ onMounted(() => {
 <style scoped>
 .active-link {
   font-weight: bold;
-  color: #da384c;
 }
 </style>
