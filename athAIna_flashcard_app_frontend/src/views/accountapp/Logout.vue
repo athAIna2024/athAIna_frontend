@@ -2,12 +2,12 @@
 import { defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/authStore";
-import { useFlashcardSearchStore} from "../../../stores/flashcardSearchStore.js";
+import { useFlashcardSearchStore } from "../../../stores/flashcardSearchStore.js";
 import { useStudysetStore } from "../../../stores/studySetStore.js";
-import { useLockedUsersStore} from "../../../stores/lockedUsersStore.js";
+import { useLockedUsersStore } from "../../../stores/lockedUsersStore.js";
 import { useStudySetSearchStore } from "../../../stores/studySetSearchStore.js";
-import {useUserStore} from "../../../stores/userStore.js";
-import {useTestModeStore} from "../../../stores/testModeStore.js";
+import { useUserStore } from "../../../stores/userStore.js";
+import { useTestModeStore } from "../../../stores/testModeStore.js";
 
 import Cookies from "js-cookie";
 import axiosInstance from "@/axiosConfig";
@@ -50,15 +50,12 @@ const logout = async () => {
       Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
 
+      sessionStorage.clear();
+
       let dbs = await indexedDB.databases();
       dbs.forEach((db) => {
         indexedDB.deleteDatabase(db.name);
       });
-
-
-
-
-
 
       authStore.logout();
 
@@ -74,7 +71,7 @@ const logout = async () => {
     }
   } catch (error) {
     console.log(error);
-  }finally {
+  } finally {
     userStore.clear();
   }
 };

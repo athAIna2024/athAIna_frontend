@@ -7,6 +7,7 @@ export const useUserStore = defineStore(
     const userID = ref(null);
     const email = ref(null);
     const loginTime = ref(null);
+    const dateJoined = ref(null);
 
     const setUserID = (user_id) => {
       userID.value = user_id;
@@ -36,10 +37,15 @@ export const useUserStore = defineStore(
       loginTime.value = time;
     };
 
+    const setDateJoined = (date) => {
+      dateJoined.value = date;
+    };
+
     const clear = () => {
       userID.value = null;
       email.value = null;
       loginTime.value = null;
+      dateJoined.value = null;
     };
 
     return {
@@ -47,11 +53,13 @@ export const useUserStore = defineStore(
       email,
       loginTime,
       setUserID,
+      dateJoined,
       clearUserID,
       getUserID,
       setEmail,
       getEmail,
       setLoginTime,
+      setDateJoined,
       clearEmail,
       clear,
     };
