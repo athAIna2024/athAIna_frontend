@@ -4,10 +4,6 @@ import { defineComponent, onMounted } from 'vue';
 defineComponent({
   name: 'Features_Page',
 });
-
-onMounted(() => {
-  document.title = 'Features – AthAIna';
-});
 </script>
 
 <template>
