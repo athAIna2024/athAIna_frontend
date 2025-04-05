@@ -1,113 +1,96 @@
-<script>
-export default {
-  name: "Features_Page",
-};
+<!-- FIXME: Turn cards to components for cleaner code -->
+<script setup>
+import { defineComponent, onMounted, watch } from 'vue';
+
+defineComponent({
+  name: 'Features_Page',
+})
+
 </script>
 
 <template>
-  <div class="m-10 p-10 -z-0">
-    <div class="text-3xl font-semibold my-5">
-      <span>Unlock Smarter Studying with AI Flashcards</span>
+  <div class="mx-14 my-20 mt-24 p-15 -z-0">
+
+    <!-- Heading -->
+    <div class="text-[24px] font-bold my-5 mb-14">
+      <span> Unlock Smarter Studying with AI Flashcards </span>
     </div>
-    <div class="grid grid-cols-2 items-center">
-      <div class="h-96 items-center athAIna-border-outer p-1">
-        <div class="athAIna-border-inner p-10">
-          <h1 class="text-2xl font-semibold my-5">
+
+    <!-- Card Grid -->
+    <div class="grid grid-cols-2 gap-16 gap-y-24">
+
+      <!-- Description Card 1 -->
+      <div class="h-auto w-auto items-center athAIna-border-outer p-1">
+        <div class="athAIna-border-inner p-12">
+
+          <h1 class="text-xl font-semibold my-7 mt-9">
             AI-Powered Flashcard Generation
           </h1>
-          <p class="text-md">
+
+          <p class="leading-9 text-[14px] font-normal">
             Harness the power of AI to generate customized flashcards instantly
             from your uploaded notes. No need to manually create cards - our
             intelligent system understands your content and generates study
             materials tailored to your needs
           </p>
+
           <RouterLink to="/signup" class="w-full mx-4">
-            <button class="btn mt-8 w-full">Generate My Flashcards</button>
-          </RouterLink>
-        </div>
+            <button class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full">Generate My Flashcards</button>
+          </RouterLink>        </div>      </div>
+
+    <!-- Icon Card 1 -->
+    <div class="p-1 bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red h-auto w-auto rounded-lg flex items-center justify-center">
+      <img src="/book-icon.svg" alt="Animated Book Icon" class="" />
+    </div>
+
+    <!-- Icon Card 2 -->
+    <div class="p-1 bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red h-auto w-auto rounded-lg flex items-center justify-center">
+      <img src="/test-icon.svg" alt="Animated Book Icon" class="" />
+    </div>
+
+    <!-- Description Card 2-->
+    <div class="h-auto w-auto items-center athAIna-border-outer p-1">
+      <div class="athAIna-border-inner p-12">
+
+        <h1 class="text-xl font-semibold my-7 mt-9"> Test Mode </h1>
+
+        <p class="leading-9 text-[14px] font-normal">
+          Take your learning to the next level by testing yourself with your
+          AI-generated flashcards. Whether you're preparing for an exam or
+          reviewing concepts, our interactive test mode will help you
+          strengthen your knowledge and identify areas for improvement.
+        </p>
+
+        <RouterLink to="/signup" class="w-full mx-4">
+          <button class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full"> Generate My Test </button>
+        </RouterLink>
       </div>
-      <div
-        class="p-1 bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red h-96 m-5 rounded-lg flex items-center justify-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="white"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="white"
-          class="size-16"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
-          />
-        </svg>
+    </div>
+
+    <!-- Description Card 3-->
+    <div class="h-auto w-auto items-center athAIna-border-outer p-1">
+      <div class="athAIna-border-inner p-12">
+
+        <h1 class="text-xl font-semibold my-7 mt-9"> Reports Generation </h1>
+
+        <p class="leading-9 text-[14px] font-normal">
+          Get detailed insights into your performance with our comprehensive
+          report generation feature. After every test, view your scores,
+          analyze your strengths and weaknesses, and track your progress over
+          time to ensure you're on the path to success.
+        </p>
+
+        <RouterLink to="/signup" class="w-full mx-4">
+          <button class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full"> Generate My Report </button>
+        </RouterLink>
       </div>
-      <div
-        class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red h-96 m-5 rounded-lg flex items-center justify-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="white"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="white"
-          class="size-16"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
-          />
-        </svg>
-      </div>
-      <div class="h-96 items-center athAIna-border-outer p-1">
-        <div class="athAIna-border-inner p-10">
-          <h1 class="text-2xl font-semibold my-5">Test mode</h1>
-          <p class="text-lg">
-            Take your learning to the next level by testing yourself with your
-            AI-generated flashcards. Whether you're preparing for an exam or
-            reviewing concepts, our interactive test mode will help you
-            strengthen your knowledge and identify areas for improvement.
-          </p>
-          <RouterLink to="/signup" class="w-full mx-4">
-            <button class="btn mt-8 w-full">Generate My Test</button>
-          </RouterLink>
-        </div>
-      </div>
-      <div class="h-96 items-center athAIna-border-outer p-1">
-        <div class="athAIna-border-inner p-10">
-          <h1 class="text-2xl font-semibold my-5">Reports Generation</h1>
-          <p class="text-lg">
-            Get detailed insights into your performance with our comprehensive
-            report generation feature. After every test, view your scores,
-            analyze your strengths and weaknesses, and track your progress over
-            time to ensure you're on the path to success.
-          </p>
-          <RouterLink to="/signup" class="w-full mx-4">
-            <button class="btn mt-8 w-full">Generate My Report</button>
-          </RouterLink>
-        </div>
-      </div>
-      <div
-        class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red h-96 m-5 rounded-lg flex items-center justify-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="white"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="white"
-          class="size-16"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
-          />
-        </svg>
-      </div>
+    </div>
+
+    <!-- Icon Card 3 -->
+    <div class="p-1 bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red h-auto w-auto rounded-lg flex items-center justify-center">
+      <img src="/book-icon.svg" alt="Animated Book Icon" class="" />
+    </div>
+
     </div>
   </div>
 </template>
