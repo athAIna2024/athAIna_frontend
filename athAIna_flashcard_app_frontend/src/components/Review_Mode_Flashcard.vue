@@ -266,14 +266,14 @@ const navigateToPreviousFlashcard = () => {
   transform-style: preserve-3d;
 }
 .flipped {
-  transform: rotateY(180deg);
+  transform: rotateX(180deg);
 }
 .question,
 .answer {
   backface-visibility: hidden;
 }
 .answer {
-  transform: rotateY(180deg);
+  transform: rotateX(180deg);
 }
 .circle-button {
   background-color: white;
