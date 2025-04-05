@@ -224,7 +224,7 @@ onMounted(() => {
 
 <template>
   <div class="my-16 ml-12 mr-12 min-h-screen">
-    <div class="flex flex-row justify-between space-x-[50px] content-center">
+    <div class="flex flex-col lg:flex-row justify-between space-x-[50px] content-center">
       <Search_Bar_Studyset
           v-model="input"
           class="w-[700px]" />

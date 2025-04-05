@@ -36,8 +36,8 @@ export default {
             master new concepts with athAIna!</span
           >
         </div>
-        <div class="w-full md:w-1/2 flex flex-row">
-          <RouterLink to="/signup" class="w-full mx-4">
+        <div class="w-full md:w-1/2 flex flex-row mx-10" >
+          <RouterLink to="/signup" class="w-full mr-10">
             <button class="btn w-full">Try now</button>
           </RouterLink>
           <button @click="scrollToFeatures" class="btn w-full">
@@ -45,15 +45,15 @@ export default {
           </button>
         </div>
       </div>
-      <div class="invisible 2xl:visible align-middle flex mr-[30rem]">
+      <div class="invisible xl:visible align-middle flex mr-[30rem]">
         <div
-          class="absolute transform -translate-x-[12rem] translate-y-14 rotate-[2deg] shadow-md w-[600px] h-[900px] rounded-lg bg-gradient-to-br from-athAIna-red via-athAIna-orange to-athAIna-yellow"
+          class="absolute transform -translate-x-[4rem] 2xl:-translate-x-[12rem] translate-y-14 rotate-[2deg] shadow-md w-[400px] h-[600px] 2xl:h-[900px] 2xl:w-[600px] rounded-lg bg-gradient-to-br from-athAIna-red via-athAIna-orange to-athAIna-yellow"
         ></div>
         <div
-          class="absolute transform -translate-x-[10rem] translate-y-12 rotate-[4deg] shadow-md w-[600px] h-[900px] rounded-lg bg-gradient-to-br from-athAIna-red via-athAIna-orange to-athAIna-yellow"
+          class="absolute transform translate-x-[0rem] 2xl:-translate-x-[10rem] translate-y-12 rotate-[4deg] shadow-md w-[400px] h-[600px] 2xl:h-[900px] 2xl:w-[600px] rounded-lg bg-gradient-to-br from-athAIna-red via-athAIna-orange to-athAIna-yellow"
         ></div>
         <div
-          class="absolute transform justify-center align-middle -translate-x-[8rem] translate-y-10 w-[600px] h-[900px] rotate-[6deg] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
+          class="absolute transform justify-center align-middle translate-x-[2rem] 2xl:-translate-x-[8rem] translate-y-10 w-[400px] h-[600px] 2xl:h-[900px] 2xl:w-[600px] rotate-[6deg] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
         >
           <span class="text-athAIna-lg">
           What's the largest star in the universe??
@@ -67,7 +67,7 @@ export default {
     </div>
 
     <div class="w-full flex-row flex">
-      <div class="athAIna-border-outer p-1 w-1/3">
+      <div class="athAIna-border-outer p-1 w-2/5 ml-10">
         <div class="athAIna-border-inner p-10">
           <div class="text-lg font-semibold">
             Craft Flashcards with AI Magic
@@ -84,7 +84,7 @@ export default {
     </div>
 
     <div class="w-full flex flex-row justify-end">
-      <div class="athAIna-border-outer p-1 w-1/3">
+      <div class="athAIna-border-outer p-1 w-2/5 mr-10">
         <div class="athAIna-border-inner p-10">
           <div class="text-lg font-semibold">
             Reveal Your Triumph with Detailed Reports
@@ -101,7 +101,7 @@ export default {
     </div>
 
     <div class="w-full flex flex-row">
-      <div class="athAIna-border-outer p-1 w-1/3">
+      <div class="athAIna-border-outer p-1 w-2/5 ml-10">
         <div class="athAIna-border-inner p-10">
           <div class="text-lg font-semibold">
             Conquer Exams with Test Questions
