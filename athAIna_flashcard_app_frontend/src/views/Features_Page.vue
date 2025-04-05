@@ -12,7 +12,7 @@ defineComponent({
   <div class="mx-14 my-20 mt-24 p-15 -z-0">
 
     <!-- Heading -->
-    <div class="text-[24px] font-bold my-5 mb-14">
+    <div class="text-[28px] font-semibold my-5 mb-14">
       <span> Unlock Smarter Studying with AI Flashcards </span>
     </div>
 
