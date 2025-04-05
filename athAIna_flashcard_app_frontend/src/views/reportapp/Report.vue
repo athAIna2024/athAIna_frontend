@@ -1,71 +1,128 @@
 <script setup>
-import {computed, ref} from "vue";
+import { provide } from "vue";
+import { ref } from "vue";
+import { watch } from "vue";
 
-const scores = ref([
-  { timestamp: "2024-03-03T12:45:00", score: 40 },
-  { timestamp: "2024-03-03T18:00:00", score: 80 },
-  { timestamp: "2024-03-04T01:00:00", score: 85 },
-  { timestamp: "2024-03-05T14:30:00", score: 90 },
-  { timestamp: "2024-03-05T14:30:00", score: 30 },
-  { timestamp: "2024-03-05T14:30:00", score: 90 },
-  { timestamp: "2024-03-05T14:30:00", score: 60 },
-]);
+import { onMounted } from "vue";
+import Subject_Selector from "@/components/Subject_Selector.vue";
+import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
+import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
+import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
+import axios from '@/axios';
+import studySetDb from "@/views/studysetapp/dexie.js";
+import {useUserStore} from "../../../stores/userStore.js";
 
-// FIXME: Improve data formatting. Implement dictionaries instead of arrays.
-const chartData = computed(() => {
-  return {
-    labels: scores.value.map(entry =>
-        new Date(entry.timestamp).toLocaleString("en-US", {
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        })
-    ),
-    datasets: [
-      {
-        label: "Pass (≥ 70%)",
-        data: scores.value.map(entry => (entry.score >= 70 ? entry.score : null)), // Show only passing scores
-        backgroundColor: "rgba(75, 192, 75, 0.6)", // Green
-        borderColor: "rgba(75, 192, 75, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Fail (< 70%)",
-        data: scores.value.map(entry => (entry.score < 70 ? entry.score : null)), // Show only failing scores
-        backgroundColor: "rgba(255, 99, 132, 0.6)", // Red
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-});
+const userStore = useUserStore();
+const learnerId = userStore.getUserID();
 
+const isSuccessful = ref(false);
+const message = ref("");
 
 const chartOptions = ref({
   responsive: true,
 });
 
 // Reactive Variables
-const study_set_placeholder = ref("Choose a Study Set");
-const subject_placeholder = ref("Filter by Subject");
 const title = ref("Study Set Title");
-const select_study_set = ref(false);
-const select_subject = ref(false);
-const studysets = ['Networking', 'Man, Church, Society']; // To be fetched from DB
-const subjects = ['Arts', 'Technology', 'Relationships'];
 
-// Components
-import Subject_Selector from "@/components/Subject_Selector.vue";
-import Date_Range_Selector from "@/components/Date_Range_Selector.vue";
-import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
-import Bar_Chart from "@/views/reportapp/Bar_Chart.vue";
+const studySets = ref({});
 
+const addStudySet = (id, title) => {
+  studySets.value[id] = title;
+};
+
+const fetchStudySets = async () => {
+  try {
+    const studySetsArray = await studySetDb.studysets.toArray();
+    studySetsArray.forEach((studySet) => {
+      addStudySet(studySet.id, studySet.title);
+    });
+  } catch (error) {
+    console.error('Error fetching study sets:', error);
+  }
+};
+
+const updateStudySet = (id, title) => {
+  studySetSelected.value = { id, title };
+  toggleModal('studySetModal');
+};
+
+const modals = ref({
+  studySetModal: false,
+})
 // Methods
 const toggleModal = (modalName) => {
-  modalName.value = !modalName.value;
-}
+  modals.value[modalName] = !modals.value[modalName];
+};
+
+const studySetSelected = ref({ id: null, title: null});
+
+const minDate = userStore.getDateJoined();
+const maxDate = ref(new Date()); // Current date (always the current, not the date user login);
+
+const startDate = ref(new Date());
+const endDate = ref(new Date());
+
+provide('startDate', startDate); // along with inject, allows to pass data between components
+provide('endDate', endDate); // along with inject, allows to pass data between components
+
+const testScores = ref([]);
+
+const fetchTestReport = async () => {
+  try {
+    const url = 'report';
+    const start = new Date(startDate.value);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate.value);
+    end.setHours(23, 59, 59, 999);
+
+    const response = await axios.get(url, {
+      params: {
+        id: learnerId,
+        studyset_id: Number(studySetSelected.value.id),
+        start_date: start.toISOString(),
+        end_date: end.toISOString(),
+      }
+    });
+
+    isSuccessful.value = response.data.successful;
+    message.value = "Fetch test scores successfully";
+    console.log(response.data);
+
+    if (isSuccessful)
+    {
+      console.log("THERE IS TEST SCORES");
+      testScores.value = response.data.data.map(entry => ({
+        timestamp: entry.submitted_at,
+        score: (entry.score / entry.number_of_questions) * 100,
+      }));
+      console.log("TEST SCORES COMPUTED", testScores.value);
+    } else {
+      testScores.value = [];
+      message.value = response.data.message;
+      console.error(response.data.message);
+    }
+
+  } catch (error) {
+    testScores.value = [];
+    isSuccessful.value = false;
+    message.value = "An error occurred while fetching test scores.";
+  }
+};
+
+watch([startDate, endDate, studySetSelected], () => {
+  if (studySetSelected.value.id !== null && startDate.value && endDate.value) {
+    fetchTestReport();
+  }
+});
+
+onMounted(() => {
+  fetchStudySets();
+  console.log("START DATE ", startDate.value);
+  console.log("END DATE ", endDate.value);
+});
+
 </script>
 
 <template>
@@ -75,45 +132,40 @@ const toggleModal = (modalName) => {
         <p class="font-semibold text-lg">{{ title }}</p>
         <div class="flex flex-row justify-between items-center gap-x-10">
 
-          <!-- Study Set Selector-->
           <div class="flex flex-col">
             <Subject_Selector
-                :placeholder="study_set_placeholder"
-                @click="select_study_set=!select_study_set"
-                class="relative w-[263px]"/>
-            <Floating_Dropdown v-if="select_study_set"
-                               :items="studysets"
+                :placeholder="'Choose Study Set'"
+                @click="toggleModal('studySetModal')"
+                class="relative w-[350px]"
+                :innerClass="'athAIna-border-inner'"
+                :outerClass="'athAIna-border-outer'"
+                v-model="studySetSelected.title"
+
+            />
+            <Floating_Dropdown_Studysets v-if="modals.studySetModal"
+                               :items="studySets"
                                top="240px"
-                               right="667px"
+                               right="max-content"
                                height="max-content"
-                               width="max-content">
-            </Floating_Dropdown>
+                               width="350px"
+                               @update:modelValue="({ key, value }) => updateStudySet(key, value)"
+            />
+
           </div>
 
-          <!-- Subject Selector -->
-          <!--          <div class="flex flex-col">-->
-          <!--            <Subject_Selector-->
-          <!--                :placeholder="subject_placeholder"-->
-          <!--                @click="select_subject=!select_subject"-->
-          <!--                class="relative w-[263px]"/>-->
-          <!--            <Floating_Dropdown v-if="select_subject"-->
-          <!--                               :items="subjects"-->
-          <!--                               top="240px"-->
-          <!--                               right="365px"-->
-          <!--                               height="max-content"-->
-          <!--                               width="260px">-->
-          <!--            </Floating_Dropdown>-->
-          <!--          </div>-->
+          <Date_Range_Selector
+              :minDate=minDate
+              :maxDate=maxDate
+              @update:startDate="(date) => startDate.value = date"
+              @update:endDate="(date) => endDate.value = date"
+          />
 
-          <Date_Range_Selector/>
         </div>
       </div>
 
       <div class="h-[400px] w-full flex justify-center">
         <Bar_Chart
-            :options="chartOptions"
-            :data="chartData"
-            aria-label="Green bars indicate passing, achieved with a score of 70% or higher. Red bars represent failing scores"
+            :scores="testScores"
         />
       </div>
     </div>

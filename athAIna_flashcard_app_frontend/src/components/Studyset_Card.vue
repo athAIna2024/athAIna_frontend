@@ -3,6 +3,7 @@ import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
 import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 import {useStudysetStore} from "../../stores/studySetStore.js";
 import {useStudySetSearchStore} from "../../stores/studySetSearchStore.js";
+import {useStudySetFilterStore} from "../../stores/studySetFilterStore.js";
 import {defineProps} from 'vue';
 import {useRouter} from 'vue-router';
 import { ref } from 'vue';
@@ -20,6 +21,7 @@ const message = ref("");
 
 const store = useStudysetStore();
 const studySetSearchStore = useStudySetSearchStore();
+const studySetFilterStore = useStudySetFilterStore();
 const props = defineProps({
   title: {
     type: String,
@@ -164,6 +166,8 @@ const navigateToLibraryPageFlashcard = async () => {
 
   // Reset Search Study Set Search Results
   studySetSearchStore.clear();
+  // Reset Filter Study Set Filter Results
+  studySetFilterStore.clear();
 
   // Navigate to the Library Page Flashcard
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: props.title, studySetId: props.studySetId } });
@@ -184,11 +188,16 @@ const refreshLibrary =  () => {
   />
 
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
-    <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
+    <div class="flex flex-col h-40 bg-athAIna-white rounded-[15px] p-[15px]">
         <div @click="navigateToLibraryPageFlashcard" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
-      <div v-if="description !== 'null'" class="text-[14px] mt-[12px]">
+      <div class="text-[14px] mt-[12px] h-12">
+      <span v-if="description !== 'null' && description.length < 50">
         {{ description }}
+      </span>
+      <span v-else-if="description !== 'null' && description.length > 50">
+        {{ description.substring(0, 50) + "..." }}
+      </span>
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>

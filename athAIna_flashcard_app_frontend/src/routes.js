@@ -13,6 +13,8 @@ import Change_Password from "@/views/accountapp/Change_Password.vue";
 import Forgot_Password from "@/views/accountapp/Forgot_Password.vue";
 import Forgot_Password_Page from "./views/accountapp/Forgot_Password_Page.vue";
 import Change_Password_Page from "./views/accountapp/Change_Password_Page.vue";
+import Change_OTP from "./views/accountapp/Change_OTP.vue";
+import OTP_Page from "./views/accountapp/OTP_Page.vue";
 
 import Create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
 import Generate_Flashcard_with_AI from "@/views/flashcardapp/Generate_Flashcard_with_AI.vue";
@@ -77,14 +79,32 @@ const routes = [
     component: Signup,
   },
   {
-    path: "/change_password/",
-    name: "Change_Password",
+    path: "/verify_email/",
+    name: "Verify Email",
+    component: OTP_Page,
+  },
+  {
+    path: "/change_password",
+    name: "change_password",
     component: Change_Password,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/change_password_otp",
+    name: "change_password_otp",
+    component: Change_OTP,
+    props: (route) => ({
+      isVisible: true,
+      email: route.params.email,
+      purpose: "change_password",
+    }),
+    meta: { requiresAuth: true },
   },
   {
     path: "/change_password_page/:uidb64/:token",
     name: "Change_Password_Page",
     component: Change_Password_Page,
+    meta: { requiresAuth: true },
   },
   {
     path: "/forgot_password/",
@@ -152,7 +172,7 @@ const routes = [
     component: Delete_studyset,
   },
   {
-    path: "/view_learning_progress/",
+    path: "/report/",
     name: "View_Learning_Progress",
     component: View_Learning_Progress,
   },
