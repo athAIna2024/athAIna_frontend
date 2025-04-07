@@ -142,7 +142,7 @@ const fetchStudySet = async () => {
   try {
     // API Call
     const response = await axios.get(studyset_url, {
-      params: { user_id: Number(learnerId.value) }
+      params: { user_id: Number(learnerId) }
     });
 
     if (response.data && Array.isArray(response.data.data)) {
