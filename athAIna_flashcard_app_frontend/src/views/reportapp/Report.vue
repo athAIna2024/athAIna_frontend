@@ -127,7 +127,7 @@ onMounted(() => {
   <div class="h-screen">
     <div class="flex flex-col justify-center gap-y-3 content-center w-screen">
       <div class="m-20 flex flex-row justify-between w-auto">
-        <p class="font-semibold text-lg">{{ title }}</p>
+        <p class="font-semibold text-lg">{{ studySetSelected.title }}</p>
         <div class="flex flex-row justify-between items-center gap-x-10">
 
           <div class="flex flex-col">
