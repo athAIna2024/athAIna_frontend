@@ -4,7 +4,6 @@ import { onMounted } from "vue";
 
 import Choose_Studyset from "@/views/reportapp/Choose_Studyset.vue";
 import Report from "@/views/reportapp/Report.vue";
-import axios from '@/axios';
 
 // Props
 const props = defineProps({
@@ -13,7 +12,7 @@ const props = defineProps({
 
 // Reactive Variables
 const isChooseStudySetVisible = ref(false);
-const isEmpty = ref(false);
+const isEmpty = ref(false); // empty report
 
 const isTestModeVisible = ref(false);
 
@@ -34,33 +33,6 @@ const close = () => {
   isChooseStudySetVisible.value = false;
 };
 
-
-
-const fetchTestReport = async () => {
-  try {
-    const url = 'report';
-    const response = await axios.get(url, {
-      params: {
-        id: 1,
-        studyset_id: 2,
-        start_date: "2025-03-28 10:50:31.546000",
-        end_date: "2025-03-28 11:50:31.546000"
-      }
-    });
-
-    if (response.data.successful) {
-      console.log('Test scores found:', response.data);
-    } else {
-      console.log('No test scores found:', response.data.message);
-    }
-  } catch (error) {
-    console.error('An error occurred while fetching the test report:', error);
-  }
-};
-
-onMounted(() => {
-  fetchTestReport();
-});
 
 
 </script>

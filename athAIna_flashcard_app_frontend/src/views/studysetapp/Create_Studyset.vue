@@ -4,6 +4,9 @@ import { watch } from 'vue';
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import Success_Message from "@/components/Success_Message.vue";
+import {useUserStore} from "../../../stores/userStore.js";
+import Subject_Selector from "@/components/Subject_Selector.vue";
+import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
@@ -11,8 +14,10 @@ const isSuccessful = ref(false);
 const message = ref("");
 const title = ref("");
 const description = ref("");
-const subject = ref("");
-const learnerId = ref(1); // For testing purposes, REMOVE IT AND USE THE USER ID
+const subject = ref({ key: "", value: "" });
+
+const userStore = useUserStore();
+const learnerId = userStore.getUserID();
 
 const props = defineProps({
   isVisible: {
@@ -29,6 +34,16 @@ const emit = defineEmits(['close']);
 const close = () => {
   emit('close');
 };
+const modals = ref({ subjectSelectModal: false });
+
+const toggleModal = (modalName) => {
+  modals.value[modalName] = !modals.value[modalName];
+};
+
+const updateSubject = (key, value) => {
+  subject.value = { key, value };
+  toggleModal('subjectSelectModal');
+};
 
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
@@ -41,9 +56,9 @@ watch(() => props.isVisible, (newValue) => {
 const saveStudySet = async () => {
   try {
     const requestData = {
-      learner_instance: Number(learnerId.value), // Ensure this is an integer
+      learner_instance: Number(learnerId), // Ensure this is an integer
       title: title.value,
-      subject: subject.value // Ensure this matches the field name in your serializer
+      subject: subject.value.key // Ensure this matches the field name in your serializer
     };
 
     if (description.value !== null && description.value !== '') {
@@ -131,18 +146,26 @@ const saveStudySet = async () => {
 
           <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
             <p> Subject </p>
-            <div class="flex justify-end border-athAIna-violet border-[3px] rounded-[20px] p-[5px] pr-[14px]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-[20px] hover:cursor-pointer">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </div>
+            <div class="relative">
+              <Subject_Selector
+                  @click="toggleModal('subjectSelectModal')"
+                  class="relative w-full mb-3"
+                  :placeholder="'Choose Subject'"
+                  :outerClass="''"
+                  :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
+                  v-model="subject.value"
+              />
 
-            TEMPORARY INPUT FOR NOW UNTIL WE HAVE A SUBJECT SELECTOR
-            <input
-                type="text"
-                placeholder="Subject"
-                class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"
-                v-model="subject" />
+              <Floating_Dropdown
+                  v-if="modals.subjectSelectModal"
+                  top="50px"
+                  right="0px"
+                  height="max-content"
+                  width="553px"
+                  @update:modelValue="({ key, value }) => updateSubject(key, value)"
+              />
+
+            </div>
 
             <div v-if="field_errors.subject" class="text-athAIna-red text-[14px] font-medium">
               {{ field_errors.subject }}

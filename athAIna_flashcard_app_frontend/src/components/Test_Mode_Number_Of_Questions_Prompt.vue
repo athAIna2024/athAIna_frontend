@@ -17,12 +17,12 @@ const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 
-const studySetTitle = ref(studySetStore.studySetTitle);
-const studySetId = ref(studySetStore.studySetId);
+const studySetTitle = studySetStore.studySetTitle; // Originally has ref but the studySetStore set them as ref
+const studySetId = studySetStore.studySetId; // Originally has ref but the studySetStore set them as ref
 
 const fetchFlashcardCounts = async () => {
   console.log(studySetId);
-  const flashcard = await studySetDb.studysets.get(Number(studySetId.value));
+  const flashcard = await studySetDb.studysets.get(Number(studySetId));
   flashcardCounts.value = flashcard ? flashcard.flashcard_count : 0;
   console.log("FLASHCARD COUNTS FROM INDEXEDDB: ", flashcardCounts.value);
 };
@@ -52,7 +52,7 @@ const randomizeTestModeFlashcards = async () => {
   try {
     const response = await axios.get(`${randomizeTestUrl}`,{
       params: {
-        studyset_id: Number(studySetId.value),
+        studyset_id: Number(studySetId),
         number_of_questions: numberOfQuestions
       }
     });
@@ -122,7 +122,7 @@ const randomizeTestQuestions = async () => {
     }
     isLoading.value = false;
 
-    await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId } });
+    await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle, studySetId: studySetId, batchId: testModeStore.batchId } });
     router.go(0); // Refresh the page (alternative for location.reload);
   }
 };

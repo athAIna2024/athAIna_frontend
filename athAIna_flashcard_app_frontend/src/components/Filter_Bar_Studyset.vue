@@ -1,7 +1,11 @@
 <script setup>
 import { defineProps, ref } from "vue";
+import studySetDb from "@/views/studysetapp/dexie.js";
+import {useStudySetFilterStore} from "../../stores/studySetFilterStore.js";
 import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
 
+const studySetFilterStore = useStudySetFilterStore();
+const filterResults = ref([]);
 const props = defineProps({
   top: String,
   right: String,
@@ -9,13 +13,24 @@ const props = defineProps({
   width: String,
 });
 
+
+
 const emit = defineEmits(["update:modelValue"]);
 
 const updateValue = async (key, value) => {
-  emit("update:modelValue", { key, value });
+  const query = key;
+  emit("update:modelValue", value);
+
+  filterResults.value = await filterStudySets(query);
+  studySetFilterStore.setFilterResults(filterResults.value);
+  console.log("Filtered results:", filterResults.value);
 };
 
-
+const filterStudySets = async (query) => {
+  return await studySetDb.studysets
+      .filter(studyset => studyset.subject === query)
+      .toArray();
+};
 </script>
 
 <template>

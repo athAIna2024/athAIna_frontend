@@ -4,6 +4,7 @@ import Delete_Account from "@/components/Delete_Account.vue";
 import Logout from "@/views/accountapp/Logout.vue";
 import { useUserStore } from "../../stores/userStore";
 import axiosInstance from "@/axiosConfig";
+import axios from "@/axios";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/authStore";
 import Cookies from "js-cookie";
@@ -14,6 +15,7 @@ import { useTestModeStore } from "../../stores/testModeStore.js";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const isLoading = ref(false);
 
 const flashcardSearchStore = useFlashcardSearchStore();
 const studysetStore = useStudysetStore();
@@ -74,6 +76,47 @@ const userStore = useUserStore();
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
+const handleChangePassword = async () => {
+  try {
+    // Close the account settings modal
+    toggleModal("accSettings");
+
+    isLoading.value = true;
+    const email = userStore.getEmail();
+
+    if (!email) {
+      throw new Error("User email not found. Please log in again.");
+    }
+
+    // Send request to initiate password change directly
+    const response = await axios.post(
+      "/account/password-change-request/",
+      { email: email },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.data.successful) {
+      // Navigate directly to the OTP verification page
+      router.push({
+        name: "change_password_otp",
+        params: { email: email },
+      });
+    } else {
+      throw new Error(
+        response.data.message || "Failed to initiate password change"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to initiate password change:", error);
+    // You could show an error message here
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 // Function to check session and log out if no session exists
 const checkSessionAndLogout = () => {
@@ -109,13 +152,21 @@ onMounted(() => {
           <span class="font-semibold">User Profile</span>
           <div class="flex flex-col">
             <span> {{ userStore.getEmail() }} </span>
-            <span> {{}} </span>
+            <span>
+              {{
+                userStore.dateJoined
+                  ? `Joined: ${new Date(
+                      userStore.dateJoined
+                    ).toLocaleDateString()}`
+                  : ""
+              }}
+            </span>
           </div>
           <button
-            @click="toggleModal('accSettings')"
+            @click="handleChangePassword"
             class="mt-10 text-base border-athAIna-orange border-[3.5px] w-52 mb-2 py-[10px] px-[30px] rounded-2xl text-sm"
           >
-            <router-link to="change_password"> Change Password </router-link>
+            Change Password
           </button>
 
           <button
@@ -175,7 +226,12 @@ onMounted(() => {
       <router-link to="/library_of_studysets" exact-active-class="active-link">
         <div>Library</div>
       </router-link>
-      <div>Reports</div>
+
+      <router-link :to="{ name: 'View_Learning_Progress' }" exact-active-class="active-link">
+        <div>
+          Reports
+        </div>
+      </router-link>
       <button class="" @click="toggleModal('profile')">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -224,6 +280,5 @@ onMounted(() => {
 <style scoped>
 .active-link {
   font-weight: bold;
-  color: #da384c;
 }
 </style>
