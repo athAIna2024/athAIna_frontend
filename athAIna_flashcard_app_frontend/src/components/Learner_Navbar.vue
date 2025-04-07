@@ -59,7 +59,8 @@ const handleLogout = async (reason) => {
       studySetSearchStore.clear();
       testModeStore.clear();
 
-      router.push("/login");
+      // router.push("/login");
+      router.push({ name: "Login" });
       emit("close");
     } else {
       console.log(response.error);
@@ -123,7 +124,6 @@ const checkSessionAndLogout = () => {
   const session = sessionStorage.getItem("session"); // Replace "userSession" with your session key
   if (!session) {
     handleLogout(); // Assuming `logout` is a method in your auth store
-    router.push("/login"); // Redirect to login page
   }
 };
 
@@ -197,40 +197,54 @@ onMounted(() => {
     <div
       class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"
     >
-      <router-link to="/"
+      <router-link :to="{ name: 'Landing_Page' }"
         ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
       /></router-link>
       <div>
-        <router-link to="/features" exact-active-class="active-link">
+        <router-link
+          :to="{ name: 'Features_Page' }"
+          exact-active-class="active-link"
+        >
           Features
         </router-link>
       </div>
       <div>
-        <router-link to="/faqs" exact-active-class="active-link"
+        <router-link
+          :to="{ name: 'FAQs_Page' }"
+          exact-active-class="active-link"
           >FAQS</router-link
         >
       </div>
       <div>
-        <router-link to="/contact_us" exact-active-class="active-link">
+        <router-link
+          :to="{ name: 'Create_Contact_Inquiry' }"
+          exact-active-class="active-link"
+        >
           Contact us
         </router-link>
       </div>
       <div>
-        <router-link to="/demo" exact-active-class="active-link"
+        <router-link
+          :to="{ name: 'Demo_Page' }"
+          exact-active-class="active-link"
           >Demo</router-link
         >
       </div>
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-20">
-      <router-link to="/library_of_studysets" exact-active-class="active-link">
+      <router-link
+        :to="{ name: 'Library_Page_Studyset' }"
+        exact-active-class="active-link"
+      >
         <div>Library</div>
       </router-link>
 
-      <router-link :to="{ name: 'View_Learning_Progress' }" exact-active-class="active-link">
-        <div>
-          Reports
-        </div>
+      <router-link
+        :to="{ name: 'View_Learning_Progress' }"
+        exact-active-class="active-link"
+      >
+        <div>Reports</div>
       </router-link>
       <button class="" @click="toggleModal('profile')">
         <svg

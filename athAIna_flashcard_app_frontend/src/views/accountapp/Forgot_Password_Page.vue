@@ -9,7 +9,9 @@ const route = useRoute();
 const router = useRouter();
 
 const goBackToLogin = () => {
-  router.push("/login");
+  router.push({
+    name: "Login",
+  });
 };
 
 // States for loading and modals
@@ -121,7 +123,9 @@ const resetPassword = async () => {
 
     // Redirect to login page after successful password reset
     setTimeout(() => {
-      router.push("/login");
+      router.push({
+        name: "Login",
+      });
     }, 2000);
   } catch (err) {
     console.log(err.response?.data);

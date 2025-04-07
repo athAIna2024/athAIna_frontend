@@ -9,7 +9,9 @@ import Loading_Modal from "@/components/Loading_Modal.vue";
 import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
 
 const goBackToLibrary = () => {
-  router.push("/library_of_studysets");
+  router.push({
+    name: "Library_Page_Studyset",
+  });
 };
 
 const isLoading = ref(false);
@@ -167,7 +169,9 @@ const updatePassword = async () => {
 
       // Redirect to login page after successful password reset
       setTimeout(() => {
-        router.push("/library_of_studysets");
+        router.push({
+          name: "Library_Page_Studyset",
+        });
       }, 2000);
     }
   } catch (err) {

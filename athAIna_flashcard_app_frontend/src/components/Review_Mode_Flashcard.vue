@@ -159,10 +159,19 @@ const navigateToPreviousFlashcard = () => {
 <template>
   <div v-if="flashcard">
     <span class="p-4 text-2xl font-semibold">
-      <router-link :to="`/${studysetName}/${flashcard.studyset_id}/flashcards`">
-        <
-      </router-link>
-      {{ studysetName }}
+      <button>
+        <router-link
+          :to="{
+            name: 'Library_Page_Flashcard',
+            params: {
+              studySetTitle: studysetName.value,
+              studySetID: flashcard.studyset_id,
+            },
+          }"
+        >
+          < {{ studysetName }}</router-link
+        >
+      </button>
     </span>
   </div>
 

@@ -64,7 +64,9 @@ const logout = async () => {
       studySetSearchStore.clear();
       testModeStore.clear();
 
-      router.push("/login");
+      router.push({
+        name: "Login",
+      });
       emit("close");
     } else {
       console.log(response.error);
