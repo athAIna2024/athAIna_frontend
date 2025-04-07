@@ -72,9 +72,21 @@
         @apply w-full rounded-2xl bg-gradient-to-br from-athAIna-yellow to-athAIna-red;
     }
 
+    .athAIna-border-outer-faq {
+        @apply w-full rounded-2xl bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
+    }
+
     .athAIna-border-inner {
         @apply h-full w-full rounded-xl;
         @apply bg-athAIna-white;
+    }
+
+    .athAIna-border-outer:hover {
+        @apply transition-all duration-300 opacity-80 text-[16px];
+    }
+
+    .athAIna-border-inner:hover {
+        @apply transition-all duration-300 opacity-80 text-[16px];
     }
 
     .w-1-5-3 {
