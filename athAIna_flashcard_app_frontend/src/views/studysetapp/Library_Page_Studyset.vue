@@ -61,6 +61,20 @@ const closeModal = async () => {
   isModalVisible.value = false;
 };
 
+const isSuccessful_studySetFilterSearch = computed(() => {
+  return studySetFilterStore.getFilterActiveStatus() || studySetSearchStore.getSearchActiveStatus();
+});
+
+const message_studySetFilterSearch = computed(() => {
+  if (studySetFilterStore.getFilterActiveStatus()) {
+    return studySetFilterStore.getFilterResults().length > 0 ? "" : "No study sets found for the selected subject.";
+  }
+
+  if (studySetSearchStore.getSearchActiveStatus()) {
+    return studySetSearchStore.getSearchResults().length > 0 ? "" : "No study sets found for the search term.";
+  }
+});
+
 const currentStudySets = computed(() => {
   const isFilterActive = studySetFilterStore.getFilterActiveStatus();
   const isSearchActive = studySetSearchStore.getSearchActiveStatus();
@@ -268,9 +282,12 @@ onMounted(() => {
       <div class="text-athAIna-sm font-medium mt-[30px]"> {{ message_studyset }} </div>
     </div>
 
+    <div v-if="isSuccessful_studySetFilterSearch">
+      <div class="text-athAIna-sm font-medium mt-[30px]"> {{ message_studySetFilterSearch }} </div>
+    </div>
 
     <div v-if="isSuccessful_studyset">
-      <div class="grid mt-[60px] mb-[60px] gap-14 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid mt-[60px] mb-[60px] gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <div v-for="(s, index) in currentStudySets" :key="index">
           <Studyset_Card
             :title="s.title"
