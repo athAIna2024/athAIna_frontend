@@ -17,8 +17,8 @@ const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 
-const studySetTitle = studySetStore.studySetTitle; // Originally has ref but the studySetStore set them as ref
-const studySetId = studySetStore.studySetId; // Originally has ref but the studySetStore set them as ref
+const studySetTitle = studySetStore.getStudySetTitle();
+const studySetId = studySetStore.getStudySetId();
 
 const fetchFlashcardCounts = async () => {
   console.log(studySetId);

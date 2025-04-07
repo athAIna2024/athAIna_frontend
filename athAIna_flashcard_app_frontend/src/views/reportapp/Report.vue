@@ -119,8 +119,6 @@ watch([startDate, endDate, studySetSelected], () => {
 
 onMounted(() => {
   fetchStudySets();
-  console.log("START DATE ", startDate.value);
-  console.log("END DATE ", endDate.value);
 });
 
 </script>

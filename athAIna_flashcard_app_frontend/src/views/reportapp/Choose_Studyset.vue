@@ -1,33 +1,65 @@
 <script setup>
-import {defineEmits, defineProps, ref} from "vue";
-import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
-import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
+
+import { ref } from "vue";
+import { onMounted } from "vue";
 import Subject_Selector from "@/components/Subject_Selector.vue";
-import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
+import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
+import studySetDb from "@/views/studysetapp/dexie.js";
+import { useStudysetStore} from "../../../stores/studySetStore.js";
 
 const props = defineProps({
   isVisible: Boolean,
 });
 
-const subject = ref("");
-const modals = ref({ subjectSelectModal: false });
-const updateSubject = (value) => {
-  subject.value = value;
-  toggleModal('subjectSelectModal');
-};
-const isNoOfQuestionsVisible = ref(false);
+const studySetStore = useStudysetStore();
+const studySetId = studySetStore.studySetId;
+const studySetTitle = studySetStore.studySetTitle;
 
-const emit = defineEmits(["close", "update:modelValue"]);
-
+// Related to studysets dropdown
+const studySetSelected = ref({ id: null, title: null});
+const modals = ref({
+  studySetSelectModal: false,
+})
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
 
+const studySets = ref({});
+const addStudySet = (id, title) => {
+  studySets.value[id] = title;
+};
+const fetchStudySets = async () => {
+  try {
+    const studySetsArray = await studySetDb.studysets.toArray();
+    studySetsArray.forEach((studySet) => {
+      addStudySet(studySet.id, studySet.title);
+    });
+  } catch (error) {
+    console.error('Error fetching study sets:', error);
+  }
+};
+const updateStudySet = (id, title) => {
+  studySetSelected.value = { id, title };
+  toggleModal('studySetSelectModal');
+};
+// end of related to studysets dropdown
+
+const isNoOfQuestionsVisible = ref(false);
+
+const emit = defineEmits(["close"]);
+
 const close = () => {
   emit("close");
+  studySetStore.setStudySetId(studySetSelected.value.id);
+  studySetStore.setStudySetTitle(studySetSelected.value.title);
   isNoOfQuestionsVisible.value = true;
 };
+
+onMounted(() => {
+  fetchStudySets();
+});
+
 </script>
 
 <template>
@@ -48,27 +80,26 @@ const close = () => {
 
         <!-- Subject Field -->
         <div class="mb-8">
-          <div class="mb-3 font-medium">Subject</div>
+          <div class="mb-3 font-medium">Study Set</div>
 
-          <div :class="modals.subjectSelectModal ? 'h-[200px]' : 'h-[50px]'" class="relative">
+          <div :class="modals.studySetSelectModal ? 'h-[200px]' : 'h-[50px]'" class="relative">
             <Subject_Selector
-                @click="toggleModal('subjectSelectModal')"
+                :placeholder="'Choose Study Set'"
+                @click="toggleModal('studySetSelectModal')"
                 class="relative w-auto mb-3"
-                :placeholder="'Choose Subject'"
-                :outerClass="'athAIna-border-outer'"
                 :innerClass="'athAIna-border-inner'"
-                v-model="subject"
+                :outerClass="'athAIna-border-outer'"
+                v-model="studySetSelected.title"
+
             />
-            <Filter_Bar_Studyset
-                v-if="modals.subjectSelectModal"
-                :items=dropdownOptions
-                top="50px"
-                right="0px"
-                height="max-content"
-                class="w-full"
-                @update:modelValue="updateSubject"
-            >
-            </Filter_Bar_Studyset>
+            <Floating_Dropdown_Studysets v-if="modals.studySetSelectModal"
+                                         :items="studySets"
+                                         top="50px"
+                                         right="0px"
+                                         height="max-content"
+                                         class="w-full"
+                                         @update:modelValue="({ key, value }) => updateStudySet(key, value)"
+            />
           </div>
         </div>
 
