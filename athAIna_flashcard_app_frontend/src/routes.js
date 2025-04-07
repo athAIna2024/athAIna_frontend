@@ -55,7 +55,6 @@ const routes = [
     component: Demo_Page,
     meta: { title: "Demo – athAIna" },
   },
-
   {
     path: "/faqs/",
     name: "FAQs_Page",
@@ -68,67 +67,6 @@ const routes = [
     component: Create_Contact_Inquiry,
     meta: { title: "Contact Us – athAIna" },
   },
-  {
-    path: "/:studySetTitle/:studySetId/flashcards/save",
-    name: "Create_Flashcard_Manually",
-    component: Create_Flashcard_Manually,
-    meta: { title: "Create Flashcard – athAIna" },
-  },
-  {
-    path: "/generate_flashcard_with_ai/",
-    name: "Generate_Flashcard_with_AI",
-    component: Generate_Flashcard_with_AI,
-    meta: { title: "Generate AI Flashcard – athAIna" },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/flashcards",
-    name: "Library_Page_Flashcard",
-    component: Library_Page_Flashcard,
-    meta: { title: "Flashcards – athAIna" },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/test/:batchId",
-    name: "Test_Mode",
-    component: Test_mode,
-    meta: { title: "Test Mode – athAIna" },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/update_flashcard/:flashcardId",
-    name: "Update_Flashcard",
-    component: Update_Flashcard,
-    meta: { title: "Update Flashcard – athAIna" },
-  },
-  {
-    path: "/delete_flashcard/",
-    name: "Delete_Flashcard",
-    component: Delete_Flashcard,
-    meta: { title: "Delete Flashcard – athAIna" },
-  },
-  {
-    path: "/create_studyset/",
-    name: "Create_Studyset",
-    component: Create_Studyset,
-    meta: { title: "Create Study Set – athAIna" },
-  },
-  {
-    path: "/update_studyset/",
-    name: "Update_Studyset",
-    component: Update_Studyset,
-    meta: { title: "Update Study Set – athAIna" },
-  },
-  {
-    path: "/delete_studyset/",
-    name: "Delete_Studyset",
-    component: Delete_Studyset,
-    meta: { title: "Delete Study Set – athAIna" },
-  },
-  {
-    path: "/report/",
-    name: "View_Learning_Progress",
-    component: View_Learning_Progress,
-    meta: { title: "Report – athAIna" },
-  },
-
   {
     path: "/account",
     children: [
@@ -197,38 +135,38 @@ const routes = [
     path: "/flashcards",
     children: [
       {
-        path: "create/:studySetTitle/:studySetId",
-        name: "Create_Flashcard_Manually1",
+        path: "/:studySetId/:studySetTitle/create",
+        name: "Create_Flashcard_Manually",
         component: Create_Flashcard_Manually,
         meta: { title: "Create Flashcard – athAIna" },
       },
       {
         path: "generate_with_ai",
-        name: "Generate_Flashcard_with_AI1",
+        name: "Generate_Flashcard_with_AI",
         component: Generate_Flashcard_with_AI,
         meta: { title: "Generate AI Flashcard – athAIna" },
       },
       {
-        path: "library/:studySetTitle/:studySetId",
-        name: "Library_Page_Flashcard1",
+        path: "library/:studySetId/:studySetTitle",
+        name: "Library_Page_Flashcard",
         component: Library_Page_Flashcard,
         meta: { title: "Flashcards – athAIna" },
       },
       {
-        path: "review/:studySetTitle/:studySetId/:id",
+        path: "review/:studySetId/:studySetTitle/:id",
         name: "Review_Mode",
         component: Review_Mode,
         meta: { title: "Review Mode – athAIna" },
       },
       {
-        path: "test/:studySetTitle/:studySetId/:batchId",
-        name: "Test_Mode1",
+        path: "/:studySetTitle/:studySetId/test/:batchId",
+        name: "Test_Mode",
         component: Test_mode,
         meta: { title: "Test Mode – athAIna" },
       },
       {
-        path: "update/:studySetTitle/:studySetId/:flashcardId",
-        name: "Update_Flashcard1",
+        path: "/:studySetId/:studySetTitle/update/:flashcardId",
+        name: "Update_Flashcard",
         component: Update_Flashcard,
         meta: { title: "Update Flashcard – athAIna" },
       },
@@ -244,28 +182,10 @@ const routes = [
     path: "/studysets",
     children: [
       {
-        path: "create",
-        name: "Create_Studyset1",
-        component: Create_Studyset,
-        meta: { title: "Create Study Set – athAIna" },
-      },
-      {
         path: "library",
         name: "Library_Page_Studyset",
         component: Library_Page_Studyset,
         meta: { title: "Study Sets – athAIna" },
-      },
-      {
-        path: "update",
-        name: "Update_Studyset1",
-        component: Update_Studyset,
-        meta: { title: "Update Study Set – athAIna" },
-      },
-      {
-        path: "delete",
-        name: "Delete_Studyset1",
-        component: Delete_Studyset,
-        meta: { title: "Delete Study Set – athAIna" },
       },
     ],
   },
