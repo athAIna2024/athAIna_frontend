@@ -17,7 +17,9 @@ const isLoading = ref(false); // State for loading modal
 const storedEmail = ref("");
 
 const goBackToLogin = () => {
-  router.push("/login");
+  router.push({
+    name: "Login1",
+  });
 };
 
 const openOTP = () => {

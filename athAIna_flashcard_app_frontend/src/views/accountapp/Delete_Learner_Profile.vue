@@ -28,7 +28,7 @@ export default {
         <div class="mb-8 flex justify-center">
           <button @click="close" class="btn-alt w-48 mr-5">No</button>
           <button class="btn w-48">
-            <router-link :to="login"> Yes </router-link>
+            <router-link :to="{ name: 'Login1' }"> Yes </router-link>
           </button>
         </div>
       </div>

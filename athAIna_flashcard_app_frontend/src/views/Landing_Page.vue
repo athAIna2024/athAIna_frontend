@@ -36,8 +36,8 @@ export default {
             master new concepts with athAIna!</span
           >
         </div>
-        <div class="w-full md:w-1/2 flex flex-row mx-10" >
-          <RouterLink to="/signup" class="w-full mr-10">
+        <div class="w-full md:w-1/2 flex flex-row mx-10">
+          <RouterLink :to="{ name: 'Signup1' }" class="w-full mr-10">
             <button class="btn w-full">Try now</button>
           </RouterLink>
           <button @click="scrollToFeatures" class="btn w-full">
@@ -56,8 +56,8 @@ export default {
           class="absolute transform justify-center align-middle translate-x-[2rem] 2xl:-translate-x-[8rem] translate-y-10 w-[400px] h-[600px] 2xl:h-[900px] 2xl:w-[600px] rotate-[6deg] rounded-lg border-4 bg-athAIna-white flex flex-col p-10"
         >
           <span class="text-athAIna-lg">
-          What's the largest star in the universe??
-            </span>
+            What's the largest star in the universe??
+          </span>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ export default {
             Saves time with automated, smartly designed flashcards that make
             studying more efficient
           </div>
-          <RouterLink to="/signup" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
             <button class="btn mt-10 w-full">Try it out!</button>
           </RouterLink>
         </div>
@@ -93,7 +93,7 @@ export default {
             Uncovers your progress guiding your path to mastery
           </div>
 
-          <RouterLink to="/signup" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
             <button class="btn mt-10 w-full">See your progress</button>
           </RouterLink>
         </div>
@@ -109,7 +109,7 @@ export default {
           <div class="text-sm my-2">
             Unlocks your wisdom, boosting your exam readiness
           </div>
-          <RouterLink to="/signup" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
             <button class="btn mt-10 w-full">Take a test</button>
           </RouterLink>
         </div>

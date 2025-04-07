@@ -95,7 +95,7 @@ const login = async () => {
 
       // router.replace("/library_of_studysets");
       // window.location.href = "/library_of_studysets";
-      router.push("/library_of_studysets");
+      router.push({ name: "Library_Of_Studyset1" });
     } else {
       console.log(response.data.error);
     }
@@ -278,7 +278,9 @@ const handleFailedAttempt = (userId) => {
       <!-- Forgot Password -->
       <div class="w-full flex justify-end mt-5 mr-5 text-[16px] font-medium">
         <span class="underline">
-          <router-link to="/forgot_password"> Forgot Password? </router-link>
+          <router-link :to="{ name: 'Forgot_Password1' }">
+            Forgot Password?
+          </router-link>
         </span>
       </div>
 
