@@ -220,22 +220,22 @@ const routes = [
   {
     path: "/flashcards",
     children: [
-      { path: "create/:studySetTitle/:studySetId", name: "Create_Flashcard_Manually", component: Create_Flashcard_Manually, meta: { title: "Create Flashcard – athAIna" } },
-      { path: "generate_with_ai", name: "Generate_Flashcard_with_AI", component: Generate_Flashcard_with_AI, meta: { title: "Generate AI Flashcard – athAIna" } },
-      { path: "library/:studySetTitle/:studySetId", name: "Library_Page_Flashcard", component: Library_Page_Flashcard, meta: { title: "Flashcards – athAIna" } },
-      { path: "review/:studySetTitle/:studySetId/:id", name: "Review_Mode", component: Review_Mode, meta: { title: "Review Mode – athAIna" } },
-      { path: "test/:studySetTitle/:studySetId/:batchId", name: "Test_Mode", component: Test_mode, meta: { title: "Test Mode – athAIna" } },
-      { path: "update/:studySetTitle/:studySetId/:flashcardId", name: "Update_Flashcard", component: Update_Flashcard, meta: { title: "Update Flashcard – athAIna" } },
+      { path: "create/:studySetTitle/:studySetId", name: "Create_Flashcard_Manually1", component: Create_Flashcard_Manually, meta: { title: "Create Flashcard – athAIna" } },
+      { path: "generate_with_ai", name: "Generate_Flashcard_with_AI1", component: Generate_Flashcard_with_AI, meta: { title: "Generate AI Flashcard – athAIna" } },
+      { path: "library/:studySetTitle/:studySetId", name: "Library_Page_Flashcard1", component: Library_Page_Flashcard, meta: { title: "Flashcards – athAIna" } },
+      { path: "review/:studySetTitle/:studySetId/:id", name: "Review_Mode1", component: Review_Mode, meta: { title: "Review Mode – athAIna" } },
+      { path: "test/:studySetTitle/:studySetId/:batchId", name: "Test_Mode1", component: Test_mode, meta: { title: "Test Mode – athAIna" } },
+      { path: "update/:studySetTitle/:studySetId/:flashcardId", name: "Update_Flashcard1", component: Update_Flashcard, meta: { title: "Update Flashcard – athAIna" } },
       { path: "delete", name: "Delete_Flashcard", component: Delete_Flashcard, meta: { title: "Delete Flashcard – athAIna" } },
     ],
   },
   {
     path: "/studysets",
     children: [
-      { path: "create", name: "Create_Studyset", component: Create_Studyset, meta: { title: "Create Study Set – athAIna" } },
-      { path: "library", name: "Library_Page_Studyset", component: Library_Page_Studyset, meta: { title: "Study Sets – athAIna" } },
-      { path: "update", name: "Update_Studyset", component: Update_Studyset, meta: { title: "Update Study Set – athAIna" } },
-      { path: "delete", name: "Delete_Studyset", component: Delete_Studyset, meta: { title: "Delete Study Set – athAIna" } },
+      { path: "create", name: "Create_Studyset1", component: Create_Studyset, meta: { title: "Create Study Set – athAIna" } },
+      { path: "library", name: "Library_Page_Studyset1", component: Library_Page_Studyset, meta: { title: "Study Sets – athAIna" } },
+      { path: "update", name: "Update_Studyset1", component: Update_Studyset, meta: { title: "Update Study Set – athAIna" } },
+      { path: "delete", name: "Delete_Studyset1", component: Delete_Studyset, meta: { title: "Delete Study Set – athAIna" } },
     ],
   },
   {
