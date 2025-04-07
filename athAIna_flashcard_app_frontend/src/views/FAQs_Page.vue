@@ -86,7 +86,7 @@ export default {
           :key="i"
           class="athAIna-border-outer-faq py-[3px] px-[2.7px] text-[16px] font-semibold !rounded-[20px] w-2/4 justify-center"
       >
-        <div class="athAIna-border-inner !rounded-[17.5px] px-6 py-5">
+        <div class="athAIna-border-inner-faq !rounded-[17.5px] px-6 py-5">
           <button
               @click="toggle(i)"
               class="flex items-center w-full justify-between"
