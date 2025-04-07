@@ -1,35 +1,45 @@
 <script setup>
-import { ref } from "vue";
-import axios from "@/axios"; // Make sure this is your configured axios instance
+import { ref, onMounted } from "vue";
+import axios from "@/axios";
 import OTP from "@/views/accountapp/Change_OTP.vue";
-import Loading_Modal from "@/components/Loading_Modal.vue"; // Import the Loading_Modal component
+import Loading_Modal from "@/components/Loading_Modal.vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "../../../src/../stores/userStore";
 
 const router = useRouter();
+const userStore = useUserStore();
 const email = ref("");
 const error = ref("");
 const success = ref("");
 const isOTPVisible = ref(false);
 const isSubmitting = ref(false);
-const isLoading = ref(false); // State for loading modal
+const isLoading = ref(false);
 
 // Store email in OTP component
 const storedEmail = ref("");
+
+// Auto-fill email from user store on component mount
+onMounted(() => {
+  email.value = userStore.getEmail();
+  if (email.value) {
+    // If user is logged in, automatically send the reset email
+    sendResetEmail();
+  }
+});
 
 const goBackToLibrary = () => {
   router.push("/library_of_studysets");
 };
 
 const openOTP = () => {
-  storedEmail.value = email.value; // Store email for OTP component
+  storedEmail.value = email.value;
   isOTPVisible.value = true;
 };
 
 const closeOTP = () => {
   isOTPVisible.value = false;
-  // Optionally reset the form after OTP verification is cancelled
   if (!success.value) {
-    email.value = "";
+    email.value = userStore.getEmail(); // Reset to user's email
     error.value = "";
     success.value = "";
   }
@@ -44,20 +54,20 @@ const sendResetEmail = async () => {
   error.value = "";
   success.value = "";
   isSubmitting.value = true;
-  isLoading.value = true; // Show loading modal
+  isLoading.value = true;
 
   // Validate email
   if (!email.value) {
     error.value = "Email is required";
     isSubmitting.value = false;
-    isLoading.value = false; // Hide loading modal
+    isLoading.value = false;
     return;
   }
 
   if (!validateEmail(email.value)) {
     error.value = "Please enter a valid email address";
     isSubmitting.value = false;
-    isLoading.value = false; // Hide loading modal
+    isLoading.value = false;
     return;
   }
 
@@ -76,7 +86,7 @@ const sendResetEmail = async () => {
       success.value =
         response.data.message ||
         "Password reset instructions sent to your email";
-      openOTP(); // Show OTP component on success
+      openOTP();
     } else {
       error.value = response.data.message || "Failed to send reset email";
     }
@@ -88,14 +98,12 @@ const sendResetEmail = async () => {
       "Error sending reset email. Please try again later.";
   } finally {
     isSubmitting.value = false;
-    isLoading.value = false; // Hide loading modal on completion
+    isLoading.value = false;
   }
 };
 
-// Handle successful OTP verification
 const handleOTPSuccess = () => {
   success.value = "Email verified successfully";
-  // The OTP component will handle the navigation to the password reset page
 };
 </script>
 
@@ -140,12 +148,18 @@ const handleOTPSuccess = () => {
         Change Password Email Verification
       </h1>
 
-      <!-- Error/Success Messages -->
-      <div v-if="error" class="text-athAIna-red text-center mt-2 p-2 rounded">
-        {{ error }}
-      </div>
-      <div v-if="success" class="text-green-500 text-center mt-2 p-2 rounded">
-        {{ success }}
+      <!-- Status Messages -->
+      <div class="text-center mb-6">
+        <div v-if="isLoading">Sending verification code to your email...</div>
+        <div v-else-if="error" class="text-athAIna-red p-2 rounded">
+          {{ error }}
+        </div>
+        <div v-else-if="success" class="text-green-500 p-2 rounded">
+          {{ success }}
+        </div>
+        <div v-else class="text-athAIna-violet">
+          We're verifying your account to change your password
+        </div>
       </div>
 
       <div
@@ -184,17 +198,19 @@ const handleOTPSuccess = () => {
           :disabled="isSubmitting || isOTPVisible"
         >
           <span v-if="isSubmitting">Sending...</span>
-          <span v-else>Send Reset Email</span>
+          <span v-else>Verify Email</span>
         </button>
       </div>
     </div>
   </div>
+
   <Loading_Modal
-    :loadingMessage="'Please wait while we send the Change Email'"
+    :loadingMessage="'Please wait while we send the verification code'"
     :loadingHeader="'Processing...'"
     :isVisible="isLoading"
     :condition="!isLoading"
   />
+
   <!-- OTP Component -->
   <OTP
     :is-visible="isOTPVisible"
@@ -204,10 +220,3 @@ const handleOTPSuccess = () => {
     @verification-success="handleOTPSuccess"
   />
 </template>
-
-<style scoped>
-.btn {
-  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
-  color: white; /* Using direct CSS instead of Tailwind's text-white */
-}
-</style>

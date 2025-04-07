@@ -1,15 +1,32 @@
 <script setup>
 import {defineEmits, defineProps, ref} from "vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
+import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
+import Subject_Selector from "@/components/Subject_Selector.vue";
+import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
+import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
 
 const props = defineProps({
   isVisible: Boolean,
 });
 
-const emit = defineEmits(["close"]);
+const subject = ref("");
+const modals = ref({ subjectSelectModal: false });
+const updateSubject = (value) => {
+  subject.value = value;
+  toggleModal('subjectSelectModal');
+};
+const isNoOfQuestionsVisible = ref(false);
+
+const emit = defineEmits(["close", "update:modelValue"]);
+
+const toggleModal = (modalName) => {
+  modals.value[modalName] = !modals.value[modalName];
+};
 
 const close = () => {
   emit("close");
+  isNoOfQuestionsVisible.value = true;
 };
 </script>
 
@@ -27,40 +44,47 @@ const close = () => {
         </div>
 
         <!-- Heading -->
-        <p class="font-semibold text-[20px] mb-5"> Choose a study set </p>
+        <p class="font-semibold text-[20px] mb-8"> Choose a study set </p>
 
         <!-- Subject Field -->
         <div class="mb-8">
           <div class="mb-3 font-medium">Subject</div>
 
-          <!-- Dropdown Unclicked -->
-          <div class="flex justify-end border-athAIna-violet border-[3px] rounded-[20px] p-[5px] pr-[14px]">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-[20px] hover:cursor-pointer">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
+          <div :class="modals.subjectSelectModal ? 'h-[200px]' : 'h-[50px]'" class="relative">
+            <Subject_Selector
+                @click="toggleModal('subjectSelectModal')"
+                class="relative w-auto mb-3"
+                :placeholder="'Choose Subject'"
+                :outerClass="'athAIna-border-outer'"
+                :innerClass="'athAIna-border-inner'"
+                v-model="subject"
+            />
+            <Filter_Bar_Studyset
+                v-if="modals.subjectSelectModal"
+                :items=dropdownOptions
+                top="50px"
+                right="0px"
+                height="max-content"
+                class="w-full"
+                @update:modelValue="updateSubject"
+            >
+            </Filter_Bar_Studyset>
           </div>
-
-          <!-- FIXME: Add Dropdown-->
-          <!--          <Floating_Dropdown top="0" left="0" width="100%" height="50px" />-->
-        </div>
-
-        <!-- Number of Questions Field -->
-        <div class="mb-10">
-          <div class="mb-3 font-medium">Number of Questions</div>
-
-          <!-- Dropdown Unclicked -->
-          <input type="text"
-                 class="flex justify-start border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px] w-full"/>
         </div>
 
         <!-- Take Test Button -->
         <div class="flex justify-center mb-4">
-          <div class="btn font-semibold hover:cursor-pointer" @click="close">Take a Test</div>
+          <div class="btn font-semibold hover:cursor-pointer" @click="close">Next</div>
         </div>
 
       </div>
     </div>
   </div>
+
+  <Test_Mode_Number_Of_Questions_Prompt
+      :isVisible="isNoOfQuestionsVisible"
+      @close="isNoOfQuestionsVisible = false"
+  />
 </template>
 
 <style scoped>
