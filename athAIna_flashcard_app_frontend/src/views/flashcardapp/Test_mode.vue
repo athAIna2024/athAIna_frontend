@@ -127,7 +127,7 @@ onMounted(() => {
       <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
 
       <div v-if="testModeStore.isTestCompleted">
-        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">
+        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
           <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
             <div class="athAIna-border-inner p-4 text-center">
 

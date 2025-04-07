@@ -188,11 +188,16 @@ const refreshLibrary =  () => {
   />
 
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
-    <div class="flex flex-col bg-athAIna-white rounded-[15px] p-[15px]">
+    <div class="flex flex-col h-40 bg-athAIna-white rounded-[15px] p-[15px]">
         <div @click="navigateToLibraryPageFlashcard" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
-      <div v-if="description !== 'null'" class="text-[14px] mt-[12px]">
+      <div class="text-[14px] mt-[12px] h-12">
+      <span v-if="description !== 'null' && description.length < 50">
         {{ description }}
+      </span>
+      <span v-else-if="description !== 'null' && description.length > 50">
+        {{ description.substring(0, 50) + "..." }}
+      </span>
       </div>
       <div class="flex flex-row justify-between mt-[18px]">
         <div>

@@ -167,14 +167,13 @@ const updatePassword = async () => {
 
       // Redirect to login page after successful password reset
       setTimeout(() => {
-        router.push("/login");
+        router.push("/library_of_studysets");
       }, 2000);
     }
   } catch (err) {
-    console.log(err.response?.data);
-    errors.general =
-      err.response?.data?.error ||
-      "An error occurred while updating your password";
+    errors.old_password =
+      err.response?.data?.old_password ||
+      "The password did not match our records";
   } finally {
     // Set loading state back to false after API call completes
     isLoading.value = false;
@@ -453,9 +452,9 @@ const closeSuccessMessage = () => {
         </div>
 
         <!-- General Error Message -->
-        <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
+        <!-- <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
           {{ errors.general }}
-        </div>
+        </div> -->
 
         <!-- Change Password Button -->
         <div class="flex m-10 justify-center">
