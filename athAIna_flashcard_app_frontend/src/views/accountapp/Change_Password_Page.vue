@@ -10,7 +10,7 @@ import Success_Message from "@/components/Success_Message.vue"; // Import Succes
 
 const goBackToLibrary = () => {
   router.push({
-    name: "Library_Of_Studyset1",
+    name: "Library_Page_Studyset",
   });
 };
 
@@ -170,7 +170,7 @@ const updatePassword = async () => {
       // Redirect to login page after successful password reset
       setTimeout(() => {
         router.push({
-          name: "Library_Of_Studyset1",
+          name: "Library_Page_Studyset",
         });
       }, 2000);
     }

@@ -30,7 +30,7 @@ defineComponent({
             materials tailored to your needs
           </p>
 
-          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button
               class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full"
             >
@@ -66,7 +66,7 @@ defineComponent({
             strengthen your knowledge and identify areas for improvement.
           </p>
 
-          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button
               class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full"
             >

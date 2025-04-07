@@ -195,7 +195,7 @@ watch(step, (newValue) => {
     setTimeout(() => {
       close();
       try {
-        router.push({ name: "Forgot_Password_Page1" });
+        router.push({ name: "Forgot_Password_Page" });
       } catch (err) {
         console.error("Error redirecting to Forgot page", err);
       }

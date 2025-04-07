@@ -65,7 +65,7 @@ const logout = async () => {
       testModeStore.clear();
 
       router.push({
-        name: "Login1",
+        name: "Login",
       });
       emit("close");
     } else {

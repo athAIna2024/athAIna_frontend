@@ -60,7 +60,7 @@ const handleLogout = async (reason) => {
       testModeStore.clear();
 
       // router.push("/login");
-      router.push({ name: "Login1" });
+      router.push({ name: "Login" });
       emit("close");
     } else {
       console.log(response.error);
@@ -233,7 +233,10 @@ onMounted(() => {
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-20">
-      <router-link to="/library_of_studysets" exact-active-class="active-link">
+      <router-link
+        :to="{ name: 'Library_Page_Studyset' }"
+        exact-active-class="active-link"
+      >
         <div>Library</div>
       </router-link>
 

@@ -112,7 +112,7 @@ const navigateToRandomFlashcard = async () => {
       flashcardHistory.value.push(randomFlashcard.id);
       router.replace(
         {
-          name: "Review_Mode1",
+          name: "Review_Mode",
           params: {
             studySetTitle: studysetName.value,
             studySetId: currentFlashcard.value.studyset_id,
@@ -143,7 +143,7 @@ const navigateToPreviousFlashcard = () => {
     isFlipped.value = false;
 
     router.push({
-      name: "Review_Mode1",
+      name: "Review_Mode",
       params: {
         studySetTitle: studysetName.value,
         studySetId: currentFlashcard.value.studyset_id,
@@ -159,16 +159,19 @@ const navigateToPreviousFlashcard = () => {
 <template>
   <div v-if="flashcard">
     <span class="p-4 text-2xl font-semibold">
-      <router-link
-        :to="{
-          name: 'Library_Page_Flashcard1',
-          params: {
-            studySetTitle: studysetName,
-            studySetID: flashcard.studyset_id,
-          },
-        }"
-      ></router-link>
-      {{ studysetName }}
+      <button>
+        <router-link
+          :to="{
+            name: 'Library_Page_Flashcard',
+            params: {
+              studySetTitle: studysetName.value,
+              studySetID: flashcard.studyset_id,
+            },
+          }"
+        >
+          < {{ studysetName }}</router-link
+        >
+      </button>
     </span>
   </div>
 

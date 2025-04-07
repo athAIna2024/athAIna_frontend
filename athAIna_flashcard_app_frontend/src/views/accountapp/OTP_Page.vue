@@ -210,7 +210,7 @@ const verifyOTP = async () => {
         isSuccessMessageVisible.value = false;
         close();
         router.push({
-          name: "Login1",
+          name: "Login",
         });
       }, 2000);
     } else {

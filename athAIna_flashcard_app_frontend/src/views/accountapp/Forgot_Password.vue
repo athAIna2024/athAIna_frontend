@@ -18,7 +18,7 @@ const storedEmail = ref("");
 
 const goBackToLogin = () => {
   router.push({
-    name: "Login1",
+    name: "Login",
   });
 };
 

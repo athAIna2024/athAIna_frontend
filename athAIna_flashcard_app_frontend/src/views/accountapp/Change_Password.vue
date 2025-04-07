@@ -29,7 +29,7 @@ onMounted(() => {
 
 const goBackToLibrary = () => {
   router.push({
-    name: "Library_Of_Studyset1",
+    name: "Library_Of_Studyset",
   });
 };
 

@@ -120,7 +120,7 @@ const redirectToReviewMode = async () => {
   const randomFlashcard =
     filteredFlashcards[Math.floor(Math.random() * filteredFlashcards.length)];
   await router.push({
-    name: "Review_Mode1",
+    name: "Review_Mode",
     params: {
       studySetTitle: studySetTitle,
       studySetId: studySetId,

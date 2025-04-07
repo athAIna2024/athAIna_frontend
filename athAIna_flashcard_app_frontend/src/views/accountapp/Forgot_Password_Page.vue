@@ -10,7 +10,7 @@ const router = useRouter();
 
 const goBackToLogin = () => {
   router.push({
-    name: "Login1",
+    name: "Login",
   });
 };
 
@@ -124,7 +124,7 @@ const resetPassword = async () => {
     // Redirect to login page after successful password reset
     setTimeout(() => {
       router.push({
-        name: "Login1",
+        name: "Login",
       });
     }, 2000);
   } catch (err) {

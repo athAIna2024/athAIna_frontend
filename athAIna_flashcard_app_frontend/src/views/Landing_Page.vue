@@ -37,7 +37,7 @@ export default {
           >
         </div>
         <div class="w-full md:w-1/2 flex flex-row mx-10">
-          <RouterLink :to="{ name: 'Signup1' }" class="w-full mr-10">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mr-10">
             <button class="btn w-full">Try now</button>
           </RouterLink>
           <button @click="scrollToFeatures" class="btn w-full">
@@ -76,7 +76,7 @@ export default {
             Saves time with automated, smartly designed flashcards that make
             studying more efficient
           </div>
-          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button class="btn mt-10 w-full">Try it out!</button>
           </RouterLink>
         </div>
@@ -93,7 +93,7 @@ export default {
             Uncovers your progress guiding your path to mastery
           </div>
 
-          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button class="btn mt-10 w-full">See your progress</button>
           </RouterLink>
         </div>
@@ -109,7 +109,7 @@ export default {
           <div class="text-sm my-2">
             Unlocks your wisdom, boosting your exam readiness
           </div>
-          <RouterLink :to="{ name: 'Signup1' }" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button class="btn mt-10 w-full">Take a test</button>
           </RouterLink>
         </div>
