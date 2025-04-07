@@ -14,6 +14,7 @@ import { useStudySetSearchStore} from "../../../stores/studySetSearchStore.js";
 import { useStudySetFilterStore } from "../../../stores/studySetFilterStore.js";
 import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
 import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
+import { useUserStore} from "../../../stores/userStore.js";
 
 const studySetSearchStore = useStudySetSearchStore();
 const studySetFilterStore = useStudySetFilterStore();
@@ -21,7 +22,8 @@ const studySetFilterStore = useStudySetFilterStore();
 
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
-const userId = ref(1);
+const userStore = useUserStore()
+const learnerId = userStore.getUserID();
 
 const isSuccessful_studyset = ref(false);
 const message_studyset = ref("");
@@ -140,7 +142,7 @@ const fetchStudySet = async () => {
   try {
     // API Call
     const response = await axios.get(studyset_url, {
-      params: { user_id: Number(userId.value) }
+      params: { user_id: Number(learnerId.value) }
     });
 
     if (response.data && Array.isArray(response.data.data)) {
