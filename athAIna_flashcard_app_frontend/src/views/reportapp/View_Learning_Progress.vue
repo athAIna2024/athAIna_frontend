@@ -8,6 +8,7 @@ import {useUserStore} from "../../../stores/userStore.js";
 import axios from '@/axios';
 import Warning_Message from "@/components/Warning_Message.vue";
 import studySetDb from "@/views/studysetapp/dexie.js";
+import Loading_Modal from "@/components/Loading_Modal.vue";
 import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
 
 const report_url = '/report/list/';
@@ -16,6 +17,10 @@ const learnerId = userStore.getUserID();
 const isSuccessful = ref(false);
 const message = ref("");
 const router = useRouter();
+
+const isLoading = ref(false);
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 
 const props = defineProps({
   isVisible: Boolean,
@@ -54,6 +59,11 @@ const closeWarning = () => {
 };
 
 const fetchTestScores = async () => {
+  isLoading.value = true;
+  const minimumLoadingTime = 500;
+  const startTime = Date.now();
+
+
   try {
     const response = await axios.get(report_url, {
       params: {
@@ -70,72 +80,89 @@ const fetchTestScores = async () => {
       isEmptyTestScores.value = true;
     }
 
-
-    console.log("TEST SCORES ARE EMPTY? ", isEmptyTestScores.value);
   } catch (error) {
     isSuccessful.value = false;
     message.value = "Error fetching test scores.";
+  } finally {
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = minimumLoadingTime - elapsedTime;
+
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    isLoading.value = false;
   }
 };
 
 const fetchStudySetCount = async () => {
+  isLoading.value = true;
+  const minimumLoadingTime = 500;
+  const startTime = Date.now();
   try {
     const studySetsArray = await studySetDb.studysets.toArray();
-    if (studySetsArray.length === 0) {
-      isEmptyStudySet.value = true;
-      isWarningVisible.value = true;
-    } else {
-      isEmptyStudySet.value = false;
-    }
+    isEmptyStudySet.value = studySetsArray.length === 0;
   } catch (error) {
     console.error('Error fetching study sets:', error);
+  } finally {
+    const elapsedTime = Date.now() - startTime;
+    const remainingTime = minimumLoadingTime - elapsedTime;
+
+    if (remainingTime > 0) {
+      await delay(remainingTime);
+    }
+    isLoading.value = false;
   }
 }
 
 
-onMounted(() => {
-  fetchStudySetCount();
-  fetchTestScores();
+onMounted(async () => {
+  if (!isEmptyTestScores.value && !isEmptyStudySet.value) {
+    isLoading.value = false;
+  } else {
+    await fetchStudySetCount();
+    await fetchTestScores();
+  }
 });
-
 </script>
 
 
 <template>
 
+  <Loading_Modal
+      :loadingHeader="'Fetching report data...'"
+      :loadingMessage="'Please wait for a couple of seconds'"
+      :condition="isLoading"
+      :isVisible="isLoading"
+  />
   <Create_Studyset
       :isVisible="isCreateStudySetModalVisible"
       title="Create Studyset – athAIna"
       @close="closeCreateStudySetModal"
-  >
-  </Create_Studyset>
-
+  />
   <div class="h-screen">
-    <div v-show="isEmptyStudySet" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
-      <p>Oops! No study sets yet. Create one and start your learning adventure!</p>
-      <div class="btn w-60 hover:cursor-pointer" @click="openCreateStudySetModal">Create Study Set</div>
-    </div>
-
-    <div v-show="isEmptyTestScores" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
-      <p>No report yet. Take a test first.</p>
-      <div class="btn w-60 hover:cursor-pointer" @click="showChooseStudySetModal">Test yourself now</div>
-    </div>
-    <div v-show="!isEmptyTestScores" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+    <div class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
       <Report></Report>
     </div>
 
+    <div v-if="!isLoading">
+      <div v-if="isEmptyStudySet" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+        <p>Oops! No study sets yet. Create one and start your learning adventure!</p>
+        <div class="btn w-60 hover:cursor-pointer" @click="openCreateStudySetModal">Create Study Set</div>
+      </div>
+
+      <div v-else-if="isEmptyTestScores" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+        <p>No report yet. Take a test first.</p>
+        <div class="btn w-60 hover:cursor-pointer" @click="showChooseStudySetModal">Test yourself now</div>
+      </div>
+    </div>
   </div>
+
+
   <Choose_Studyset
       :isVisible="isChooseStudySetVisible"
       @close="close"
   />
 
-  <Warning_Message
-      :warningHeader="'No Study Sets Found'"
-      :warningMessage="'Please create a study set to view the report.'"
-      :isVisible="isWarningVisible"
-      @close="closeWarning"
-  />
 </template>
 
 <style scoped>
