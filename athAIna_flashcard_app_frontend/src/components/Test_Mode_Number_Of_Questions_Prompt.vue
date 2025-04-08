@@ -85,9 +85,10 @@ const redirectToTestMode = async () => {
     testModeStore.setNumberOfQuestions(numberOfQuestions.value);
 
     emit('close');
+
+    await randomizeTestQuestions();
   }
 
-  await randomizeTestQuestions();
 }
 
 const randomizeTestQuestions = async () => {
@@ -123,7 +124,7 @@ const randomizeTestQuestions = async () => {
     isLoading.value = false;
 
     await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle, studySetId: studySetId, batchId: testModeStore.batchId } });
-    router.go(0); // Refresh the page (alternative for location.reload);
+    // router.go(0); // Refresh the page (alternative for location.reload);
   }
 };
 
