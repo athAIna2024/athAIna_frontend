@@ -100,7 +100,7 @@ const fetchStudySetCount = async () => {
   const startTime = Date.now();
   try {
     const studySetsArray = await studySetDb.studysets.toArray();
-    isEmptyStudySet.value = studySetsArray.length === 0;
+    isEmptyStudySet.value = Array.from(studySetsArray).length === 0;
   } catch (error) {
     console.error('Error fetching study sets:', error);
   } finally {
@@ -116,12 +116,8 @@ const fetchStudySetCount = async () => {
 
 
 onMounted(async () => {
-  if (!isEmptyTestScores.value && !isEmptyStudySet.value) {
-    isLoading.value = false;
-  } else {
-    await fetchStudySetCount();
-    await fetchTestScores();
-  }
+  await fetchStudySetCount(); // Fetch study set count
+  await fetchTestScores(); // Fetch test scores
 });
 </script>
 
@@ -139,23 +135,26 @@ onMounted(async () => {
       title="Create Studyset – athAIna"
       @close="closeCreateStudySetModal"
   />
-  <div class="h-screen">
-    <div class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
-      <Report></Report>
-    </div>
-
     <div v-if="!isLoading">
-      <div v-if="isEmptyStudySet" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
-        <p>Oops! No study sets yet. Create one and start your learning adventure!</p>
-        <div class="btn w-60 hover:cursor-pointer" @click="openCreateStudySetModal">Create Study Set</div>
-      </div>
+      <div class="h-screen">
 
-      <div v-else-if="isEmptyTestScores" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
-        <p>No report yet. Take a test first.</p>
-        <div class="btn w-60 hover:cursor-pointer" @click="showChooseStudySetModal">Test yourself now</div>
+        <div v-if="isEmptyStudySet" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+          <p>Oops! No study sets yet. Create one and start your learning adventure!</p>
+          <div class="btn w-60 hover:cursor-pointer" @click="openCreateStudySetModal">Create Study Set</div>
+        </div>
+
+        <div v-else-if="isEmptyTestScores" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+          <p>No report yet. Take a test first.</p>
+          <div class="btn w-60 hover:cursor-pointer" @click="showChooseStudySetModal">Test yourself now</div>
+        </div>
+
+        <div v-else class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+          <Report></Report>
+        </div>
       </div>
     </div>
-  </div>
+    <div v-else class="h-screen">
+    </div>
 
 
   <Choose_Studyset

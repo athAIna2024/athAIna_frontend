@@ -57,7 +57,7 @@ const toggleModal = (modalName) => {
 
 const studySetSelected = ref({ id: null, title: null});
 
-const minDate = userStore.getDateJoined();
+const minDate = new Date(userStore.getDateJoined());
 const maxDate = ref(new Date()); // Current date (always the current, not the date user login);
 
 const startDate = ref(new Date());
