@@ -116,8 +116,8 @@ const fetchStudySetCount = async () => {
 
 
 onMounted(async () => {
-  await fetchStudySetCount(); // Fetch study set count
-  await fetchTestScores(); // Fetch test scores
+  await fetchStudySetCount();
+  await fetchTestScores();
 });
 </script>
 
@@ -148,12 +148,17 @@ onMounted(async () => {
           <div class="btn w-60 hover:cursor-pointer" @click="showChooseStudySetModal">Test yourself now</div>
         </div>
 
-        <div v-else class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
-          <Report></Report>
+        <div v-else>
+          <div class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+            <Report></Report>
+          </div>
         </div>
       </div>
     </div>
     <div v-else class="h-screen">
+      <div class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
+        <Report></Report>
+      </div>
     </div>
 
 
