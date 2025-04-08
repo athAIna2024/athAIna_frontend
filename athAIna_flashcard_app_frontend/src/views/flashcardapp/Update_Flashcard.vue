@@ -50,9 +50,6 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const showSuccessMessage = ref(false);
 
 const updateFlashcard = async () => {
-
-
-  showSuccessMessage.value = true;
   const minimumLoadingTime = 500; // Minimum loading time in milliseconds
   const startTime = Date.now();
 
@@ -95,7 +92,7 @@ const updateFlashcard = async () => {
 
     await flashcardsDB.flashcards.update(Number(flashcardId), updateFlashcard);
     if (isSuccessful.value) {
-
+      showSuccessMessage.value = true;
       navigateToLibraryPage();
     }
 
