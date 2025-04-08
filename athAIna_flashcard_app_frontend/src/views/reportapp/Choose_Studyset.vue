@@ -12,6 +12,10 @@ const props = defineProps({
   isVisible: Boolean,
 });
 
+const refreshTest_Mode = () => {
+  router.go();
+}
+
 const studySetStore = useStudysetStore();
 const studySetId = studySetStore.studySetId;
 const studySetTitle = studySetStore.studySetTitle;
@@ -115,6 +119,7 @@ onMounted(() => {
   <Test_Mode_Number_Of_Questions_Prompt
       :isVisible="isNoOfQuestionsVisible"
       @close="isNoOfQuestionsVisible = false"
+      @refresh="refreshTest_Mode"
   />
 </template>
 

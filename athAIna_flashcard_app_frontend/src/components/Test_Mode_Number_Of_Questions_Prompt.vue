@@ -29,7 +29,7 @@ const fetchFlashcardCounts = async () => {
 
 const isSuccessful_test = ref(false);
 const message_test = ref('');
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'refresh']);
 
 const numberOfQuestions = ref(null);
 
@@ -40,6 +40,7 @@ const errors = ref({
 const errorMessage = ref({
   numberOfQuestions: null,
 });
+
 
 const randomizeTestUrl = '/test/randomize/'
 
@@ -124,7 +125,7 @@ const randomizeTestQuestions = async () => {
     isLoading.value = false;
 
     await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle, studySetId: studySetId, batchId: testModeStore.batchId } });
-    // router.go(0); // Refresh the page (alternative for location.reload);
+    emit('refresh');
   }
 };
 
