@@ -150,7 +150,15 @@ const fetchFlashcardData = async () => {
 };
 
 const navigateToLibraryPage = () => {
-  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+  setTimeout(() => {
+    router.push({
+      name: 'Library_Page_Flashcard',
+      params: { studySetTitle: studySetName, studySetId: studySetId }
+    });
+  }, 500); // Delay navigation to match the fade-out duration
+
+  document.body.classList.add('fade-out'); // Add fade-out class
+
 };
 
 onMounted(() => {
