@@ -297,7 +297,7 @@ const saveTestScore = async () => {
             Your answer
           </span>
           <span :class="[answerClass, 'text-athAIna-base']">
-            {{ learner_answer }}
+            {{ learner_answer ? learner_answer : 'You did not provide an answer.' }}
           </span>
         </div>
 

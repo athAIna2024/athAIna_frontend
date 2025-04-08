@@ -28,7 +28,9 @@ onMounted(() => {
 });
 
 const goBackToLibrary = () => {
-  router.push("/library_of_studysets");
+  router.push({
+    name: "Library_Of_Studyset",
+  });
 };
 
 const openOTP = () => {

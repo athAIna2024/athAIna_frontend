@@ -180,7 +180,9 @@ const verifyOTP = async () => {
 const close = () => {
   if (route.name === "change_password_otp") {
     // If we're on the dedicated route, go back to library
-    router.push("/library_of_studysets");
+    router.push({
+      name: "Library_Page_Studyset",
+    });
   } else {
     // Otherwise emit close for modal behavior
     emit("close");

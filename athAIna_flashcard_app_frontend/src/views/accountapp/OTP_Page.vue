@@ -209,7 +209,9 @@ const verifyOTP = async () => {
       setTimeout(() => {
         isSuccessMessageVisible.value = false;
         close();
-        router.push("/login");
+        router.push({
+          name: "Login",
+        });
       }, 2000);
     } else {
       isLoadingModalVisible.value = false;
