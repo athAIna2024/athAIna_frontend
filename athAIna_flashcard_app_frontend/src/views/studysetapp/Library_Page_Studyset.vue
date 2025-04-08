@@ -224,14 +224,15 @@ onMounted(() => {
 
 <template>
   <div class="my-16 ml-12 mr-12 min-h-screen">
-    <div class="flex flex-col lg:flex-row justify-between space-x-[50px] content-center">
+    <div class="flex flex-col lg:flex-row justify-between lg:space-x-[50px] content-center">
       <Search_Bar_Studyset
           v-model="input"
-          class="w-[700px]" />
-      <div class="relative">
+          class="'lg:w-[700px] w-full" />
+      <div class="flex flex-row mt-4 lg:mt-0 space-x-[50px] justify-evenly content-center">
+      <div class="relative lg:w-[350px] w-full">
         <Subject_Selector
             @click="toggleModal('subjectSelectModal')"
-            class="relative w-[350px] mb-3"
+            class="relative mb-3"
             :placeholder="'Choose Subject'"
             :outerClass="'athAIna-border-outer'"
             :innerClass="'athAIna-border-inner'"
@@ -255,6 +256,7 @@ onMounted(() => {
       >
         Create Studyset
       </div>
+      </div>
     </div>
 
     <div class="mt-[30px]">
@@ -270,7 +272,7 @@ onMounted(() => {
 
 
     <div v-if="isSuccessful_studyset">
-      <div class="grid mt-[60px] mb-[60px] gap-14 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid mt-[60px] mb-[60px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-cols-max">
         <div v-for="(s, index) in currentStudySets" :key="index">
           <Studyset_Card
             :title="s.title"
