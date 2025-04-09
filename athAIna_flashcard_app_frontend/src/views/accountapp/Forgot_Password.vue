@@ -100,16 +100,26 @@ const handleOTPSuccess = () => {
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div
+      class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center"
+  >
+    <!-- Right Card -->
     <div
-      class="absolute transform top-1/3 left-1/2 translate-x-0 translate-y-10 rotate-[12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+        class="mt-8 ml-10 rotate-[-12deg] shadow-md w-[400px] h-[550px] rounded-lg bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
     ></div>
+
+    <!-- Left Card -->
     <div
-      class="absolute transform top-1/3 left-1/2 -translate-x-[18.75rem] translate-y-10 rotate-[-12deg] shadow-md w-[450px] h-[525px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
+        class="mt-16 mr-12 rotate-[15deg] shadow-md w-[400px] h-[500px] rounded-lg bg-gradient-to-bl from-athAIna-yellow to-athAIna-red"
     ></div>
+
+    <!-- Middle Card -->
     <div
-      class="absolute transform top-1/3 left-1/2 -translate-x-[9.37rem] w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex flex-col p-10 py-20"
+        class="absolute bg-gradient-to-b rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red w-[450px] h-[600px] bg-athAIna-white flex flex-col p-[5px]"
     >
+      <div
+          class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
+      >
       <div class="absolute top-8 left-8 z-10">
         <button
           @click="goBackToLogin"
@@ -132,23 +142,20 @@ const handleOTPSuccess = () => {
           <span class="font-medium">Back to Log in</span>
         </button>
       </div>
-      <div class="w-full flex flex-row justify-center items-center">
-        <img src="@/assets/athAIna.svg" alt="Logo" class="w-20" />
-      </div>
-      <h1 class="text-athAIna-violet font-semibold w-full text-center my-10">
+        <div class="mt-5 w-auto flex flex-row justify-center items-center">
+          <img
+              src="@/assets/athAIna.svg"
+              alt="Logo"
+              class="w-[185px] h-[111px] mb-3"
+          />
+        </div>
+        <h1
+            class="text-athAIna-violet font-semibold text-lg w-full text-center">
         Forgot Password Email Verification
       </h1>
 
-      <!-- Error/Success Messages -->
-      <div v-if="error" class="text-athAIna-red text-center mt-2 p-2 rounded">
-        {{ error }}
-      </div>
-      <div v-if="success" class="text-green-500 text-center mt-2 p-2 rounded">
-        {{ success }}
-      </div>
-
       <div
-        class="m-2 mb-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
+        class="m-2 mt-16 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
       >
         <div class="relative flex flex-row items-center">
           <svg
@@ -176,6 +183,16 @@ const handleOTPSuccess = () => {
         </div>
       </div>
 
+      <!-- Error/Success Messages -->
+      <div class="h-10">
+        <div v-if="error" class="text-athAIna-red text-center p-6 rounded">
+          {{ error }}
+        </div>
+        <div v-if="success" class="text-green-500 text-center p-6 rounded">
+          {{ success }}
+        </div>
+      </div>
+
       <div class="flex m-10 justify-center">
         <button
           @click="sendResetEmail"
@@ -186,6 +203,7 @@ const handleOTPSuccess = () => {
           <span v-else>Send Reset Email</span>
         </button>
       </div>
+    </div>
     </div>
   </div>
 
@@ -206,10 +224,3 @@ const handleOTPSuccess = () => {
     @verification-success="handleOTPSuccess"
   />
 </template>
-
-<style scoped>
-.btn {
-  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
-  color: white; /* Using direct CSS instead of Tailwind's text-white */
-}
-</style>
