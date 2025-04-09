@@ -31,17 +31,35 @@
         @apply leading-tight;
         @apply py-2.5;
         @apply rounded-full;
-        @apply w-32;
+        @apply w-full;
     }
 
     .btn-alt {
-        @apply border-2 border-athAIna-red;
-        @apply text-athAIna-red;
-        @apply font-bold;
-
-        @apply py-2.5;
+        @apply athAIna-border-outer;
+        @apply athAIna-border-outer;
+        @apply text-athAIna-violet;
+        @apply font-normal;
         @apply rounded-full;
         @apply w-32;
+        @apply p-1;
+    }
+
+    .btn-alt-inner {
+        @apply athAIna-border-inner;
+        @apply rounded-[20px];
+        @apply relative;
+        @apply flex;
+        @apply flex-row;
+        @apply items-center justify-center;
+        @apply h-full;
+        @apply w-full;
+    }
+
+    .btn-alt:hover .btn-alt-inner {
+        @apply transition-all;
+        @apply duration-300;
+        @apply opacity-80;
+        @apply text-[16px];
     }
 
     .btn:hover {
@@ -57,5 +75,26 @@
     .athAIna-border-inner {
         @apply h-full w-full rounded-xl;
         @apply bg-athAIna-white;
+    }
+
+    .athAIna-border-outer-faq {
+        @apply w-full rounded-2xl bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
+    }
+
+    .athAIna-border-inner-faq {
+        @apply h-full w-full rounded-xl;
+        @apply bg-athAIna-white;
+    }
+
+    .athAIna-border-outer-faq:hover {
+        @apply transition-all duration-300 opacity-80 text-[16px];
+    }
+
+    .athAIna-border-inner-faq:hover {
+        @apply transition-all duration-300 opacity-80 text-[16px];
+    }
+
+    .w-1-5-3 {
+        width: 40%;
     }
 }

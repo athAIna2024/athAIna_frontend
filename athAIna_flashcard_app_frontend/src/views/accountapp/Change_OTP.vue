@@ -196,6 +196,7 @@ watch(step, (newValue) => {
   if (newValue === 3) {
     setTimeout(() => {
       emit("verification-success");
+      close();
     }, 2000);
   }
 });
@@ -216,6 +217,7 @@ const stepText = computed(() => {
 </script>
 
 <template>
+  <div class="min-h-screen"></div>
   <div
     class="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
   >
