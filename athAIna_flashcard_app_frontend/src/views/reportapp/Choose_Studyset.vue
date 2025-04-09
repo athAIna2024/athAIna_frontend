@@ -2,15 +2,20 @@
 
 import { ref } from "vue";
 import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
 import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studysets.vue";
 import studySetDb from "@/views/studysetapp/dexie.js";
 import { useStudysetStore} from "../../../stores/studySetStore.js";
+import Warning_Message from "@/components/Warning_Message.vue";
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const props = defineProps({
   isVisible: Boolean,
 });
+
+const router = useRouter();
 
 const refreshTest_Mode = () => {
   router.go();
@@ -19,6 +24,7 @@ const refreshTest_Mode = () => {
 const studySetStore = useStudysetStore();
 const studySetId = studySetStore.studySetId;
 const studySetTitle = studySetStore.studySetTitle;
+const flashcardsCount = ref(0);
 
 // Related to studysets dropdown
 const studySetSelected = ref({ id: null, title: null});
@@ -53,11 +59,39 @@ const isNoOfQuestionsVisible = ref(false);
 
 const emit = defineEmits(["close"]);
 
-const close = () => {
+const close = async () => {
   emit("close");
   studySetStore.setStudySetId(studySetSelected.value.id);
   studySetStore.setStudySetTitle(studySetSelected.value.title);
-  isNoOfQuestionsVisible.value = true;
+
+  await fetchFlashcardCount();
+
+  if (flashcardsCount.value === 0) {
+    isWarningVisible.value = true;
+  } else {
+    isNoOfQuestionsVisible.value = true;
+  }
+
+};
+
+const fetchFlashcardCount = async () => {
+  const flashcardsArray = await flashcardsDB.flashcards.where("studyset_id").equals(Number(studySetSelected.value.id)).toArray();
+  flashcardsCount.value = flashcardsArray.length;
+}
+const isWarningVisible = ref(false);
+
+const closeWarning = () => {
+  isWarningVisible.value = false;
+
+  if (studySetSelected.value.id !== null) {
+    redirectToLibraryPageFlashcard();
+  }
+};
+
+const redirectToLibraryPageFlashcard = () => {
+  router.push({
+    name: "Library_Page_Flashcard", params: { studySetTitle: studySetStore.getStudySetTitle(), studySetId: studySetStore.getStudySetId() },
+  });
 };
 
 onMounted(() => {
@@ -67,6 +101,16 @@ onMounted(() => {
 </script>
 
 <template>
+
+
+  <Warning_Message
+      :warningHeader="'Oops! No questions available yet'"
+      :warningMessage="'Create flashcards in a study set to take a test.'"
+      :isVisible="isWarningVisible"
+      @close="closeWarning"
+  />
+
+
   <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40">
     <div class="athAIna-border-outer p-1 flex flex-col w-[400px]">
       <div class="athAIna-border-inner p-7 flex flex-col">

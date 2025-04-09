@@ -136,142 +136,159 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="m-4">
-    <div class="athAIna-border-outer p-1 shadow-xl">
-      <div class="athAIna-border-inner py-4">
-        <div class="flex flex-col m-10">
-          <div
-            class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center"
-          >
-            <div class="flex flex-row space-x-6 items-center">
-              <button @click="navigateToLibraryPage">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                  />
-                </svg>
-              </button>
-              <h1 class="text-athAIna-violet font-semibold flex">
-                {{ studySetTitle }}
-              </h1>
-            </div>
-
-            <div class="flex flex-row justify-between space-x-6 items-center">
-              <Search_Bar v-model="input" />
-              <button
-                class="relative btn w-60 text-[16px] font-semibold"
-                @click="toggleModal('learningMode')"
-              >
-                Learning Mode
-              </button>
+  <transition appear name="fade">
+    <div>
+      <div class="m-4">
+        <div class="athAIna-border-outer p-1 shadow-xl">
+          <div class="athAIna-border-inner py-4">
+            <div class="flex flex-col m-10">
               <div
-                v-if="modals.learningMode"
-                class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
+                  class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center"
               >
-                <button
-                  @click="redirectToReviewMode"
-                  class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
-                >
-                  Review Mode
-                </button>
-                <button
-                  class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
-                  @click="openTest_Mode"
-                >
-                  Test Mode
-                </button>
-              </div>
-              <button
-                class="relative btn w-60 text-[16px] font-semibold"
-                @click="toggleModal('addFlashcard')"
-              >
-                Add Flashcard
-              </button>
-              <div
-                v-if="modals.addFlashcard"
-                class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
-              >
-                <!--               CLEAN UP CODE ROUTER LINK SHOULD NOT BE USED INSTEAD USE @CLICK LOGIC-->
-                <router-link :to="{ name: 'Create_Flashcard_Manually' }">
-                  <button
-                    class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
-                  >
-                    Create Manually
+                <div class="flex flex-row space-x-6 items-center">
+                  <button @click="navigateToLibraryPage">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        class="size-6"
+                    >
+                      <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                      />
+                    </svg>
                   </button>
-                </router-link>
+                  <h1 class="text-athAIna-violet font-semibold flex">
+                    {{ studySetTitle }}
+                  </h1>
+                </div>
 
-                <button
-                  @click="openAI_Flashcard"
-                  class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
-                >
-                  Generate with AI
-                </button>
+                <div class="flex flex-row justify-between space-x-6 items-center">
+                  <Search_Bar v-model="input" />
+                  <button
+                      class="relative btn w-60 text-[16px] font-semibold"
+                      @click="toggleModal('learningMode')"
+                  >
+                    Learning Mode
+                  </button>
+                  <div
+                      v-if="modals.learningMode"
+                      class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
+                  >
+                    <button
+                        @click="redirectToReviewMode"
+                        class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                    >
+                      Review Mode
+                    </button>
+                    <button
+                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
+                        @click="openTest_Mode"
+                    >
+                      Test Mode
+                    </button>
+                  </div>
+                  <button
+                      class="relative btn w-60 text-[16px] font-semibold"
+                      @click="toggleModal('addFlashcard')"
+                  >
+                    Add Flashcard
+                  </button>
+                  <div
+                      v-if="modals.addFlashcard"
+                      class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
+                  >
+                    <!--               CLEAN UP CODE ROUTER LINK SHOULD NOT BE USED INSTEAD USE @CLICK LOGIC-->
+                    <router-link :to="{ name: 'Create_Flashcard_Manually' }">
+                      <button
+                          class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                      >
+                        Create Manually
+                      </button>
+                    </router-link>
+
+                    <button
+                        @click="openAI_Flashcard"
+                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
+                    >
+                      Generate with AI
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="mt-4 mb-6">
-            <div
-              class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"
-            ></div>
-          </div>
+              <div class="mt-4 mb-6">
+                <div
+                    class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"
+                ></div>
+              </div>
 
-          <div class="flex flex-row gap-2">
-            <div class="text-[18px] font-semibold flex flex-row items-center">
-              Flashcards
-            </div>
-            <div class="border-athAIna-violet border-2 rounded-full px-3 py-0">
-              {{ flashcardCounts }}
-            </div>
-          </div>
+              <div class="flex flex-row gap-2">
+                <div class="text-[18px] font-semibold flex flex-row items-center">
+                  Flashcards
+                </div>
+                <div class="border-athAIna-violet border-2 rounded-full px-3 py-0">
+                  {{ flashcardCounts }}
+                </div>
+              </div>
 
-          <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-            <div
-              class="list-none"
-              v-for="(
+              <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
+                <div
+                    class="list-none"
+                    v-for="(
                 flashcard, index
               ) in flashcardSearchStore.getSearchResults(studySetId).length
                 ? flashcardSearchStore.getSearchResults(studySetId)
                 : currentFlashcards"
-              :key="index"
-            >
-              <Flashcard_Card
-                :flashcardId="flashcard.id"
-                :question="flashcard.question"
-                :answer="flashcard.answer"
-                :image="flashcard.image"
-              />
-            </div>
-            <div class="item error" v-if="!isSuccessful">
-              <p>{{ message }}</p>
-            </div>
-          </div>
+                    :key="index"
+                >
+                  <Flashcard_Card
+                      :flashcardId="flashcard.id"
+                      :question="flashcard.question"
+                      :answer="flashcard.answer"
+                      :image="flashcard.image"
+                  />
+                </div>
+                <div class="item error" v-if="!isSuccessful">
+                  <p>{{ message }}</p>
+                </div>
+              </div>
 
-          <div class="flex justify-center">
-            <Pagination
-              :total-items="flashcardCounts"
-              :items-per-page="itemsPerPage"
-              :current-page="currentPage"
-              @update:currentPage="currentPage = $event"
-            />
+              <div class="flex justify-center">
+                <Pagination
+                    :total-items="flashcardCounts"
+                    :items-per-page="itemsPerPage"
+                    :current-page="currentPage"
+                    @update:currentPage="currentPage = $event"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
-  <Test_Mode_Number_Of_Questions_Prompt
-    :is-visible="isTestModeVisible"
-    @close="closeTest_Mode"
-  />
+      <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
+      <Test_Mode_Number_Of_Questions_Prompt
+          :is-visible="isTestModeVisible"
+          @close="closeTest_Mode"
+      />
+    </div>
+  </transition>
+
+
 </template>
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+}
+</style>
