@@ -34,9 +34,10 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    return response; 
+    return response; // Pass through successful responses
   },
   async (error) => {
+    console.error("Interceptor caught an error:", error); // Debug log
     const originalRequest = error.config;
 
     if (
@@ -44,33 +45,29 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
-      originalRequest._retry = true; 
+      originalRequest._retry = true;
 
       try {
         const refreshResponse = await axios.post(
           "http://localhost:8009/account/token/refresh/",
-          {},
+          {}, // No need to include the refresh token manually if it's HttpOnly
           { withCredentials: true }
         );
 
-        Cookies.set("access_token", `${response.data.access}`, {
-          secure: true,
-          sameSite: "Strict",
-          expires: 3600 / (24 * 60 * 60),
-        });
-        Cookies.set("refresh_token", `${response.data.refresh}`, {
-          secure: true,
-          sameSite: "Strict",
-          expires: 1209600 / (24 * 60 * 60),
-        });
+        console.log("Token refresh successful:", refreshResponse.data);
 
+        // Retry the original request
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        console.error(
+          "Token refresh failed:",
+          refreshError.response?.data || refreshError
+        );
         return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(error); 
+    return Promise.reject(error); // Reject other errors
   }
 );
 
