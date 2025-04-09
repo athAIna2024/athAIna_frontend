@@ -60,6 +60,10 @@ const closeTest_Mode = () => {
   isTestModeVisible.value = false;
 };
 
+const refreshTest_Mode = () => {
+  router.go();
+}
+
 const loadQuestion = async () => {
   try {
     flashcardId.value = flashcardIds.value[questionIndex.value];
@@ -162,7 +166,7 @@ onMounted(() => {
   <Test_Mode_Number_Of_Questions_Prompt
     :is-visible="isTestModeVisible"
     @close="closeTest_Mode"
-
+    @refresh="refreshTest_Mode"
   />
   <Confirmation_Prompt
       :confirmQuestion="'Are you sure you want to leave? All progress will be lost.'"
