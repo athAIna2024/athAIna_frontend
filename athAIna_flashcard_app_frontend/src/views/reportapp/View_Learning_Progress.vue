@@ -29,11 +29,7 @@ const props = defineProps({
 const isChooseStudySetVisible = ref(false);
 const isEmptyTestScores = ref(false); // empty report
 const isEmptyStudySet = ref(false); // no study sets
-const isWarningVisible = ref(false); // no study sets found
 const isTestModeVisible = ref(false);
-
-const isCreateStudySetModalVisible = ref(false);
-
 
 const redirectToLibraryPage = () => {
   router.push({
@@ -53,10 +49,6 @@ const closeTest_Mode = () => {
 
 const close = () => {
   isChooseStudySetVisible.value = false;
-};
-
-const closeWarning = () => {
-  isWarningVisible.value = false;
 };
 
 const fetchTestScores = async () => {
