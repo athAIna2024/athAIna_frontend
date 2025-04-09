@@ -223,7 +223,7 @@ const fetchStudySetFromDb = async () => {
 
     studySetCounts.value = studySet_db.value.length;
     isSuccessful_studyset.value = studySetCounts.value > 0;
-    message_studyset.value = isSuccessful_studyset.value ? "Study sets fetched successfully" : "No study sets found";
+    message_studyset.value = isSuccessful_studyset.value ? "Study sets fetched successfully" : "Create your first study set to get started!";
 
   } catch (error) {
     isSuccessful_studyset.value = false;
