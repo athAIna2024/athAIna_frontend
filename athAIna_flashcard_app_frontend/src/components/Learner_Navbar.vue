@@ -146,7 +146,22 @@ onMounted(() => {
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
         <div class="flex justify-end pl-4 text-athAIna-lg">
-          <button @click="toggleModal('accSettings')">x</button>
+          <button @click="toggleModal('accSettings')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18 18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
         <div class="flex flex-col items-center justify-between p-5">
           <span class="font-semibold">User Profile</span>
