@@ -9,7 +9,7 @@ import axios from '@/axios';
 import Warning_Message from "@/components/Warning_Message.vue";
 import studySetDb from "@/views/studysetapp/dexie.js";
 import Loading_Modal from "@/components/Loading_Modal.vue";
-import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
+import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 const report_url = '/report/list/';
 const userStore = useUserStore();
@@ -29,16 +29,13 @@ const props = defineProps({
 const isChooseStudySetVisible = ref(false);
 const isEmptyTestScores = ref(false); // empty report
 const isEmptyStudySet = ref(false); // no study sets
-const isWarningVisible = ref(false); // no study sets found
 const isTestModeVisible = ref(false);
 
-const isCreateStudySetModalVisible = ref(false);
-const closeCreateStudySetModal = () => {
-  isCreateStudySetModalVisible.value = false;
-};
-const openCreateStudySetModal = () => {
-  isCreateStudySetModalVisible.value = true;
-};
+const redirectToLibraryPage = () => {
+  router.push({
+    name: "Library_Page_Studyset",
+  });
+}
 
 const defineEmits = ["close"];
 
@@ -52,10 +49,6 @@ const closeTest_Mode = () => {
 
 const close = () => {
   isChooseStudySetVisible.value = false;
-};
-
-const closeWarning = () => {
-  isWarningVisible.value = false;
 };
 
 const fetchTestScores = async () => {
@@ -130,17 +123,13 @@ onMounted(async () => {
       :condition="isLoading"
       :isVisible="isLoading"
   />
-  <Create_Studyset
-      :isVisible="isCreateStudySetModalVisible"
-      title="Create Studyset – athAIna"
-      @close="closeCreateStudySetModal"
-  />
+
     <div v-if="!isLoading">
       <div class="h-screen">
 
         <div v-if="isEmptyStudySet" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
           <p>Oops! No study sets yet. Create one and start your learning adventure!</p>
-          <div class="btn w-60 hover:cursor-pointer" @click="openCreateStudySetModal">Create Study Set</div>
+          <div class="btn w-60 hover:cursor-pointer" @click="redirectToLibraryPage">Create Study Set</div>
         </div>
 
         <div v-else-if="isEmptyTestScores" class="flex flex-col items-center justify-center gap-y-3 content-center flex-grow h-full w-full">
