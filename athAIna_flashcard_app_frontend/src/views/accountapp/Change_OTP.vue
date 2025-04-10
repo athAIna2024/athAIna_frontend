@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "@/axios";
-import { useUserStore } from "../../../src/../stores/userStore";
+import { useUserStore } from "../../../stores/userStore";
+import Success_Message from "@/components/Success_Message.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -24,31 +25,29 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["verification-success"]);
-
 // Use email from props or from route params
 const userEmail = computed(
   () => props.email || route.params.email || userStore.getEmail()
 );
 
-const step = ref(1);
 const error = ref("");
 const isVerified = ref(false);
+const isSuccessMessageVisible = ref(false);
 
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
 
 // Countdown and OTP resend functionality
-const countdown = ref(10); // Keep at 10 seconds as requested
+const countdown = ref(10);
 const isCountdownActive = ref(false);
 let countdownInterval = null;
 
 const startCountdown = () => {
   isCountdownActive.value = true;
-  countdown.value = 10; // Keep at 10 seconds
+  countdown.value = 10;
 
   if (countdownInterval) {
-    clearInterval(countdownInterval); // Clear any existing interval
+    clearInterval(countdownInterval);
   }
 
   countdownInterval = setInterval(() => {
@@ -62,39 +61,30 @@ const startCountdown = () => {
 
 const resendOTP = async () => {
   try {
-    // Only proceed if countdown is not active
     if (isCountdownActive.value) return;
 
     error.value = "";
-    console.log("Resending OTP to:", userEmail.value); // Debug log
 
     const response = await axios.post("/account/resend-otp/", {
       email: userEmail.value,
       purpose: props.purpose,
     });
 
-    console.log("Resend OTP response:", response.data); // Debug log
-
     if (response.data.successful) {
-      // Clear the current OTP input fields
       otpValue.value = "";
       displayOTP.value = ["", "", "", "", "", ""];
-      // Start countdown again
       startCountdown();
     }
   } catch (err) {
-    console.error("Error resending OTP:", err);
     error.value = err.response?.data?.message || "Failed to resend OTP";
   }
 };
 
 onMounted(() => {
-  // Start countdown when component is mounted
   startCountdown();
 });
 
 onBeforeUnmount(() => {
-  // Clear interval when component is unmounted
   if (countdownInterval) {
     clearInterval(countdownInterval);
   }
@@ -126,11 +116,9 @@ const handleBoxInput = (boxIndex, event) => {
 const handleBoxKeydown = (boxIndex, event) => {
   if (event.key === "Backspace") {
     if (displayOTP.value[boxIndex]) {
-      // If current box has a value, clear it
       displayOTP.value[boxIndex] = "";
       otpValue.value = displayOTP.value.join("");
     } else if (boxIndex > 0) {
-      // If current box is empty and not the first box, go to previous box
       event.preventDefault();
       const prevInput = event.target.previousElementSibling;
       if (prevInput) {
@@ -151,16 +139,13 @@ const verifyOTP = async () => {
 
     if (response.data.successful) {
       isVerified.value = true;
-      step.value++;
+      isSuccessMessageVisible.value = true;
 
-      // Extract the uidb64 and token from the password_reset_link
       const resetLink = response.data.password_reset_link;
-      // Parse the URL to extract uidb64 and token
       const urlParts = resetLink.split("/");
       const uidb64 = urlParts[urlParts.length - 3];
       const token = urlParts[urlParts.length - 2];
 
-      // Redirect to the reset password page with the tokens
       setTimeout(() => {
         router.push({
           name: "Change_Password_Page",
@@ -170,7 +155,6 @@ const verifyOTP = async () => {
     }
   } catch (err) {
     error.value = err.response?.data?.message || "Invalid OTP code";
-    console.error("OTP verification error", err);
   }
 };
 
@@ -186,79 +170,82 @@ const nextStep = () => {
   }
 };
 
-const previousStep = () => {
-  if (step.value > 1) {
-    step.value--;
-  }
+const closeSuccessMessage = () => {
+  isSuccessMessageVisible.value = false;
 };
-
-watch(step, (newValue) => {
-  if (newValue === 3) {
-    setTimeout(() => {
-      emit("verification-success");
-      close();
-    }, 2000);
-  }
-});
-
-// Computed properties for step text
-const stepText = computed(() => {
-  switch (step.value) {
-    case 1:
-      return "OTP VERIFICATION";
-    case 2:
-      return "Verification Successful";
-    case 3:
-      return "Redirecting...";
-    default:
-      return "";
-  }
-});
 </script>
 
 <template>
-  <div class="min-h-screen"></div>
   <div
-    class="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+    class="flex flex-row min-h-screen items-center justify-center content-center text-center bg-center"
   >
-    <div class="max-w-md w-full space-y-8">
-      <div class="athAIna-card">
-        <!-- Header with back button -->
-        <div class="flex items-center justify-between mb-6">
+    <!-- Right Card -->
+    <div
+      class="mt-8 ml-10 rotate-[-12deg] shadow-md w-[400px] h-[550px] rounded-lg bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
+    ></div>
+
+    <!-- Left Card -->
+    <div
+      class="mt-16 mr-12 rotate-[15deg] shadow-md w-[400px] h-[500px] rounded-lg bg-gradient-to-bl from-athAIna-yellow to-athAIna-red"
+    ></div>
+
+    <!-- Middle Card -->
+    <div
+      class="absolute bg-gradient-to-b rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red w-[450px] h-[600px] bg-athAIna-white flex flex-col p-[5px]"
+    >
+      <div
+        class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
+      >
+        <!-- Back Button -->
+        <div class="absolute top-8 left-8 z-10">
           <button
             @click="navigateBack"
-            class="text-athAIna-violet hover:text-athAIna-red focus:outline-none flex items-center"
-            aria-label="Back"
+            class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 mr-1"
               fill="none"
               viewBox="0 0 24 24"
+              stroke-width="2"
               stroke="currentColor"
+              class="w-6 h-6 mr-1"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            Back
+            <span class="font-medium">Back to Library</span>
           </button>
         </div>
 
-        <!-- Step 1: OTP Entry -->
-        <div v-if="step === 1" class="text-center">
-          <h1 class="text-2xl font-bold text-athAIna-violet mb-6">
-            {{ stepText }}
-          </h1>
-          <p class="mb-6 text-gray-600">We've sent a verification code</p>
+        <!-- Logo -->
+        <div class="mt-5 w-auto flex flex-row justify-center items-center">
+          <img
+            src="@/assets/athAIna.svg"
+            alt="Logo"
+            class="w-[185px] h-[111px] mb-3"
+          />
+        </div>
 
-          <p v-if="error" class="text-athAIna-red text-sm mb-4">{{ error }}</p>
+        <!-- Title -->
+        <h1
+          class="text-athAIna-violet font-semibold text-lg w-full text-center"
+        >
+          OTP Verification
+        </h1>
+
+        <div class="flex flex-col items-center mt-5">
+          <p class="mb-4 text-gray-600 text-sm">
+            We've sent a verification code to your email
+          </p>
+
+          <!-- Error Message -->
+          <p v-if="error" class="text-athAIna-red text-xs mb-4">{{ error }}</p>
 
           <!-- OTP Input Boxes -->
-          <div class="flex flex-row justify-center items-center">
+          <div class="flex flex-row justify-center items-center mt-4">
             <input
               type="text"
               v-model="otpValue"
@@ -274,13 +261,13 @@ const stepText = computed(() => {
                 :value="digit"
                 @input="handleBoxInput(index, $event)"
                 @keydown="handleBoxKeydown(index, $event)"
-                class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
+                class="w-11 h-11 text-center text-xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
               />
             </div>
           </div>
 
           <!-- Resend OTP section -->
-          <div class="mt-6 mb-6 text-sm text-athAIna-violet">
+          <div class="mt-6 text-sm text-athAIna-violet">
             <span v-if="isCountdownActive"
               >Resend OTP in {{ countdown }} seconds</span
             >
@@ -294,64 +281,32 @@ const stepText = computed(() => {
           </div>
 
           <!-- Verify Button -->
-          <div class="mt-8 flex justify-center">
+          <div class="mt-8">
             <button
               @click="nextStep"
-              class="w-48 bg-athAIna-orange text-white py-3 px-8 rounded-xl hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="verify-btn w-48"
               :disabled="otpValue.length !== 6"
             >
               Verify
             </button>
           </div>
         </div>
-
-        <!-- Step 2: Verification Success -->
-        <div v-else-if="step === 2" class="text-center py-8">
-          <div class="flex justify-center mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-16 w-16 text-green-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-          <p class="text-xl font-medium text-athAIna-violet mb-2">
-            Verification Successful!
-          </p>
-          <p class="text-athAIna-violet mb-6">
-            Redirecting to change your password...
-          </p>
-
-          <div class="w-full h-2 bg-gray-200 rounded-full mt-4">
-            <div
-              class="bg-athAIna-orange h-full rounded-full animate-pulse"
-            ></div>
-          </div>
-        </div>
       </div>
     </div>
+
+    <!-- Success Message Component -->
+    <Success_Message
+      :successHeader="'Verification Successful!'"
+      :successMessage="'Redirecting to change your password...'"
+      :isVisible="isSuccessMessageVisible"
+      @close="closeSuccessMessage"
+    />
   </div>
 </template>
 
 <style scoped>
-/* Page-specific styles */
-.athAIna-card {
-  background-color: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid transparent;
-  background-image: linear-gradient(white, white),
-    linear-gradient(to bottom right, #da384c, #f5a524);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
+.verify-btn {
+  @apply bg-gradient-to-r from-athAIna-yellow to-athAIna-red text-center py-2 px-4 font-medium rounded-xl shadow-md hover:from-athAIna-red hover:to-athAIna-yellow transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+  color: #ffffff;
 }
 </style>
