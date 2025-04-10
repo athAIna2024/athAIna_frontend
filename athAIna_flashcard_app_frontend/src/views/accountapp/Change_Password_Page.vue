@@ -64,6 +64,12 @@ const togglePassword3 = () => {
   showPassword3.value = !showPassword3.value;
 };
 
+const goToResetPassword = () => {
+  router.push({
+    name: "Forgot_Password",
+  });
+};
+
 // Enhanced updatePassword function with better error handling
 const updatePassword = async () => {
   // Clear previous errors
@@ -265,10 +271,11 @@ const closeSuccessMessage = () => {
               stroke="currentColor"
               class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
             >
-                <path 
-stroke-linecap="round" 
-stroke-linejoin="round" 
-d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
             </svg>
             <input
               v-model="oldPassword"
@@ -325,10 +332,11 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
               stroke="currentColor"
               class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
             >
-                <path 
-stroke-linecap="round" 
-stroke-linejoin="round" 
-d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
             </svg>
             <input
               v-model="newPassword"
@@ -385,10 +393,11 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
               stroke="currentColor"
               class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
             >
-                <path 
-stroke-linecap="round" 
-stroke-linejoin="round" 
-d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
             </svg>
             <input
               v-model="confirmPassword"
@@ -442,8 +451,18 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
           {{ errors.general }}
         </div> -->
 
+        <!-- Forgot Password Link -->
+        <div class="text-center mt-2">
+          <button
+            @click="goToResetPassword"
+            class="text-athAIna-violet hover:text-athAIna-red text-sm transition-colors duration-200"
+          >
+            Forgot your password?
+          </button>
+        </div>
+
         <!-- Change Password Button -->
-        <div class="flex m-10 justify-center">
+        <div class="flex mt-6 justify-center">
           <button @click="updatePassword" class="btn w-full">
             {{ "Change Password" }}
           </button>
@@ -460,7 +479,7 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
 
     <Success_Message
       :successHeader="'Password Change Successful'"
-      :successMessage="'Your password has been updated. Redirecting to login page...'"
+      :successMessage="'Your password has been updated. Redirecting to Library Of StudySet...'"
       :isVisible="isSuccessMessageVisible"
       @close="closeSuccessMessage"
     />

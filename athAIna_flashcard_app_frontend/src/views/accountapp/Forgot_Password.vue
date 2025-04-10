@@ -122,6 +122,7 @@ const handleOTPSuccess = () => {
       <div
         class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
       >
+        <!-- Back button -->
         <div class="absolute top-8 left-8 z-10">
           <button
             @click="goBackToLogin"
@@ -144,6 +145,8 @@ const handleOTPSuccess = () => {
             <span class="font-medium">Back to Log in</span>
           </button>
         </div>
+
+        <!-- Logo -->
         <div class="mt-5 w-auto flex flex-row justify-center items-center">
           <img
             src="@/assets/athAIna.svg"
@@ -151,53 +154,16 @@ const handleOTPSuccess = () => {
             class="w-[185px] h-[111px] mb-3"
           />
         </div>
+
+        <!-- Title -->
         <h1
-          class="text-athAIna-violet font-semibold text-lg w-full text-center"
+          class="text-athAIna-violet font-semibold text-lg w-full text-center mb-5"
         >
           Forgot Password Email Verification
         </h1>
 
-        <div
-          class="m-2 mt-16 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full"
-        >
-          <div class="absolute top-8 left-8 z-10">
-            <button
-              @click="goBackToLogin"
-              class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                class="w-6 h-6 mr-1"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                />
-              </svg>
-              <span class="font-medium">Back to Log in</span>
-            </button>
-          </div>
-
-          <!-- Logo -->
-          <div class="mt-5 w-auto flex flex-row justify-center items-center">
-            <img
-              src="@/assets/athAIna.svg"
-              alt="Logo"
-              class="w-[185px] h-[111px] mb-3"
-            />
-          </div>
-
-          <h1
-            class="text-athAIna-violet font-semibold text-lg w-full text-center mb-5"
-          >
-            Forgot Password Email Verification
-          </h1>
-
+        <!-- Content Container -->
+        <div class="mt-8 w-full">
           <!-- Error/Success Messages -->
           <div v-if="error" class="text-athAIna-red text-center mt-2 mb-3">
             {{ error }}
@@ -238,7 +204,8 @@ const handleOTPSuccess = () => {
             </div>
           </div>
 
-          <div class="flex m-10 justify-center w-auto">
+          <!-- Submit Button -->
+          <div class="flex mt-8 justify-center w-auto">
             <button
               @click="sendResetEmail"
               class="btn w-full"
