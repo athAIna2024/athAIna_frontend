@@ -348,7 +348,7 @@ const closeLoadingModal = () => {
           <div class="text-center">
             Already have an account?
             <span class="font-semibold underline">
-              <RouterLink to="/login"> Login </RouterLink>
+              <RouterLink :to="{ name: 'Login' }"> Login </RouterLink>
             </span>
           </div>
         </div>

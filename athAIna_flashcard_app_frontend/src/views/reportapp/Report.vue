@@ -57,7 +57,7 @@ const toggleModal = (modalName) => {
 
 const studySetSelected = ref({ id: null, title: null});
 
-const minDate = userStore.getDateJoined();
+const minDate = new Date(userStore.getDateJoined());
 const maxDate = ref(new Date()); // Current date (always the current, not the date user login);
 
 const startDate = ref(new Date());
@@ -119,8 +119,6 @@ watch([startDate, endDate, studySetSelected], () => {
 
 onMounted(() => {
   fetchStudySets();
-  console.log("START DATE ", startDate.value);
-  console.log("END DATE ", endDate.value);
 });
 
 </script>
@@ -129,7 +127,7 @@ onMounted(() => {
   <div class="h-screen">
     <div class="flex flex-col justify-center gap-y-3 content-center w-screen">
       <div class="m-20 flex flex-row justify-between w-auto">
-        <p class="font-semibold text-lg">{{ title }}</p>
+        <p class="font-semibold text-lg">{{ studySetSelected.title }}</p>
         <div class="flex flex-row justify-between items-center gap-x-10">
 
           <div class="flex flex-col">

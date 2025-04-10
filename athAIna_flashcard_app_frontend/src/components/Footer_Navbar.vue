@@ -19,7 +19,9 @@ export default {
       <div>Privacy Policy</div>
       <div>Terms of Service</div>
       <div>
-        <router-link to="/contact_us"> Contact us </router-link>
+        <router-link :to="{ name: 'Create_Contact_Inquiry' }">
+          Contact us
+        </router-link>
       </div>
     </div>
   </div>

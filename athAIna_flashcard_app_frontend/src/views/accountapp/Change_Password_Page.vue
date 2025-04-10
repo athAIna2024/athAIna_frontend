@@ -9,7 +9,9 @@ import Loading_Modal from "@/components/Loading_Modal.vue";
 import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
 
 const goBackToLibrary = () => {
-  router.push("/library_of_studysets");
+  router.push({
+    name: "Library_Page_Studyset",
+  });
 };
 
 const isLoading = ref(false);
@@ -167,14 +169,15 @@ const updatePassword = async () => {
 
       // Redirect to login page after successful password reset
       setTimeout(() => {
-        router.push("/login");
+        router.push({
+          name: "Library_Page_Studyset",
+        });
       }, 2000);
     }
   } catch (err) {
-    console.log(err.response?.data);
-    errors.general =
-      err.response?.data?.error ||
-      "An error occurred while updating your password";
+    errors.old_password =
+      err.response?.data?.old_password ||
+      "The password did not match our records";
   } finally {
     // Set loading state back to false after API call completes
     isLoading.value = false;
@@ -435,9 +438,9 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
         </div>
 
         <!-- General Error Message -->
-        <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
+        <!-- <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
           {{ errors.general }}
-        </div>
+        </div> -->
 
         <!-- Change Password Button -->
         <div class="flex m-10 justify-center">
