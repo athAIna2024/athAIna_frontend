@@ -122,6 +122,7 @@ const handleOTPSuccess = () => {
       <div
         class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
       >
+        <!-- Back button -->
         <div class="absolute top-8 left-8 z-10">
           <button
             @click="goBackToLogin"
@@ -154,79 +155,86 @@ const handleOTPSuccess = () => {
           />
         </div>
 
+        <!-- Title -->
         <h1
           class="text-athAIna-violet font-semibold text-lg w-full text-center mb-5"
         >
           Forgot Password Email Verification
         </h1>
 
-        <!-- Error/Success Messages -->
-        <div v-if="error" class="text-athAIna-red text-center mt-2 mb-3">
-          {{ error }}
-        </div>
-        <div v-if="success" class="text-green-500 text-center mt-2 mb-3">
-          {{ success }}
-        </div>
+        <!-- Content Container -->
+        <div class="mt-8 w-full">
+          <!-- Error/Success Messages -->
+          <div v-if="error" class="text-athAIna-red text-center mt-2 mb-3">
+            {{ error }}
+          </div>
+          <div v-if="success" class="text-green-500 text-center mt-2 mb-3">
+            {{ success }}
+          </div>
 
-        <!-- Email Field -->
-        <div
-          class="m-2 mb-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-auto"
-        >
-          <div class="relative flex flex-row items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+          <!-- Email Field -->
+          <div
+            class="m-2 mb-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-auto"
+          >
+            <div class="relative flex flex-row items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                />
+              </svg>
+              <input
+                v-model="email"
+                type="email"
+                placeholder="Email"
+                :disabled="isSubmitting || isOTPVisible"
+                class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+                @keyup.enter="
+                  !isSubmitting && !isOTPVisible && sendResetEmail()
+                "
               />
-            </svg>
-            <input
-              v-model="email"
-              type="email"
-              placeholder="Email"
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex mt-8 justify-center w-auto">
+            <button
+              @click="sendResetEmail"
+              class="btn w-full"
               :disabled="isSubmitting || isOTPVisible"
-              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
-              @keyup.enter="!isSubmitting && !isOTPVisible && sendResetEmail()"
-            />
+            >
+              <span v-if="isSubmitting">Sending...</span>
+              <span v-else>Send Reset Email</span>
+            </button>
           </div>
         </div>
-
-        <div class="flex m-10 justify-center w-auto">
-          <button
-            @click="sendResetEmail"
-            class="btn w-full"
-            :disabled="isSubmitting || isOTPVisible"
-          >
-            <span v-if="isSubmitting">Sending...</span>
-            <span v-else>Send Reset Email</span>
-          </button>
-        </div>
       </div>
+
+      <!-- Use the Loading_Modal component -->
+      <Loading_Modal
+        :loadingMessage="'Please wait while we send the reset email'"
+        :loadingHeader="'Processing...'"
+        :isVisible="isLoading"
+        :condition="!isLoading"
+      />
+
+      <!-- OTP Component -->
+      <OTP
+        :is-visible="isOTPVisible"
+        :email="storedEmail"
+        title="OTP Verification"
+        @close="closeOTP"
+        @verification-success="handleOTPSuccess"
+      />
     </div>
-
-    <!-- Use the Loading_Modal component -->
-    <Loading_Modal
-      :loadingMessage="'Please wait while we send the reset email'"
-      :loadingHeader="'Processing...'"
-      :isVisible="isLoading"
-      :condition="!isLoading"
-    />
-
-    <!-- OTP Component -->
-    <OTP
-      :is-visible="isOTPVisible"
-      :email="storedEmail"
-      title="OTP Verification"
-      @close="closeOTP"
-      @verification-success="handleOTPSuccess"
-    />
   </div>
 </template>
 

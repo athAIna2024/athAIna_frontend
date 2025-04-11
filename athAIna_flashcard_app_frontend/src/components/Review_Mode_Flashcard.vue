@@ -157,7 +157,12 @@ const navigateToPreviousFlashcard = () => {
 </script>
 
 <template>
-  <div v-if="flashcard">
+  <div v-if="flashcard" class="flex flex-row items-center">
+    <router-link :to="`/${studysetName}/${flashcard.studyset_id}/flashcards`">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+    </router-link>
     <span class="p-4 text-2xl font-semibold">
       <button>
         <router-link
@@ -192,8 +197,8 @@ const navigateToPreviousFlashcard = () => {
         />
       </svg>
     </button>
-    <div @click="flipCard" class="flashcard">
-      <div v-if="flashcard" class="card h-48 py-80">
+    <div @click="flipCard" class="flashcard h-full">
+      <div v-if="flashcard" class="card mx-48 h-48 py-80">
         <div
           :class="{
             'card-content transition-transform duration-1000': true,
@@ -201,28 +206,35 @@ const navigateToPreviousFlashcard = () => {
           }"
         >
           <div
-            class="question absolute top-0 bottom-0 right-0 left-0 p-8 bg-pink-600 flex items-center justify-center"
+            class="question absolute top-0 bottom-0 right-0 left-0 bg-pink-600 flex items-center justify-center"
           >
             <div class="athAIna-border-outer p-1">
               <div
-                class="athAIna-border-inner flex flex-c justify-between items-center"
+                class="athAIna-border-inner h-96 py-60 flex flex-row justify-between items-center"
               >
-                <div class="p-10 font-semibold text-lg">
+                <div class="font-semibold text-lg">
                   <h1></h1>
                 </div>
-                <div>
-                  <h1 class="text-athAIna-violet p-64 text-xl">
+                <div v-if="isValidImage" class="flex flex-row p-0 items-center">
+                  <div>
+                    <h1 class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-20 w-full">
+                      {{ currentFlashcard.question }}
+                    </h1>
+                  </div>
+                  <div class="p-10">
+                    <img
+                      :src="currentFlashcard.image"
+                      alt="Flashcard Image"
+                      class="max-w-xs invisible md:visible h-48 lg:h-64 object-cover rounded-lg"
+                    />
+                  </div>
+                </div>
+                <div v-else>
+                  <h1 class="text-athAIna-violet text-md 2xl:text-2xl p-32">
                     {{ currentFlashcard.question }}
                   </h1>
                 </div>
-                <div v-if="isValidImage" class="p-10">
-                  <img
-                    :src="currentFlashcard.image"
-                    alt="Flashcard Image"
-                    class="max-w-xs h-auto"
-                  />
-                </div>
-                <div class="p-10 font-semibold text-lg">
+                <div class="p-0 font-semibold text-lg">
                   <!-- <button @click="flipCard">
                     <h1>></h1>
                   </button> -->
@@ -232,23 +244,22 @@ const navigateToPreviousFlashcard = () => {
           </div>
 
           <div
-            class="answer absolute top-0 bottom-0 right-0 left-0 p-8 bg-pink-600 flex items-center justify-center"
+            class="answer absolute top-0 bottom-0 right-0 left-0 bg-pink-600 flex items-center justify-center"
           >
             <div class="athAIna-border-outer p-1">
               <div
-                class="athAIna-border-inner flex flex-c justify-between items-center"
+                class="athAIna-border-inner h-96 flex flex-row justify-center items-center"
               >
-                <div class="p-10 font-semibold text-lg">
+                <div class="font-semibold text-lg">
                   <!-- <button @click="flipCard">
                     <h1><</h1>
                   </button> -->
                 </div>
                 <div>
-                  <h1 class="text-athAIna-violet p-64 text-xl">
+                  <h1 class="text-athAIna-violet text-md 2xl:text-2xl p-10">
                     {{ currentFlashcard.answer }}
                   </h1>
                 </div>
-                <div class="p-10 font-semibold text-lg"></div>
               </div>
             </div>
           </div>
