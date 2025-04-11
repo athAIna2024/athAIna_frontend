@@ -212,6 +212,7 @@ onMounted(() => {
                   </label>
                 </div>
               </div>
+              <div v-if="field_errors.image" class="text-athAIna-red text-athAIna-base">{{ field_errors.image }}</div>
 
               <div class="flex flex-row bg-athAIna-violet w-auto px-8 py-2 rounded-full" v-if="imageName">
                 <div class="flex flex-row items-center gap-2 justify-center my-2">
@@ -230,8 +231,6 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-
-            <div v-if="field_errors.image" class="text-athAIna-red text-athAIna-base">{{ field_errors.image }}</div>
 
             <div class="athAIna-border-outer p-1 mb-2 mt-3">
               <div class="athAIna-border-inner py-1">
