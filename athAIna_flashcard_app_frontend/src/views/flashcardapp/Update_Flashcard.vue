@@ -50,7 +50,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const showSuccessMessage = ref(false);
 
 const updateFlashcard = async () => {
-  const minimumLoadingTime = 500; // Minimum loading time in milliseconds
+  const minimumLoadingTime = 1000; // Minimum loading time in milliseconds
   const startTime = Date.now();
 
   try {
