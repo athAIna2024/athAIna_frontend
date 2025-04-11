@@ -63,13 +63,6 @@ const togglePassword2 = () => {
 const togglePassword3 = () => {
   showPassword3.value = !showPassword3.value;
 };
-
-const goToResetPassword = () => {
-  router.push({
-    name: "Forgot_Password",
-  });
-};
-
 // Enhanced updatePassword function with better error handling
 const updatePassword = async () => {
   // Clear previous errors
@@ -450,17 +443,6 @@ const closeSuccessMessage = () => {
         <!-- <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
           {{ errors.general }}
         </div> -->
-
-        <!-- Forgot Password Link -->
-        <div class="text-center mt-2">
-          <button
-            @click="goToResetPassword"
-            class="text-athAIna-violet hover:text-athAIna-red text-sm transition-colors duration-200"
-          >
-            Forgot your password?
-          </button>
-        </div>
-
         <!-- Change Password Button -->
         <div class="flex mt-6 justify-center">
           <button @click="updatePassword" class="btn w-full">
