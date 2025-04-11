@@ -16,8 +16,9 @@ const props = defineProps({
 
 // Dynamically generate labels and datasets
 const chartData = computed(() => {
+  const recentScores = props.scores.slice(-7); // Get the last 7 entries
   return {
-    labels: props.scores.map(entry => new Date(entry.timestamp).toLocaleString("en-US", {
+    labels: recentScores.map(entry => new Date(entry.timestamp).toLocaleString("en-US", {
       timeZone: "Asia/Manila",
       month: "short",
       day: "2-digit",
@@ -27,9 +28,9 @@ const chartData = computed(() => {
     datasets: [
       {
         label: "Scores",
-        data: props.scores.map(entry => entry.score),
-        backgroundColor: props.scores.map(entry => (entry.score >= 70 ? "rgba(75, 192, 75, 0.6)" : "rgba(255, 99, 132, 0.6)")), // Green for passing, Red for failing
-        borderColor: props.scores.map(entry => (entry.score >= 70 ? "rgba(75, 192, 75, 1)" : "rgba(255, 99, 132, 1)")),
+        data: recentScores.map(entry => entry.score),
+        backgroundColor: recentScores.map(entry => (entry.score >= 70 ? "rgba(75, 192, 75, 0.6)" : "rgba(255, 99, 132, 0.6)")), // Green for passing, Red for failing
+        borderColor: recentScores.map(entry => (entry.score >= 70 ? "rgba(75, 192, 75, 1)" : "rgba(255, 99, 132, 1)")),
         borderWidth: 1,
       },
     ],

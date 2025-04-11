@@ -95,7 +95,8 @@ watch(
 );
 
 const handleOTPChange = (e) => {
-  const value = e.target.value.replace(/[^0-9]/g, (otpValue.value = value));
+  const value = e.target.value.replace(/[^0-9]/g, "");
+  otpValue.value = value;
   displayOTP.value = [...value.padEnd(6, "")];
 };
 
@@ -109,8 +110,7 @@ const handleBoxInput = (boxIndex, event) => {
   displayOTP.value[boxIndex] = value;
   otpValue.value = displayOTP.value.join("");
   if (value && boxIndex < 5) {
-    event.target.nextElementSibling.focus();
-    const nextInput = input.parentElement.children[boxIndex + 1]; // Fixed 'index' to 'boxIndex'
+    const nextInput = input.parentElement.children[boxIndex + 1];
     if (nextInput) {
       nextInput.focus();
     }
@@ -118,17 +118,20 @@ const handleBoxInput = (boxIndex, event) => {
 };
 
 const handleBoxKeydown = (boxIndex, event) => {
-  if (
-    event.key === "Backspace" &&
-    !displayOTP.value[boxIndex] &&
-    boxIndex > 0
-  ) {
-    event.preventDefault();
-    const prevInput = event.target.previousElementSibling;
-    if (prevInput) {
-      prevInput.focus();
-      displayOTP.value[boxIndex - 1] = "";
+  if (event.key === "Backspace") {
+    if (displayOTP.value[boxIndex]) {
+      // If current box has a value, clear it
+      displayOTP.value[boxIndex] = "";
       otpValue.value = displayOTP.value.join("");
+    } else if (boxIndex > 0) {
+      // If current box is empty and not the first box, go to previous box
+      event.preventDefault();
+      const prevInput = event.target.previousElementSibling;
+      if (prevInput) {
+        prevInput.focus();
+        displayOTP.value[boxIndex - 1] = "";
+        otpValue.value = displayOTP.value.join("");
+      }
     }
   }
 };
@@ -214,14 +217,6 @@ const stepText = computed(() => {
       return "";
   }
 });
-
-const detail = computed(() => {
-  // Add your detail logic here
-});
-
-const buttonText = computed(() => {
-  // Add your button text logic here
-});
 </script>
 
 <template>
@@ -271,7 +266,7 @@ const buttonText = computed(() => {
               :key="boxIndex"
               type="text"
               maxlength="1"
-              v-model="displayOTP[boxIndex]"
+              :value="digit"
               @input="handleBoxInput(boxIndex, $event)"
               @keydown="handleBoxKeydown(boxIndex, $event)"
               class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
@@ -296,7 +291,7 @@ const buttonText = computed(() => {
         <div class="m-8 flex justify-center">
           <button
             @click="nextStep"
-            class="btn w-48"
+            class="btn w-48 bg-athAIna-orange text-white py-2 px-8 rounded-xl hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="otpValue.length !== 6"
           >
             Verify
@@ -307,4 +302,16 @@ const buttonText = computed(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* Component-specific styles */
+.athAIna-border-outer {
+  border-radius: 1rem;
+  background-image: linear-gradient(to bottom right, #da384c, #f5a524);
+}
+
+.athAIna-border-inner {
+  border-radius: 0.75rem;
+  background-color: white;
+  height: 100%;
+}
+</style>

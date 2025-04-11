@@ -8,20 +8,22 @@ import Loading_Modal from "@/components/Loading_Modal.vue";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { computed } from "vue";
-import axios from '@/axios'; // Import the configured Axios instance
+import axios from "@/axios"; // Import the configured Axios instance
 import studySetDb from "@/views/studysetapp/dexie.js";
-import { useStudySetSearchStore} from "../../../stores/studySetSearchStore.js";
+import { useStudySetSearchStore } from "../../../stores/studySetSearchStore.js";
 import { useStudySetFilterStore } from "../../../stores/studySetFilterStore.js";
 import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
-import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
+import { dropdownOptions } from "@/components/constants/SubjectDropDownOptions.js";
+import { useUserStore } from "../../../stores/userStore.js";
 
+const isPageVisible = ref(false);
 const studySetSearchStore = useStudySetSearchStore();
 const studySetFilterStore = useStudySetFilterStore();
 
-
 const studyset_url = "/studyset/";
 const flashcard_url = "/flashcard/";
-const userId = ref(1);
+const userStore = useUserStore();
+const learnerId = userStore.getUserID();
 
 const isSuccessful_studyset = ref(false);
 const message_studyset = ref("");
@@ -49,7 +51,7 @@ const toggleModal = (modalName) => {
 const subject = ref("");
 const updateSubject = (value) => {
   subject.value = value;
-  toggleModal('subjectSelectModal');
+  toggleModal("subjectSelectModal");
 };
 
 const openModal = () => {
@@ -62,16 +64,23 @@ const closeModal = async () => {
 };
 
 const isSuccessful_studySetFilterSearch = computed(() => {
-  return studySetFilterStore.getFilterActiveStatus() || studySetSearchStore.getSearchActiveStatus();
+  return (
+    studySetFilterStore.getFilterActiveStatus() ||
+    studySetSearchStore.getSearchActiveStatus()
+  );
 });
 
 const message_studySetFilterSearch = computed(() => {
   if (studySetFilterStore.getFilterActiveStatus()) {
-    return studySetFilterStore.getFilterResults().length > 0 ? "" : "No study sets found for the selected subject.";
+    return studySetFilterStore.getFilterResults().length > 0
+      ? ""
+      : "No study sets found for the selected subject.";
   }
 
   if (studySetSearchStore.getSearchActiveStatus()) {
-    return studySetSearchStore.getSearchResults().length > 0 ? "" : "No study sets found for the search term.";
+    return studySetSearchStore.getSearchResults().length > 0
+      ? ""
+      : "No study sets found for the search term.";
   }
 });
 
@@ -103,21 +112,18 @@ const getSubjectName = (abbreviation) => {
 const fetchFlashcardCount = async (studysetId) => {
   try {
     const response = await axios.get(flashcard_url, {
-      params: { studyset_id: studysetId }
+      params: { studyset_id: studysetId },
     });
 
     if (response.data && Array.isArray(response.data.data)) {
       isSuccessful_flashcard.value = response.data.successful;
       message_flashcard.value = response.data.message;
       return response.data.data.length;
-
     } else {
       isSuccessful_flashcard.value = false;
       message_flashcard.value = "API response is not an array";
       return 0;
-
     }
-
   } catch (error) {
     if (error.response && error.response.status === 200) {
       isSuccessful_flashcard.value = error.response.data.successful;
@@ -125,13 +131,12 @@ const fetchFlashcardCount = async (studysetId) => {
     } else {
       isSuccessful_flashcard.value = false;
       message_flashcard.value = "An error occurred. Please try again later.";
-
     }
     return 0;
   }
 };
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const fetchStudySet = async () => {
   isLoading.value = true;
@@ -140,7 +145,7 @@ const fetchStudySet = async () => {
   try {
     // API Call
     const response = await axios.get(studyset_url, {
-      params: { user_id: Number(userId.value) }
+      params: { user_id: Number(learnerId) },
     });
 
     if (response.data && Array.isArray(response.data.data)) {
@@ -158,12 +163,14 @@ const fetchStudySet = async () => {
         };
       });
 
-      const flashcardCountPromises = studySet_result.value.map(async (studyset) => {
-        studyset.flashcard_count = await fetchFlashcardCount(studyset.id);
-      });
+      const flashcardCountPromises = studySet_result.value.map(
+        async (studyset) => {
+          studyset.flashcard_count = await fetchFlashcardCount(studyset.id);
+        }
+      );
       await Promise.all(flashcardCountPromises);
 
-      const serializableStudySets = studySet_result.value.map(studyset => {
+      const serializableStudySets = studySet_result.value.map((studyset) => {
         return {
           id: studyset.id,
           title: studyset.title,
@@ -171,21 +178,18 @@ const fetchStudySet = async () => {
           subject: studyset.subject,
           flashcard_count: studyset.flashcard_count,
           created_at: studyset.created_at,
-          updated_at: studyset.updated_at
+          updated_at: studyset.updated_at,
         };
       });
 
       await studySetDb.studysets.bulkPut(serializableStudySets);
-
     } else {
       isSuccessful_studyset.value = false;
       message_studyset.value = "API response is not an array";
       studySet_result.value = [];
       studySetCounts.value = 0;
-
     }
     return studySet_result;
-
   } catch (error) {
     if (error.response && error.response.status === 400) {
       isSuccessful_studyset.value = error.response.data.successful;
@@ -209,20 +213,26 @@ const fetchStudySet = async () => {
   }
 };
 
-
 const fetchStudySetFromDb = async () => {
   try {
-    studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
+    studySet_db.value = await studySetDb.studysets
+      .orderBy("updated_at")
+      .reverse()
+      .toArray();
 
     if (studySet_db.value.length === 0) {
       await fetchStudySet();
-      studySet_db.value = await studySetDb.studysets.orderBy("updated_at").reverse().toArray();
+      studySet_db.value = await studySetDb.studysets
+        .orderBy("updated_at")
+        .reverse()
+        .toArray();
     }
 
     studySetCounts.value = studySet_db.value.length;
     isSuccessful_studyset.value = studySetCounts.value > 0;
-    message_studyset.value = isSuccessful_studyset.value ? "Study sets fetched successfully" : "No study sets found";
-
+    message_studyset.value = isSuccessful_studyset.value
+      ? "Study sets fetched successfully"
+      : "Create your first study set to get started!";
   } catch (error) {
     isSuccessful_studyset.value = false;
     message_studyset.value = "An error occurred. Please try again later.";
@@ -230,102 +240,119 @@ const fetchStudySetFromDb = async () => {
 };
 
 onMounted(() => {
-  fetchStudySetFromDb();
-  document.title = "Study Sets";
+  document.title = "Study Sets"; // Set the document title first
+  fetchStudySetFromDb(); // Fetch the study set data
 });
-
 </script>
 
 <template>
-  <div class="my-16 ml-12 mr-12 min-h-screen">
-    <div class="flex flex-col lg:flex-row justify-between space-x-[50px] content-center">
-      <Search_Bar_Studyset
-          v-model="input"
-          class="w-[700px]" />
-      <div class="relative">
-        <Subject_Selector
-            @click="toggleModal('subjectSelectModal')"
-            class="relative w-[350px] mb-3"
-            :placeholder="'Choose Subject'"
-            :outerClass="'athAIna-border-outer'"
-            :innerClass="'athAIna-border-inner'"
-            v-model="subject"
-        />
-        <Filter_Bar_Studyset
-            v-if="modals.subjectSelectModal"
-            :items=dropdownOptions
-            top="50px"
-            right="0px"
-            height="max-content"
-            width="350px"
-            @update:modelValue="updateSubject"
+  <transition appear name="fade">
+    <div>
+      <div class="my-16 ml-12 mr-12 min-h-screen">
+        <div
+          class="flex flex-col lg:flex-row justify-between space-x-[50px] content-center"
         >
-        </Filter_Bar_Studyset>
-      </div>
+          <Search_Bar_Studyset v-model="input" class="w-[700px]" />
+          <div class="relative">
+            <Subject_Selector
+              @click="toggleModal('subjectSelectModal')"
+              class="relative w-[350px] mb-3"
+              :placeholder="'Choose Subject'"
+              :outerClass="'athAIna-border-outer'"
+              :innerClass="'athAIna-border-inner'"
+              v-model="subject"
+            />
+            <Filter_Bar_Studyset
+              v-if="modals.subjectSelectModal"
+              :items="dropdownOptions"
+              top="50px"
+              right="0px"
+              height="max-content"
+              width="350px"
+              @update:modelValue="updateSubject"
+            >
+            </Filter_Bar_Studyset>
+          </div>
 
-      <div
-        @click="openModal"
-        class="btn hover:cursor-pointer w-[250px] font-semibold"
-      >
-        Create Studyset
-      </div>
-    </div>
+          <div
+            @click="openModal"
+            class="btn hover:cursor-pointer w-[250px] font-semibold"
+          >
+            Create Studyset
+          </div>
+        </div>
 
-    <div class="mt-[30px]">
-      <div class="text-[16px] font-medium">Select a Study Set to View</div>
-      <div
-        class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"
-      ></div>
-    </div>
+        <div class="mt-[30px]">
+          <div class="text-[16px] font-medium">Select a Study Set to View</div>
+          <div
+            class="w-full size-[1px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red mt-[12px]"
+          ></div>
+        </div>
 
-    <div v-if="!isSuccessful_studyset">
-      <div class="text-athAIna-sm font-medium mt-[30px]"> {{ message_studyset }} </div>
-    </div>
+        <div v-if="!isSuccessful_studyset">
+          <div class="text-athAIna-sm font-medium mt-[30px]">
+            {{ message_studyset }}
+          </div>
+        </div>
 
-    <div v-if="isSuccessful_studySetFilterSearch">
-      <div class="text-athAIna-sm font-medium mt-[30px]"> {{ message_studySetFilterSearch }} </div>
-    </div>
+        <div v-if="isSuccessful_studySetFilterSearch">
+          <div class="text-athAIna-sm font-medium mt-[30px]">
+            {{ message_studySetFilterSearch }}
+          </div>
+        </div>
 
-    <div v-if="isSuccessful_studyset">
-      <div class="grid mt-[60px] mb-[60px] gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <div v-for="(s, index) in currentStudySets" :key="index">
-          <Studyset_Card
-            :title="s.title"
-            :description="s.description"
-            :subject="getSubjectName(s.subject)"
-            :flashcardCount="s.flashcard_count"
-            :studySetId="s.id"
+        <div v-if="isSuccessful_studyset">
+          <div
+            class="grid mt-[60px] mb-[60px] gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <div v-for="(s, index) in currentStudySets" :key="index">
+              <Studyset_Card
+                :title="s.title"
+                :description="s.description"
+                :subject="getSubjectName(s.subject)"
+                :flashcardCount="s.flashcard_count"
+                :studySetId="s.id"
+              />
+            </div>
+          </div>
+
+          <Pagination
+            :total-items="studySetCounts"
+            :items-per-page="itemsPerPage"
+            :current-page="currentPage"
+            @update:currentPage="currentPage = $event"
           />
         </div>
+
+        <Create_Studyset
+          :isVisible="isModalVisible"
+          title="Create Studyset – athAIna"
+          @close="closeModal"
+        >
+        </Create_Studyset>
+
+        <Loading_Modal
+          :condition="isSuccessful_studyset"
+          :isVisible="isLoading"
+          :loadingHeader="'Fetching study sets...'"
+          :loadingMessage="'Please wait for a couple of seconds'"
+        />
       </div>
-
-
-      <Pagination
-          :total-items="studySetCounts"
-          :items-per-page="itemsPerPage"
-          :current-page="currentPage"
-          @update:currentPage="currentPage = $event"
-      />
-
     </div>
-
-    <Create_Studyset
-        :isVisible="isModalVisible"
-        title="Create Studyset – athAIna"
-        @close="closeModal"
-    >
-    </Create_Studyset>
-
-    <Loading_Modal
-        :condition="isSuccessful_studyset"
-        :isVisible="isLoading"
-        :loadingHeader="'Fetching study sets...'"
-        :loadingMessage="'Please wait for a couple of seconds'"
-    />
-
-
-    </div>
-
+  </transition>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>

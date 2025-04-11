@@ -55,7 +55,6 @@ const routes = [
     component: Demo_Page,
     meta: { title: "Demo – athAIna" },
   },
-
   {
     path: "/faqs/",
     name: "FAQs_Page",
@@ -69,6 +68,7 @@ const routes = [
     meta: { title: "Contact Us – athAIna" },
   },
   {
+
     path: "/:studySetTitle/:studySetId/flashcards/save",
     name: "Create_Flashcard_Manually",
     component: Create_Flashcard_Manually,
@@ -197,38 +197,38 @@ const routes = [
     path: "/flashcards",
     children: [
       {
-        path: "create/:studySetTitle/:studySetId",
-        name: "Create_Flashcard_Manually1",
+        path: "/:studySetId/:studySetTitle/create",
+        name: "Create_Flashcard_Manually",
         component: Create_Flashcard_Manually,
         meta: { title: "Create Flashcard – athAIna", requiresAuth: true },
       },
       {
         path: "generate_with_ai",
-        name: "Generate_Flashcard_with_AI1",
+        name: "Generate_Flashcard_with_AI",
         component: Generate_Flashcard_with_AI,
         meta: { title: "Generate AI Flashcard – athAIna", requiresAuth: true },
       },
       {
-        path: "library/:studySetTitle/:studySetId",
-        name: "Library_Page_Flashcard1",
+        path: "library/:studySetId/:studySetTitle",
+        name: "Library_Page_Flashcard",
         component: Library_Page_Flashcard,
         meta: { title: "Flashcards – athAIna", requiresAuth: true },
       },
       {
-        path: "review/:studySetTitle/:studySetId/:id",
+        path: "review/:studySetId/:studySetTitle/:id",
         name: "Review_Mode",
         component: Review_Mode,
         meta: { title: "Review Mode – athAIna", requiresAuth: true },
       },
       {
-        path: "test/:studySetTitle/:studySetId/:batchId",
-        name: "Test_Mode1",
+        path: "/:studySetTitle/:studySetId/test/:batchId",
+        name: "Test_Mode",
         component: Test_mode,
         meta: { title: "Test Mode – athAIna", requiresAuth: true },
       },
       {
-        path: "update/:studySetTitle/:studySetId/:flashcardId",
-        name: "Update_Flashcard1",
+        path: "/:studySetId/:studySetTitle/update/:flashcardId",
+        name: "Update_Flashcard",
         component: Update_Flashcard,
         meta: { title: "Update Flashcard – athAIna", requiresAuth: true },
       },
@@ -244,17 +244,20 @@ const routes = [
     path: "/studysets",
     children: [
       {
+
         path: "create",
         name: "Create_Studyset1",
         component: Create_Studyset,
         meta: { title: "Create Study Set – athAIna", requiresAuth: true },
       },
       {
+
         path: "library",
         name: "Library_Page_Studyset",
         component: Library_Page_Studyset,
         meta: { title: "Study Sets – athAIna", requiresAuth: true },
       },
+
       {
         path: "update",
         name: "Update_Studyset1",
