@@ -9,6 +9,10 @@ import { useStudysetStore } from "../../stores/studySetStore.js";
 import {testModeDB} from "@/views/flashcardapp/dexie.js";
 import axios from '@/axios';
 import {useRoute} from "vue-router";
+import { useUserStore} from "../../stores/userStore.js";
+
+const userStore = useUserStore();
+const learnerId = userStore.getUserID();
 
 const ai_validation_url = 'test/validate_learner_answer/';
 const save_test_results_url = 'test/save/'
@@ -227,6 +231,7 @@ const saveTestScore = async () => {
 
   try {
     const newTestScore = {
+      user_id: Number(learnerId),
       batch: batch_pk.value,
       studyset_instance: studySetId,
       score: correctAnswersCount.value,

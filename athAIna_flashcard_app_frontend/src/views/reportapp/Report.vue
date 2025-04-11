@@ -72,14 +72,14 @@ const fetchTestReport = async () => {
   try {
     const url = 'report';
     const start = new Date(startDate.value);
-    start.setHours(0, 0, 0, 0);
+    start.setUTCHours(0, 0, 0, 0);
 
     const end = new Date(endDate.value);
-    end.setHours(23, 59, 59, 999);
+    end.setUTCHours(23, 59, 59, 999);
 
     const response = await axios.get(url, {
       params: {
-        id: learnerId,
+        user_id: learnerId,
         studyset_id: Number(studySetSelected.value.id),
         start_date: start.toISOString(),
         end_date: end.toISOString(),
