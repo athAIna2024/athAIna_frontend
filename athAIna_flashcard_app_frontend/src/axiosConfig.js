@@ -1,10 +1,24 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8009",
   withCredentials: true,
 });
+
+const isTokenExpired = (token) => {
+  try {
+    const { exp } = jwtDecode(token);
+    return Date.now() >= exp * 1000;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return true; // If there's an error decoding, consider the token expired
+  }
+};
 
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -68,6 +82,26 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error); // Reject other errors
+  }
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.error("Access denied:", error.response.data);
+      const refreshToken = Cookies.get("refresh_token");
+      if (refreshToken && isTokenExpired(refreshToken)) {
+        console.error("Refresh token expired. Redirecting to login.");
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
+        Cookies.remove("athAIna_csrfToken");
+        router.push({ name: "Login" });
+      } else {
+        console.error("Access denied:", error.response.data);
+      }
+    }
+    return Promise.reject(error);
   }
 );
 
