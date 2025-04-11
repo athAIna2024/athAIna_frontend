@@ -2,6 +2,7 @@
 import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
+import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const router = useRouter();
 
@@ -21,6 +22,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close"]);
+const isResendingOTP = ref(false);
 
 const step = ref(1);
 const error = ref("");
@@ -49,6 +51,7 @@ const startCountdown = () => {
 
 const resendOTP = async () => {
   try {
+    isResendingOTP.value = true; // Show loading modal
     error.value = "";
     // Use the correct payload format for your backend
     const response = await axios.post("/account/resend-otp/", {
@@ -66,6 +69,8 @@ const resendOTP = async () => {
   } catch (err) {
     error.value = err.response?.data?.message || "Failed to resend OTP";
     console.error("Error resending OTP", err);
+  } finally {
+    isResendingOTP.value = false; // Hide loading modal when done
   }
 };
 
@@ -299,6 +304,15 @@ const stepText = computed(() => {
         </div>
       </div>
     </div>
+
+    <!-- Using the Loading_Modal component -->
+    <Loading_Modal
+      :isVisible="isResendingOTP"
+      loadingHeader="Resending OTP"
+      loadingMessage="Processing your request"
+      :condition="false"
+      @close="isResendingOTP = false"
+    />
   </div>
 </template>
 

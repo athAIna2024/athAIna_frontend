@@ -1,54 +1,60 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "@/axios";
 import { useUserStore } from "../../../stores/userStore";
 import Success_Message from "@/components/Success_Message.vue";
+import Loading_Modal from "@/components/Loading_Modal.vue";
+
+const props = defineProps({
+  purpose: {
+    type: String,
+    default: "password-change",
+  },
+});
 
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 
-const props = defineProps({
-  title: {
-    type: String,
-    default: "OTP Verification",
-  },
-  email: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  purpose: {
-    type: String,
-    default: "change_password",
-  },
-});
-
-// Use email from props or from route params
-const userEmail = computed(
-  () => props.email || route.params.email || userStore.getEmail()
-);
-
 const error = ref("");
 const isVerified = ref(false);
+const userEmail = ref("");
+
+// States for loading and modals
+const isLoading = ref(false);
+const isLoadingModalVisible = ref(false);
 const isSuccessMessageVisible = ref(false);
 
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
 
 // Countdown and OTP resend functionality
-const countdown = ref(10);
+const countdown = ref(5);
 const isCountdownActive = ref(false);
 let countdownInterval = null;
 
-const startCountdown = () => {
-  isCountdownActive.value = true;
-  countdown.value = 10;
+onMounted(() => {
+  // Get the email from route params or vuex store
+  userEmail.value = route.query.email || userStore.getEmail() || "";
+  if (!userEmail.value) {
+    error.value = "Email not found. Please try again.";
+    return;
+  }
 
+  startCountdown();
+});
+
+onBeforeUnmount(() => {
+  // Clear interval when component is unmounted
   if (countdownInterval) {
     clearInterval(countdownInterval);
   }
+});
+
+const startCountdown = () => {
+  isCountdownActive.value = true;
+  countdown.value = 5;
 
   countdownInterval = setInterval(() => {
     countdown.value--;
@@ -58,37 +64,6 @@ const startCountdown = () => {
     }
   }, 1000);
 };
-
-const resendOTP = async () => {
-  try {
-    if (isCountdownActive.value) return;
-
-    error.value = "";
-
-    const response = await axios.post("/account/resend-otp/", {
-      email: userEmail.value,
-      purpose: props.purpose,
-    });
-
-    if (response.data.successful) {
-      otpValue.value = "";
-      displayOTP.value = ["", "", "", "", "", ""];
-      startCountdown();
-    }
-  } catch (err) {
-    error.value = err.response?.data?.message || "Failed to resend OTP";
-  }
-};
-
-onMounted(() => {
-  startCountdown();
-});
-
-onBeforeUnmount(() => {
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
-  }
-});
 
 const handleOTPChange = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, "");
@@ -114,24 +89,42 @@ const handleBoxInput = (boxIndex, event) => {
 };
 
 const handleBoxKeydown = (boxIndex, event) => {
-  if (event.key === "Backspace") {
-    if (displayOTP.value[boxIndex]) {
-      displayOTP.value[boxIndex] = "";
+  if (
+    event.key === "Backspace" &&
+    !displayOTP.value[boxIndex] &&
+    boxIndex > 0
+  ) {
+    event.preventDefault();
+    const prevInput = event.target.previousElementSibling;
+    if (prevInput) {
+      prevInput.focus();
+      displayOTP.value[boxIndex - 1] = "";
       otpValue.value = displayOTP.value.join("");
-    } else if (boxIndex > 0) {
-      event.preventDefault();
-      const prevInput = event.target.previousElementSibling;
-      if (prevInput) {
-        prevInput.focus();
-        displayOTP.value[boxIndex - 1] = "";
-        otpValue.value = displayOTP.value.join("");
-      }
     }
   }
 };
 
+const nextStep = () => {
+  if (otpValue.value.length === 6) {
+    verifyOTP();
+  } else {
+    error.value = "Please enter a valid OTP code";
+  }
+};
+
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
+
+const closeSuccessMessage = () => {
+  isSuccessMessageVisible.value = false;
+};
+
 const verifyOTP = async () => {
   try {
+    isLoading.value = true;
+    isLoadingModalVisible.value = true;
+
     const response = await axios.post("/account/verify-password-change-otp/", {
       otp: otpValue.value,
       email: userEmail.value,
@@ -139,6 +132,7 @@ const verifyOTP = async () => {
 
     if (response.data.successful) {
       isVerified.value = true;
+      isLoadingModalVisible.value = false;
       isSuccessMessageVisible.value = true;
 
       const resetLink = response.data.password_reset_link;
@@ -155,146 +149,116 @@ const verifyOTP = async () => {
     }
   } catch (err) {
     error.value = err.response?.data?.message || "Invalid OTP code";
+    isLoadingModalVisible.value = false;
+  } finally {
+    isLoading.value = false;
   }
 };
 
-const navigateBack = () => {
-  router.push({ name: "Library_Page_Studyset" });
-};
+const resendOTP = async () => {
+  try {
+    if (isCountdownActive.value) return;
 
-const nextStep = () => {
-  if (otpValue.value.length === 6) {
-    verifyOTP();
-  } else {
-    error.value = "Please enter a valid OTP code";
+    error.value = "";
+    isLoading.value = true;
+    isLoadingModalVisible.value = true;
+
+    const response = await axios.post("/account/resend-otp/", {
+      email: userEmail.value,
+      purpose: props.purpose,
+    });
+
+    if (response.data.successful) {
+      otpValue.value = "";
+      displayOTP.value = ["", "", "", "", "", ""];
+
+      isLoadingModalVisible.value = false;
+      isSuccessMessageVisible.value = false;
+
+      setTimeout(() => {
+        isSuccessMessageVisible.value = false;
+        startCountdown();
+      }, 2000);
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || "Failed to resend OTP";
+  } finally {
+    isLoading.value = false;
+    isLoadingModalVisible.value = false;
   }
-};
-
-const closeSuccessMessage = () => {
-  isSuccessMessageVisible.value = false;
 };
 </script>
 
 <template>
   <div
-    class="flex flex-row min-h-screen items-center justify-center content-center text-center bg-center"
+    class="min-h-screen flex items-center justify-center bg-athAIna-dark py-12 px-4"
   >
-    <!-- Right Card -->
-    <div
-      class="mt-8 ml-10 rotate-[-12deg] shadow-md w-[400px] h-[550px] rounded-lg bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
-    ></div>
+    <div class="athAIna-border-outer p-1 flex flex-col w-full max-w-[550px]">
+      <div class="athAIna-border-inner p-4 text-center relative">
+        <h1 class="m-8 text-athAIna-lg font-semibold">OTP VERIFICATION</h1>
+        <p class="m-8 text-athAIna-md">
+          We've sent a One Time Password (OTP) to verify your email.
+        </p>
+        <p v-if="error" class="text-athAIna-red text-sm mb-4">{{ error }}</p>
+        <div class="flex flex-row justify-center items-center">
+          <input
+            type="text"
+            v-model="otpValue"
+            class="sr-only"
+            @input="handleOTPChange"
+          />
+          <div class="flex flex-row justify-center items-center gap-2">
+            <input
+              v-for="(digit, boxIndex) in displayOTP"
+              :key="boxIndex"
+              type="text"
+              maxlength="1"
+              v-model="displayOTP[boxIndex]"
+              @input="handleBoxInput(boxIndex, $event)"
+              @keydown="handleBoxKeydown(boxIndex, $event)"
+              class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
+            />
+          </div>
+        </div>
 
-    <!-- Left Card -->
-    <div
-      class="mt-16 mr-12 rotate-[15deg] shadow-md w-[400px] h-[500px] rounded-lg bg-gradient-to-bl from-athAIna-yellow to-athAIna-red"
-    ></div>
-
-    <!-- Middle Card -->
-    <div
-      class="absolute bg-gradient-to-b rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red w-[450px] h-[600px] bg-athAIna-white flex flex-col p-[5px]"
-    >
-      <div
-        class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
-      >
-        <!-- Back Button -->
-        <div class="absolute top-8 left-8 z-10">
-          <button
-            @click="navigateBack"
-            class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
+        <!-- Resend OTP section -->
+        <div class="mt-4 mb-2 text-sm text-athAIna-violet">
+          <span v-if="isCountdownActive"
+            >Resend OTP in {{ countdown }} seconds</span
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="w-6 h-6 mr-1"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-              />
-            </svg>
-            <span class="font-medium">Back to Library</span>
+          <button
+            v-else
+            @click="resendOTP"
+            class="text-athAIna-red hover:underline focus:outline-none"
+          >
+            Resend OTP
           </button>
         </div>
 
-        <!-- Logo -->
-        <div class="mt-5 w-auto flex flex-row justify-center items-center">
-          <img
-            src="@/assets/athAIna.svg"
-            alt="Logo"
-            class="w-[185px] h-[111px] mb-3"
-          />
-        </div>
-
-        <!-- Title -->
-        <h1
-          class="text-athAIna-violet font-semibold text-lg w-full text-center"
-        >
-          OTP Verification
-        </h1>
-
-        <div class="flex flex-col items-center mt-5">
-          <p class="mb-4 text-gray-600 text-sm">
-            We've sent a verification code to your email
-          </p>
-
-          <!-- Error Message -->
-          <p v-if="error" class="text-athAIna-red text-xs mb-4">{{ error }}</p>
-
-          <!-- OTP Input Boxes -->
-          <div class="flex flex-row justify-center items-center mt-4">
-            <input
-              type="text"
-              v-model="otpValue"
-              class="sr-only"
-              @input="handleOTPChange"
-            />
-            <div class="flex flex-row justify-center items-center gap-2">
-              <input
-                v-for="(digit, index) in displayOTP"
-                :key="index"
-                type="text"
-                maxlength="1"
-                :value="digit"
-                @input="handleBoxInput(index, $event)"
-                @keydown="handleBoxKeydown(index, $event)"
-                class="w-11 h-11 text-center text-xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
-              />
-            </div>
-          </div>
-
-          <!-- Resend OTP section -->
-          <div class="mt-6 text-sm text-athAIna-violet">
-            <span v-if="isCountdownActive"
-              >Resend OTP in {{ countdown }} seconds</span
-            >
-            <button
-              v-else
-              @click="resendOTP"
-              class="text-athAIna-red hover:underline focus:outline-none"
-            >
-              Resend OTP
-            </button>
-          </div>
-
-          <!-- Verify Button -->
-          <div class="mt-8">
-            <button
-              @click="nextStep"
-              class="verify-btn w-48"
-              :disabled="otpValue.length !== 6"
-            >
-              Verify
-            </button>
-          </div>
+        <div class="m-8 flex justify-center">
+          <button
+            @click="nextStep"
+            class="btn w-48"
+            :disabled="otpValue.length !== 6"
+          >
+            Verify
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Success Message Component -->
+    <!-- Loading Modal -->
+    <Loading_Modal
+      :loadingMessage="
+        isVerified ? 'Verifying your email' : 'Processing your request'
+      "
+      :loadingHeader="'Please wait'"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+
+    <!-- Success Message -->
     <Success_Message
       :successHeader="'Verification Successful!'"
       :successMessage="'Redirecting to change your password...'"
@@ -305,8 +269,8 @@ const closeSuccessMessage = () => {
 </template>
 
 <style scoped>
-.verify-btn {
-  @apply bg-gradient-to-r from-athAIna-yellow to-athAIna-red text-center py-2 px-4 font-medium rounded-xl shadow-md hover:from-athAIna-red hover:to-athAIna-yellow transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
-  color: #ffffff;
+.btn {
+  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  color: white;
 }
 </style>
