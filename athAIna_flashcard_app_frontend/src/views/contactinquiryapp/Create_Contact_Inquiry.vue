@@ -55,11 +55,9 @@ const closeSuccessMessage = () => {
 </script>
 <template>
   <div class="flex flex-row justify-between min-h-screen">
-    <div class="flex flex-col items-center mx-10 justify-center">
-      <h1
-        class="text-athAIna-violet font-semibold w-full p-10 text-center lg:text-left"
-      >
-        Welcome Back!
+    <div class="flex flex-col items-center mx-14 mt-8 w-1/2">
+      <h1 class="text-athAIna-violet font-semibold w-full pt-10 pb-6 px-0 text-center text-[24px] flex justify-start">
+        SEND INQUIRY
       </h1>
 
       <!-- Success Message -->
@@ -72,134 +70,139 @@ const closeSuccessMessage = () => {
 
       <!-- Error Message -->
       <div
-        v-if="error"
-        class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg w-[700px]"
+          v-if="error"
+          class="mb-0 bg-red-100 text-athAIna-red rounded-lg w-full"
       >
         {{ error }}
       </div>
 
-      <div
-        class="m-10 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-full md:w-[700px]"
-      >
-        <div class="relative flex flex-row items-center">
-          <svg
+      <!-- Name Field -->
+      <div class="m-5 my-4 px-2 border-[2.5px] border-athAIna-violet rounded-[20px] h-[40px] w-full relative flex flex-row items-center">
+        <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
             class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
-          >
-            <path
+        >
+          <path
               stroke-linecap="round"
               stroke-linejoin="round"
               d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-            />
-          </svg>
-          <input
+          />
+        </svg>
+        <input
             v-model="formData.name"
             type="text"
             placeholder="Name"
             class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
-          />
-        </div>
+        />
       </div>
 
-      <div
-        class="m-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-[700px]"
-      >
-        <div class="relative flex flex-row items-center">
+      <!-- Email Field -->
+      <div class="m-5 mb-4 px-2 border-[2.5px] border-athAIna-violet rounded-[20px] h-[40px] w-full relative flex flex-row items-center">
+        <div class="relative flex flex-row items-center w-full">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-[4px] top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
             />
           </svg>
           <input
-            v-model="formData.email"
-            type="email"
-            placeholder="Email"
-            class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+              v-model="formData.email"
+              type="email"
+              placeholder="Email"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
           />
         </div>
       </div>
 
-      <div
-        class="m-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[136px] w-[700px]"
-      >
-        <div class="relative flex flex-row items-center">
+      <!-- Inquiry Field -->
+      <div class="m-5 mb-4 px-2 border-[2.5px] border-athAIna-violet rounded-[20px] h-[136px] w-full relative flex flex-row items-center">
+        <div class="relative flex flex-row items-center w-full">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet -mt-12 ml-2 mr-3"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-1 top-[75px] transform -translate-y-1/2 text-athAIna-violet -mt-12 ml-2 mr-3"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
             />
           </svg>
           <textarea
-            v-model="formData.message"
-            placeholder="Inquiry"
-            class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[128px] flex flex-row items-center pl-[50px]"
+              v-model="formData.message"
+              placeholder="Inquiry"
+              class="text-[14px] py-3 text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[128px] flex flex-row items-center pl-[50px]"
           ></textarea>
         </div>
+      </div>
 
-        <div class="flex my-10 justify-center">
-          <button
+      <!-- Submit Button -->
+      <div class="flex my-10 justify-center w-full">
+        <button
             @click="submitInquiry"
             :disabled="loading"
-            class="w-full bg-athAIna-violet text-athAIna-white py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:bg-opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ loading ? "Sending..." : "Send Inquiry" }}
-          </button>
+            class="w-full btn bg-athAIna-violet font-semibold text-athAIna-white py-2 px-4 rounded-full hover:bg-opacity-90 transition-colors duration-200 disabled:bg-opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ loading ? "Sending..." : "Send Inquiry" }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Sample Card Display -->
+    <div class="ml-0 mr-0 pr-0 flex justify-center w-1/2 mt-16 mb-10 ">
+      <!-- Lowermost Card -->
+      <div
+          class="mr-12 mt-7 absolute rotate-[-4deg] shadow-md w-[360px] h-[480px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
+      ></div>
+
+      <!-- Middle Card-->
+      <div
+          class="mr-0 ml-5 mt-3 absolute rotate-[0deg] shadow-md w-[360px] h-[480px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
+      ></div>
+
+      <!-- Topmost Card -->
+      <div
+          class="absolute ml-20 p-[5px] shadow-md bg-gradient-to-br rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red rotate-[4deg] w-[360px] h-[480px]"
+      >
+        <div class="ml-0 rotate-[0deg] w-[350px] h-[470px] rounded-[10px] bg-athAIna-white flex flex-col gap-x-2 justify-center items-center align-middle">
+          <span class="p-0 text-[18px] font-semibold">
+            Contact Us
+          </span>
+          <span class="p-0 text-[14px] font-normal items-center align-middle">
+            Fill out the form with your inquiry or concern
+          </span>
         </div>
       </div>
     </div>
 
-    <div class="invisible 2xl:visible items-center flex justify-center mr-96">
-      <div
-        class="absolute rotate-[12deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
-      ></div>
-      <div
-        class="absolute rotate-[6deg] shadow-md w-[450px] h-[600px] rounded-lg bg-gradient-to-br from-athAIna-red to-athAIna-yellow"
-      ></div>
-      <div
-        class="absolute w-[450px] h-[600px] rounded-lg border-4 bg-athAIna-white flex"
-      >
-        <span class="absolute p-8 text-center font-semibold">
-          Contact Us <br /><br />
-          <span class="font-normal">
-            Fill out the form with your inquiry or concern
-          </span>
-        </span>
-      </div>
-    </div>
     <LoadingModal
-      :loading-header="'Processing Your Inquiry'"
-      :loading-message="'Please wait while we submit your inquiry...'"
-      :condition="!loading"
-      :is-visible="isLoadingModalVisible"
-      @close="closeLoadingModal"
+        :loading-header="'Processing Your Inquiry'"
+        :loading-message="'Please wait while we submit your inquiry...'"
+        :condition="!loading"
+        :is-visible="isLoadingModalVisible"
+        @close="closeLoadingModal"
     />
 
     <SuccessMessage
-      :success-header="'Inquiry Submitted'"
-      :success-message="'Your inquiry has been successfully submitted. We will get back to you soon.'"
-      :is-visible="isSuccessMessageVisible"
-      @close="closeSuccessMessage"
+        :success-header="'Inquiry Submitted'"
+        :success-message="'Your inquiry has been successfully submitted. We will get back to you soon.'"
+        :is-visible="isSuccessMessageVisible"
+        @close="closeSuccessMessage"
     />
   </div>
 </template>
