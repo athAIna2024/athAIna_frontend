@@ -49,7 +49,7 @@
         </router-link>
       </div>
       <router-link :to="{ name: 'Signup' }">
-        <button class="btn">Sign up</button>
+        <button class="btn px-10">Sign up</button>
       </router-link>
     </div>
   </div>
