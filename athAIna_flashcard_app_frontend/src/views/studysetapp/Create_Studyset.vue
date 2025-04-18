@@ -14,7 +14,7 @@ const isSuccessful = ref(false);
 const message = ref("");
 const title = ref("");
 const description = ref("");
-const subject = ref({ key: "", value: "" });
+const subject = ref({ key: "No subject", value: "Choose a subject" });
 
 const userStore = useUserStore();
 const learnerId = userStore.getUserID();
@@ -150,7 +150,7 @@ const saveStudySet = async () => {
               <Subject_Selector
                   @click="toggleModal('subjectSelectModal')"
                   class="relative w-full mb-3"
-                  :placeholder="'Choose Subject'"
+                  :placeholder="''"
                   :outerClass="''"
                   :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
                   v-model="subject.value"

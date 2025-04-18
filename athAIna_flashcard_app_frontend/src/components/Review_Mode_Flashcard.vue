@@ -164,7 +164,19 @@ const navigateToPreviousFlashcard = () => {
       </svg>
     </router-link>
     <span class="p-4 text-2xl font-semibold">
-      {{ studysetName }}
+      <button>
+        <router-link
+          :to="{
+            name: 'Library_Page_Flashcard',
+            params: {
+              studySetTitle: studysetName.value,
+              studySetID: flashcard.studyset_id,
+            },
+          }"
+        >
+          < {{ studysetName }}</router-link
+        >
+      </button>
     </span>
   </div>
 

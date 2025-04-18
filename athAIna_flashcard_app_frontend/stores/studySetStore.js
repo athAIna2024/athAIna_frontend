@@ -16,12 +16,27 @@ export const useStudysetStore = defineStore('studyset', () => {
         studySetTitle.value = title;
     };
 
+    const getStudySetId = () => {
+        return studySetId.value;
+    };
+
+    const getStudySetTitle = () => {
+        return studySetTitle.value;
+    };
+
     const clear = () => {
         studySetId.value = null;
         studySetTitle.value = null;
     }
 
-    return { studySetId, setStudySetId, studySetTitle, setStudySetTitle, clear };
+    return {
+        studySetId,
+        setStudySetId,
+        getStudySetId,
+        studySetTitle,
+        setStudySetTitle,
+        getStudySetTitle,
+        clear };
 }, {
     persist: true,
 });

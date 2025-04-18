@@ -144,44 +144,7 @@ const navigateToLibraryPage = () => {
           <div class="flex flex-col gap-4">
             <div class="flex flex-row justify-between">
               <span class="text-athAIna-violet ml-1 font-bold text-[22px]">Question</span>
-              <!-- Insert Image -->
-              <div v-if="!imageName" class="flex flex-row bg-athAIna-violet w-auto px-8 py-2 rounded-full">
-                <div class="flex flex-row items-center gap-2 justify-center my-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                  </svg>
-                  <label for="image-upload">
-                    <span class="text-athAIna-white text-[14px]">+ Insert Image</span>
-                    <input
-                        type="file"
-                        accept="image/png, image/jpeg"
-                        id="image-upload"
-                        class="hidden"
-                        @change="handleFileUpload"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div class="flex flex-row bg-athAIna-violet w-auto px-8 py-2 rounded-full" v-if="imageName">
-                <div class="flex flex-row items-center gap-2 justify-center my-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                  </svg>
-                  <label for="image-upload" class="text-athAIna-white">
-                    <span v-if="imageName.length > 50">{{ imageName.substring(0, 25) + "..." }}</span>
-                    <span v-else-if="imageName">{{ imageName }}</span>
-                  </label>
-                  <button @click="clearImage">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
             </div>
-
-            <div v-if="field_errors.image" class="text-athAIna-red text-athAIna-base">{{ field_errors.image }}</div>
 
             <div class="athAIna-border-outer p-1 mb-2 mt-3">
               <div class="athAIna-border-inner py-1">
@@ -195,7 +158,40 @@ const navigateToLibraryPage = () => {
             </div>
             <div v-if="field_errors.question" class="text-athAIna-red text-athAIna-base mb-4">{{ field_errors.question }}</div>
 
-          </div>
+
+            <div class="athAIna-border-outer p-1 mb-4">
+              <div class="athAIna-border-inner py-1">
+
+                <div class="flex flex-row items-center gap-2 justify-center my-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                  </svg>
+                  <label for="image-upload">
+
+                    <span v-if="imageName">{{ imageName }}</span>
+                    <span v-else class="text-athAIna-base">+ Insert Image</span>
+                    <input
+                        type="file"
+                        accept="image/png, image/jpeg"
+                        id="image-upload"
+                        class="hidden"
+                        @change="handleFileUpload"
+                    />
+                  </label>
+
+                  <button @click="clearImage" v-if="imageName">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                </div>
+              </div>
+            </div>
+
+            <div v-if="field_errors.image" class="text-athAIna-red text-athAIna-base">{{ field_errors.image }}</div>
+
+            </div>
         </div>
 
         <div class="w-auto mx-10 mt-11 size-[3px] bg-gradient-to-r from-athAIna-yellow via-athAIna-orange to-athAIna-red my-6"></div>
@@ -227,7 +223,7 @@ const navigateToLibraryPage = () => {
       <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
         <button @click="navigateToLibraryPage" class="athAIna-border-inner rounded-full"> Cancel </button>
       </div>
-      <button class="btn mt-10 mx-2" type="submit"> Submit </button>
+      <button class="btn mt-10 mx-2 w-32" type="submit"> Submit </button>
     </div>
   </form>
 </template>

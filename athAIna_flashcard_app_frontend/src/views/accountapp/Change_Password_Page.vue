@@ -9,7 +9,9 @@ import Loading_Modal from "@/components/Loading_Modal.vue";
 import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
 
 const goBackToLibrary = () => {
-  router.push("/library_of_studysets");
+  router.push({
+    name: "Library_Page_Studyset",
+  });
 };
 
 const isLoading = ref(false);
@@ -61,7 +63,6 @@ const togglePassword2 = () => {
 const togglePassword3 = () => {
   showPassword3.value = !showPassword3.value;
 };
-
 // Enhanced updatePassword function with better error handling
 const updatePassword = async () => {
   // Clear previous errors
@@ -167,14 +168,15 @@ const updatePassword = async () => {
 
       // Redirect to login page after successful password reset
       setTimeout(() => {
-        router.push("/login");
+        router.push({
+          name: "Library_Page_Studyset",
+        });
       }, 2000);
     }
   } catch (err) {
-    console.log(err.response?.data);
-    errors.general =
-      err.response?.data?.error ||
-      "An error occurred while updating your password";
+    errors.old_password =
+      err.response?.data?.old_password ||
+      "The password did not match our records";
   } finally {
     // Set loading state back to false after API call completes
     isLoading.value = false;
@@ -262,10 +264,11 @@ const closeSuccessMessage = () => {
               stroke="currentColor"
               class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
             >
-                <path 
-stroke-linecap="round" 
-stroke-linejoin="round" 
-d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
             </svg>
             <input
               v-model="oldPassword"
@@ -322,10 +325,11 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
               stroke="currentColor"
               class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
             >
-                <path 
-stroke-linecap="round" 
-stroke-linejoin="round" 
-d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
             </svg>
             <input
               v-model="newPassword"
@@ -382,10 +386,11 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
               stroke="currentColor"
               class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
             >
-                <path 
-stroke-linecap="round" 
-stroke-linejoin="round" 
-d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
             </svg>
             <input
               v-model="confirmPassword"
@@ -435,12 +440,11 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
         </div>
 
         <!-- General Error Message -->
-        <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
+        <!-- <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
           {{ errors.general }}
-        </div>
-
+        </div> -->
         <!-- Change Password Button -->
-        <div class="flex m-10 justify-center">
+        <div class="flex mt-6 justify-center">
           <button @click="updatePassword" class="btn w-full">
             {{ "Change Password" }}
           </button>
@@ -457,7 +461,7 @@ d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2
 
     <Success_Message
       :successHeader="'Password Change Successful'"
-      :successMessage="'Your password has been updated. Redirecting to login page...'"
+      :successMessage="'Your password has been updated. Redirecting to Library Of StudySet...'"
       :isVisible="isSuccessMessageVisible"
       @close="closeSuccessMessage"
     />
