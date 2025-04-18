@@ -71,21 +71,21 @@ const login = async () => {
       userStore.setDateJoined(response.data.user_date_joined);
       userStore.setEmail(response.data.email);
       userStore.setLoginTime(response.data.login_date);
-      Cookies.set("access_token", `${response.data.access}`, {
-        secure: true,
-        sameSite: "Strict",
-        expires: 3600 / (24 * 60 * 60),
-      });
-      Cookies.set("refresh_token", `${response.data.refresh}`, {
-        secure: true,
-        sameSite: "Strict",
-        expires: 1209600 / (24 * 60 * 60),
-      });
+      // Cookies.set("access_token", `${response.data.access}`, {
+      //   secure: true,
+      //   sameSite: "Strict",
+      //   expires: 3600 / (24 * 60 * 60),
+      // });
+      // Cookies.set("refresh_token", `${response.data.refresh}`, {
+      //   secure: true,
+      //   sameSite: "Strict",
+      //   expires: 1209600 / (24 * 60 * 60),
+      // });
 
-      authStore.setTokens({
-        access: response.data.access,
-        refresh: response.data.refresh,
-      });
+      // authStore.setTokens({
+      //   access: response.data.access,
+      //   refresh: response.data.refresh,
+      // });
 
       authStore.setUserID(response.data.user_id);
       userStore.setEmail(response.data.email);
