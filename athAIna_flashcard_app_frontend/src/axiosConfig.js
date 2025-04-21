@@ -63,7 +63,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         const refreshResponse = await axios.post(
-          "http://localhost:8009/account/token/refresh/",
+          "https://athaina.software/account/token/refresh/",
           {}, // No need to include the refresh token manually if it's HttpOnly
           { withCredentials: true }
         );
