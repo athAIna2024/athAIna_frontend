@@ -94,7 +94,7 @@ const updatePassword = async () => {
   }
 
   if (newPassword.value !== confirmPassword.value) {
-    errors.confirm_new_password = "Passwords do not match";
+    errors.general = "New passwords do not match";
 
     return;
   }
@@ -155,9 +155,7 @@ const updatePassword = async () => {
         confirm_new_password: confirmPassword.value,
       },
       {
-        headers: {
-          withCredentials: true,
-        },
+        Authorization: `Bearer ${Cookies.get("access_token")}`,
       }
     );
 
