@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8009",
+  baseURL: "https://athaina.software",
   withCredentials: true,
 });
 

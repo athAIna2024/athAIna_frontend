@@ -338,7 +338,7 @@ const successMessage = computed(() => {
       :loadingMessage="
         isVerified ? 'Verifying your email' : 'Processing your request'
       "
-      :loadingHeader="'Please wait'"
+      :loadingHeader="'Resending OTP'"
       :isVisible="isLoadingModalVisible"
       :condition="!isLoading"
       @close="closeLoadingModal"

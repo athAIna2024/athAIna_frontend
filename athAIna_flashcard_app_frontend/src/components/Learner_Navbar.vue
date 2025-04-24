@@ -12,10 +12,12 @@ import { useFlashcardSearchStore } from "../../stores/flashcardSearchStore.js";
 import { useStudysetStore } from "../../stores/studySetStore.js";
 import { useStudySetSearchStore } from "../../stores/studySetSearchStore.js";
 import { useTestModeStore } from "../../stores/testModeStore.js";
+import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const isLoading = ref(false);
+const isLoadingModalVisible = ref(false);
 
 const flashcardSearchStore = useFlashcardSearchStore();
 const studysetStore = useStudysetStore();
@@ -83,6 +85,7 @@ const handleChangePassword = async () => {
     toggleModal("accSettings");
 
     isLoading.value = true;
+    isLoadingModalVisible.value = true; // Show loading modal
     const email = userStore.getEmail();
 
     if (!email) {
@@ -104,7 +107,7 @@ const handleChangePassword = async () => {
       // Navigate directly to the OTP verification page
       router.push({
         name: "change_password_otp",
-        params: { email: email },
+        query: { email: email }, // Changed from params to query to match what Change_OTP expects
       });
     } else {
       throw new Error(
@@ -116,9 +119,13 @@ const handleChangePassword = async () => {
     // You could show an error message here
   } finally {
     isLoading.value = false;
+    isLoadingModalVisible.value = false; // Hide loading modal
   }
 };
-
+// Add this method to close the loading modal
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
 // Function to check session and log out if no session exists
 const checkSessionAndLogout = () => {
   const session = sessionStorage.getItem("session"); // Replace "userSession" with your session key
@@ -139,6 +146,16 @@ onMounted(() => {
     @close="toggleModal('Delete_Account')"
   />
   <Logout :isVisible="modals.logout" @close="toggleModal('logout')" />
+
+  <!-- Loading Modal -->
+  <Loading_Modal
+    loadingMessage="Sending verification code to your email..."
+    loadingHeader="Please wait"
+    :isVisible="isLoadingModalVisible"
+    :condition="!isLoading"
+    @close="closeLoadingModal"
+  />
+
   <div
     v-if="modals.accSettings"
     class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
