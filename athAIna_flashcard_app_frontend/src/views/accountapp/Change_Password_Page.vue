@@ -94,7 +94,7 @@ const updatePassword = async () => {
   }
 
   if (newPassword.value !== confirmPassword.value) {
-    errors.general = "New passwords do not match";
+    errors.confirm_new_password = "Passwords do not match";
 
     return;
   }
