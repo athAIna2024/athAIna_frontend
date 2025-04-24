@@ -46,8 +46,8 @@ const logout = async () => {
     console.log("response message: ", response.message);
 
     if (response.status === 204) {
-      Cookies.remove("access_token");
-      Cookies.remove("refresh_token");
+      // Cookies.remove("access_token");
+      // Cookies.remove("refresh_token");
       Cookies.remove("athAIna_csrfToken");
 
       sessionStorage.clear();
