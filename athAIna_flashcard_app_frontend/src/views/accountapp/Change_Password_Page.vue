@@ -156,7 +156,7 @@ const updatePassword = async () => {
       },
       {
         headers: {
-          Authorization: `Bearer ${Cookies.get("access_token")}`,
+          withCredentials: true,
         },
       }
     );
