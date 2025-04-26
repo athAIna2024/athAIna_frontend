@@ -143,9 +143,9 @@ onMounted(() => {
           <div class="athAIna-border-inner py-4">
             <div class="flex flex-col m-10">
               <div
-                  class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center"
+                  class="text-athAIna-lg text-center flex md:flex-row space-y-6 md:space-y-0 flex-col justify-between items-left md:items-center"
               >
-                <div class="flex flex-row space-x-6 items-center">
+                <div class="flex flex-row space-x-6 items-center mr-10">
                   <button @click="navigateToLibraryPage">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -160,65 +160,66 @@ onMounted(() => {
                           stroke-linejoin="round"
                           d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
                       />
-                    </svg>
+                    </svg>  
                   </button>
-                  <h1 class="text-athAIna-violet font-semibold flex">
+                  <h1 class="text-athAIna-violet font-semibold flex mr-10">
                     {{ studySetTitle }}
                   </h1>
                 </div>
-
-                <div class="flex flex-row justify-between space-x-6 items-center">
-                  <Search_Bar v-model="input" />
-                  <button
-                      class="relative btn w-60 text-[16px] font-semibold"
-                      @click="toggleModal('learningMode')"
-                  >
-                    Learning Mode
-                  </button>
-                  <div
-                      v-if="modals.learningMode"
-                      class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
-                  >
+                <div class="flex flex-col md:flex-row md:space-x-2">
+                  <Search_Bar v-model="input" class="mb-2 md:mb-0"/>
+                  <div class="flex flex-row space-x-2 items-center">
                     <button
-                        @click="redirectToReviewMode"
-                        class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                        class="relative btn w-52 text-[16px] font-semibold"
+                        @click="toggleModal('learningMode')"
                     >
-                      Review Mode
+                      Learning Mode
                     </button>
-                    <button
-                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
-                        @click="openTest_Mode"
+                    <div
+                        v-if="modals.learningMode"
+                        class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
                     >
-                      Test Mode
-                    </button>
-                  </div>
-                  <button
-                      class="relative btn w-60 text-[16px] font-semibold"
-                      @click="toggleModal('addFlashcard')"
-                  >
-                    Add Flashcard
-                  </button>
-                  <div
-                      v-if="modals.addFlashcard"
-                      class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
-                  >
-                    <!--               CLEAN UP CODE ROUTER LINK SHOULD NOT BE USED INSTEAD USE @CLICK LOGIC-->
-                    <router-link :to="{ name: 'Create_Flashcard_Manually' }">
                       <button
+                          @click="redirectToReviewMode"
                           class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
                       >
-                        Create Manually
+                        Review Mode
                       </button>
-                    </router-link>
-
+                      <button
+                          class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
+                          @click="openTest_Mode"
+                      >
+                        Test Mode
+                      </button>
+                    </div>
                     <button
-                        @click="openAI_Flashcard"
-                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
+                        class="relative btn w-52 text-[16px] font-semibold"
+                        @click="toggleModal('addFlashcard')"
                     >
-                      Generate with AI
+                      Add Flashcard
                     </button>
+                    <div
+                        v-if="modals.addFlashcard"
+                        class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
+                    >
+                      <!--               CLEAN UP CODE ROUTER LINK SHOULD NOT BE USED INSTEAD USE @CLICK LOGIC-->
+                      <router-link :to="{ name: 'Create_Flashcard_Manually' }">
+                        <button
+                            class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                        >
+                          Create Manually
+                        </button>
+                      </router-link>
+
+                      <button
+                          @click="openAI_Flashcard"
+                          class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
+                      >
+                        Generate with AI
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </div>  
               </div>
 
               <div class="mt-4 mb-6">
