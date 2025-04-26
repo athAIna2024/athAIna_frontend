@@ -158,7 +158,7 @@ onMounted(() => {
 
   <div
     v-if="modals.accSettings"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
   >
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
@@ -224,7 +224,7 @@ onMounted(() => {
   </div>
 
   <div
-    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 bg-athAIna-white sticky font-poppins shadow-md"
+    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-40 bg-athAIna-white sticky font-poppins shadow-md"
   >
     <div
       class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"

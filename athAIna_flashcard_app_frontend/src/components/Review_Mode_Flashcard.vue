@@ -158,26 +158,19 @@ const navigateToPreviousFlashcard = () => {
 
 <template>
   <div v-if="flashcard" class="flex flex-row items-center">
-    <router-link :to="`/${studysetName}/${flashcard.studyset_id}/flashcards`">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-      </svg>
-    </router-link>
-    <span class="p-4 text-2xl font-semibold">
-      <button>
-        <router-link
-          :to="{
+    <router-link
+        :to="{
             name: 'Library_Page_Flashcard',
             params: {
               studySetTitle: studysetName.value,
               studySetID: flashcard.studyset_id,
             },
           }"
-        >
-          < {{ studysetName }}</router-link
-        >
-      </button>
-    </span>
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+    </router-link>
   </div>
 
   <div class="review-mode-container">

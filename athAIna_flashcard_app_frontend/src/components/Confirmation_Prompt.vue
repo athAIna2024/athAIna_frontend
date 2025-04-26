@@ -27,7 +27,7 @@ const confirmAction = () => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-40"
+    class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50"
   >
     <div
       class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red p-[4px] rounded-[20px] flex flex-col w-[550px]"

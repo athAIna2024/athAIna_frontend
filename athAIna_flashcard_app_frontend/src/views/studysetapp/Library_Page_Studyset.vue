@@ -249,36 +249,38 @@ onMounted(() => {
   <transition appear name="fade">
     <div>
       <div class="my-16 ml-12 mr-12 min-h-screen">
-        <div
-          class="flex flex-col lg:flex-row justify-between space-x-[50px] content-center"
-        >
-          <Search_Bar_Studyset v-model="input" class="w-[700px]" />
-          <div class="relative">
-            <Subject_Selector
-              @click="toggleModal('subjectSelectModal')"
-              class="relative w-[350px] mb-3"
-              :placeholder="'Choose Subject'"
-              :outerClass="'athAIna-border-outer'"
-              :innerClass="'athAIna-border-inner'"
-              v-model="subject"
-            />
-            <Filter_Bar_Studyset
-              v-if="modals.subjectSelectModal"
-              :items="dropdownOptions"
-              top="50px"
-              right="0px"
-              height="max-content"
-              width="350px"
-              @update:modelValue="updateSubject"
-            >
-            </Filter_Bar_Studyset>
-          </div>
+        <div class="flex flex-col lg:flex-row justify-between lg:space-x-[50px] content-center">
+          <Search_Bar_Studyset
+              v-model="input"
+              class="'lg:w-[700px] w-full" />
+          <div class="flex flex-row mt-4 lg:mt-0 space-x-[50px] justify-evenly content-center">
+            <div class="relative lg:w-[350px] w-full">
+              <Subject_Selector
+                  @click="toggleModal('subjectSelectModal')"
+                  class="relative mb-3"
+                  :placeholder="'Choose Subject'"
+                  :outerClass="'athAIna-border-outer'"
+                  :innerClass="'athAIna-border-inner'"
+                  v-model="subject"
+              />
+              <Filter_Bar_Studyset
+                  v-if="modals.subjectSelectModal"
+                  :items=dropdownOptions
+                  top="50px"
+                  right="0px"
+                  height="max-content"
+                  width="350px"
+                  @update:modelValue="updateSubject"
+              >
+              </Filter_Bar_Studyset>
+            </div>
 
-          <div
-            @click="openModal"
-            class="btn hover:cursor-pointer w-[250px] font-semibold"
-          >
-            Create Studyset
+            <div
+                @click="openModal"
+                class="btn hover:cursor-pointer w-[250px] font-semibold"
+            >
+              Create Studyset
+            </div>
           </div>
         </div>
 
