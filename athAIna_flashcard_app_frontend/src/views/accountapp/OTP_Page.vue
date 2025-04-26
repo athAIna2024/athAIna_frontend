@@ -209,7 +209,9 @@ const verifyOTP = async () => {
       setTimeout(() => {
         isSuccessMessageVisible.value = false;
         close();
-        router.push("/login");
+        router.push({
+          name: "Login",
+        });
       }, 2000);
     } else {
       isLoadingModalVisible.value = false;
@@ -336,7 +338,7 @@ const successMessage = computed(() => {
       :loadingMessage="
         isVerified ? 'Verifying your email' : 'Processing your request'
       "
-      :loadingHeader="'Please wait'"
+      :loadingHeader="'Resending OTP'"
       :isVisible="isLoadingModalVisible"
       :condition="!isLoading"
       @close="closeLoadingModal"

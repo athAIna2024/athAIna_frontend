@@ -60,6 +60,10 @@ const closeTest_Mode = () => {
   isTestModeVisible.value = false;
 };
 
+const refreshTest_Mode = () => {
+  router.go();
+}
+
 const loadQuestion = async () => {
   try {
     flashcardId.value = flashcardIds.value[questionIndex.value];
@@ -127,7 +131,7 @@ onMounted(() => {
       <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
 
       <div v-if="testModeStore.isTestCompleted">
-        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-999">
+        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
           <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
             <div class="athAIna-border-inner p-4 text-center">
 
@@ -162,7 +166,7 @@ onMounted(() => {
   <Test_Mode_Number_Of_Questions_Prompt
     :is-visible="isTestModeVisible"
     @close="closeTest_Mode"
-
+    @refresh="refreshTest_Mode"
   />
   <Confirmation_Prompt
       :confirmQuestion="'Are you sure you want to leave? All progress will be lost.'"

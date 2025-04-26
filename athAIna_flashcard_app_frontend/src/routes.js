@@ -29,7 +29,7 @@ import Create_Studyset from "@/views/studysetapp/Create_Studyset.vue";
 // Library page includes the search and select studyset
 import Library_Page_Studyset from "@/views/studysetapp/Library_Page_Studyset.vue";
 import Update_Studyset from "@/views/studysetapp/Update_Studyset.vue";
-import Delete_studyset from "@/views/studysetapp/Delete_Studyset.vue";
+import Delete_Studyset from "@/views/studysetapp/Delete_Studyset.vue";
 
 import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue";
 
@@ -41,140 +41,242 @@ const routes = [
     path: "",
     name: "Landing_Page",
     component: Landing_Page,
+    meta: { title: "athAIna – Memorization Made Memorable" },
   },
   {
     path: "/features/",
     name: "Features_Page",
     component: Features_Page,
+    meta: { title: "Features – athAIna" },
   },
   {
     path: "/demo/",
     name: "Demo_Page",
     component: Demo_Page,
+    meta: { title: "Demo – athAIna" },
   },
-
   {
     path: "/faqs/",
     name: "FAQs_Page",
     component: FAQs_Page,
+    meta: { title: "Frequently Asked Questions (FAQs) – athAIna" },
   },
   {
     path: "/contact_us/",
     name: "Create_Contact_Inquiry",
     component: Create_Contact_Inquiry,
+    meta: { title: "Contact Us – athAIna" },
   },
   {
-    path: "/login/",
-    name: "Login",
-    component: Login,
-  },
-  {
-    path: "/logout/",
-    name: "Logout",
-    component: Logout,
-  },
-  {
-    path: "/signup/",
-    name: "Signup",
-    component: Signup,
-  },
-  {
-    path: "/verify_email/",
-    name: "Verify Email",
-    component: OTP_Page,
-  },
-  {
-    path: "/change_password",
-    name: "change_password",
-    component: Change_Password,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/change_password_otp",
-    name: "change_password_otp",
-    component: Change_OTP,
-    props: (route) => ({
-      isVisible: true,
-      email: route.params.email,
-      purpose: "change_password",
-    }),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/change_password_page/:uidb64/:token",
-    name: "Change_Password_Page",
-    component: Change_Password_Page,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/forgot_password/",
-    name: "Forgot_Password",
-    component: Forgot_Password,
-  },
-  {
-    path: "/forgot_password_page/:uidb64/:token",
-    name: "Forgot_password_page",
-    component: Forgot_Password_Page,
-  },
-  {
+
     path: "/:studySetTitle/:studySetId/flashcards/save",
     name: "Create_Flashcard_Manually",
     component: Create_Flashcard_Manually,
+    meta: { title: "Create Flashcard – athAIna", requiresAuth: true },
   },
   {
     path: "/generate_flashcard_with_ai/",
     name: "Generate_Flashcard_with_AI",
     component: Generate_Flashcard_with_AI,
+    meta: { title: "Generate AI Flashcard – athAIna", requiresAuth: true },
   },
   {
     path: "/:studySetTitle/:studySetId/flashcards",
     name: "Library_Page_Flashcard",
     component: Library_Page_Flashcard,
-  },
-  {
-    path: "/:studySetTitle/:studySetId/review/:id",
-    name: "Review_Mode",
-    component: Review_Mode,
+    meta: { title: "Flashcards – athAIna", requiresAuth: true },
   },
   {
     path: "/:studySetTitle/:studySetId/test/:batchId",
     name: "Test_Mode",
     component: Test_mode,
+    meta: { title: "Test Mode – athAIna", requiresAuth: true },
   },
   {
     path: "/:studySetTitle/:studySetId/update_flashcard/:flashcardId",
     name: "Update_Flashcard",
     component: Update_Flashcard,
+    meta: { title: "Update Flashcard – athAIna", requiresAuth: true },
   },
   {
     path: "/delete_flashcard/",
     name: "Delete_Flashcard",
     component: Delete_Flashcard,
+    meta: { title: "Delete Flashcard – athAIna", requiresAuth: true },
   },
   {
     path: "/create_studyset/",
     name: "Create_Studyset",
     component: Create_Studyset,
-  },
-  {
-    path: "/library_of_studysets/",
-    name: "Library_Page_Studyset",
-    component: Library_Page_Studyset,
+    meta: { title: "Create Study Set – athAIna", requiresAuth: true },
   },
   {
     path: "/update_studyset/",
     name: "Update_Studyset",
     component: Update_Studyset,
+    meta: { title: "Update Study Set – athAIna", requiresAuth: true },
   },
   {
     path: "/delete_studyset/",
     name: "Delete_Studyset",
-    component: Delete_studyset,
+    component: Delete_Studyset,
+    meta: { title: "Delete Study Set – athAIna", requiresAuth: true },
   },
   {
     path: "/report/",
     name: "View_Learning_Progress",
     component: View_Learning_Progress,
+    meta: { title: "Report – athAIna", requiresAuth: true },
+  },
+
+  {
+    path: "/account",
+    children: [
+      {
+        path: "login",
+        name: "Login",
+        component: Login,
+        meta: { title: "Login – athAIna" },
+      },
+      {
+        path: "logout",
+        name: "Logout",
+        component: Logout,
+        meta: { title: "Logout – athAIna" },
+      },
+      {
+        path: "signup",
+        name: "Signup",
+        component: Signup,
+        meta: { title: "Sign In – athAIna" },
+      },
+      {
+        path: "/verify_email",
+        name: "Verify_Email",
+        component: OTP_Page,
+        meta: { title: "Verify Email – athAIna" },
+      },
+      {
+        path: "change_password",
+        name: "change_password",
+        component: Change_Password,
+        meta: { title: "Change Password – athAIna", requiresAuth: true },
+      },
+      {
+        path: "change_password_otp",
+        name: "change_password_otp",
+        component: Change_OTP,
+        props: (route) => ({
+          isVisible: true,
+          email: route.params.email,
+          purpose: "change_password",
+        }),
+        meta: { title: "Change Password (OTP) – athAIna", requiresAuth: true },
+      },
+      {
+        path: "change_password_page/:uidb64/:token",
+        name: "Change_Password_Page",
+        component: Change_Password_Page,
+        meta: { title: "Change Password – athAIna", requiresAuth: true },
+      },
+      {
+        path: "forgot_password",
+        name: "Forgot_Password",
+        component: Forgot_Password,
+        meta: { title: "Forgot Password – athAIna" },
+      },
+      {
+        path: "forgot_password_page/:uidb64/:token",
+        name: "Forgot_password_page",
+        component: Forgot_Password_Page,
+        meta: { title: "Forgot Password – athAIna" },
+      },
+    ],
+  },
+  {
+    path: "/flashcards",
+    children: [
+      {
+        path: "/:studySetId/:studySetTitle/create",
+        name: "Create_Flashcard_Manually",
+        component: Create_Flashcard_Manually,
+        meta: { title: "Create Flashcard – athAIna", requiresAuth: true },
+      },
+      {
+        path: "generate_with_ai",
+        name: "Generate_Flashcard_with_AI",
+        component: Generate_Flashcard_with_AI,
+        meta: { title: "Generate AI Flashcard – athAIna", requiresAuth: true },
+      },
+      {
+        path: "library/:studySetId/:studySetTitle",
+        name: "Library_Page_Flashcard",
+        component: Library_Page_Flashcard,
+        meta: { title: "Flashcards – athAIna", requiresAuth: true },
+      },
+      {
+        path: "review/:studySetId/:studySetTitle/:id",
+        name: "Review_Mode",
+        component: Review_Mode,
+        meta: { title: "Review Mode – athAIna", requiresAuth: true },
+      },
+      {
+        path: "/:studySetTitle/:studySetId/test/:batchId",
+        name: "Test_Mode",
+        component: Test_mode,
+        meta: { title: "Test Mode – athAIna", requiresAuth: true },
+      },
+      {
+        path: "/:studySetId/:studySetTitle/update/:flashcardId",
+        name: "Update_Flashcard",
+        component: Update_Flashcard,
+        meta: { title: "Update Flashcard – athAIna", requiresAuth: true },
+      },
+      {
+        path: "delete",
+        name: "Delete_Flashcard",
+        component: Delete_Flashcard,
+        meta: { title: "Delete Flashcard – athAIna", requiresAuth: true },
+      },
+    ],
+  },
+  {
+    path: "/studysets",
+    children: [
+      {
+
+        path: "create",
+        name: "Create_Studyset1",
+        component: Create_Studyset,
+        meta: { title: "Create Study Set – athAIna", requiresAuth: true },
+      },
+      {
+
+        path: "library",
+        name: "Library_Page_Studyset",
+        component: Library_Page_Studyset,
+        meta: { title: "Study Sets – athAIna", requiresAuth: true },
+      },
+
+      {
+        path: "update",
+        name: "Update_Studyset1",
+        component: Update_Studyset,
+        meta: { title: "Update Study Set – athAIna", requiresAuth: true },
+      },
+      {
+        path: "delete",
+        name: "Delete_Studyset1",
+        component: Delete_Studyset,
+        meta: { title: "Delete Study Set – athAIna", requiresAuth: true },
+      },
+    ],
+  },
+  {
+    path: "/report",
+    name: "View_Learning_Progress",
+    component: View_Learning_Progress,
+    meta: { title: "Report – athAIna", requiresAuth: true },
   },
 ];
 
@@ -205,6 +307,14 @@ router.beforeEach((to, from, next) => {
     testModeStore.clear();
   }
 
+  next();
+});
+
+// Update page title dynamically
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
   next();
 });
 

@@ -18,7 +18,7 @@ export default {
 <template>
   <div
     v-if="isVisible"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
   >
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
@@ -28,7 +28,7 @@ export default {
         <div class="mb-8 flex justify-center">
           <button @click="close" class="btn-alt w-48 mr-5">No</button>
           <button class="btn w-48">
-            <router-link :to="login"> Yes </router-link>
+            <router-link :to="{ name: 'Login' }"> Yes </router-link>
           </button>
         </div>
       </div>

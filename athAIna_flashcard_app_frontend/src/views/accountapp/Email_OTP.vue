@@ -33,6 +33,7 @@ const isVerified = ref(false);
 // States for loading and modals
 const isLoading = ref(false);
 const isLoadingModalVisible = ref(false);
+const isResendingOTP = ref(false); // New state for resending OTP
 const isSuccessMessageVisible = ref(false);
 
 const otpValue = ref("");
@@ -59,16 +60,14 @@ const startCountdown = () => {
 const resendOTP = async () => {
   try {
     error.value = "";
-    isLoading.value = true;
-    isLoadingModalVisible.value = true;
+    isResendingOTP.value = true; // Show resending OTP modal
 
     // Get email from props or localStorage
     const userEmail = props.email || localStorage.getItem("signupEmail");
 
     if (!userEmail) {
       error.value = "Email not found. Please try again.";
-      isLoadingModalVisible.value = false;
-      isLoading.value = false;
+      isResendingOTP.value = false;
       return;
     }
 
@@ -84,7 +83,6 @@ const resendOTP = async () => {
       displayOTP.value = ["", "", "", "", "", ""];
 
       // Show success message
-      isLoadingModalVisible.value = false;
       isSuccessMessageVisible.value = true;
 
       setTimeout(() => {
@@ -97,8 +95,48 @@ const resendOTP = async () => {
     error.value = err.response?.data?.message || "Failed to resend OTP";
     console.error("Error resending OTP", err);
   } finally {
-    isLoading.value = false;
+    isResendingOTP.value = false; // Hide resending OTP modal
+  }
+};
+
+const verifyOTP = async () => {
+  try {
+    isLoading.value = true;
+    isLoadingModalVisible.value = true;
+
+    const response = await axios.post("/account/verify-email/", {
+      otp: otpValue.value,
+    });
+
+    console.log(response.data);
+
+    if (response.data.successful) {
+      isVerified.value = true;
+      step.value++;
+
+      // Hide loading modal and show success message
+      isLoadingModalVisible.value = false;
+      isSuccessMessageVisible.value = true;
+
+      // After success message, close and redirect
+      setTimeout(() => {
+        isSuccessMessageVisible.value = false;
+        close();
+        router.push({
+          name: "Login",
+        });
+      }, 2000);
+    } else {
+      isLoadingModalVisible.value = false;
+      error.value = response.data.error;
+    }
+  } catch (err) {
+    console.log(err.response.data);
+    error.value = err.response?.data?.message || "Invalid OTP code";
+    console.error("OTP verification error", err);
     isLoadingModalVisible.value = false;
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -186,45 +224,6 @@ const handleBoxKeydown = (boxIndex, event) => {
   }
 };
 
-const verifyOTP = async () => {
-  try {
-    isLoading.value = true;
-    isLoadingModalVisible.value = true;
-
-    const response = await axios.post("/account/verify-email/", {
-      otp: otpValue.value,
-    });
-
-    console.log(response.data);
-
-    if (response.data.successful) {
-      isVerified.value = true;
-      step.value++;
-
-      // Hide loading modal and show success message
-      isLoadingModalVisible.value = false;
-      isSuccessMessageVisible.value = true;
-
-      // After success message, close and redirect
-      setTimeout(() => {
-        isSuccessMessageVisible.value = false;
-        close();
-        router.push("/login");
-      }, 2000);
-    } else {
-      isLoadingModalVisible.value = false;
-      error.value = response.data.error;
-    }
-  } catch (err) {
-    console.log(err.response.data);
-    error.value = err.response?.data?.message || "Invalid OTP code";
-    console.error("OTP verification error", err);
-    isLoadingModalVisible.value = false;
-  } finally {
-    isLoading.value = false;
-  }
-};
-
 const close = () => {
   emit("close");
   step.value = 1;
@@ -233,6 +232,7 @@ const close = () => {
   displayOTP.value = ["", "", "", "", "", ""];
   isSuccessMessageVisible.value = false;
   isLoadingModalVisible.value = false;
+  isResendingOTP.value = false;
 
   // Clear countdown interval when closing
   if (countdownInterval) {
@@ -354,7 +354,7 @@ const successMessage = computed(() => {
       </div>
     </div>
 
-    <!-- Loading Modal -->
+    <!-- Loading Modal for OTP verification -->
     <Loading_Modal
       :loadingMessage="
         isVerified ? 'Verifying your email' : 'Processing your request'
@@ -363,6 +363,15 @@ const successMessage = computed(() => {
       :isVisible="isLoadingModalVisible"
       :condition="!isLoading"
       @close="closeLoadingModal"
+    />
+
+    <!-- Loading Modal for resending OTP -->
+    <Loading_Modal
+      :loadingMessage="'Processing your request'"
+      :loadingHeader="'Resending OTP'"
+      :isVisible="isResendingOTP"
+      :condition="false"
+      @close="isResendingOTP = false"
     />
 
     <!-- Success Message -->

@@ -17,8 +17,8 @@ const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 
-const studySetTitle = studySetStore.studySetTitle; // Originally has ref but the studySetStore set them as ref
-const studySetId = studySetStore.studySetId; // Originally has ref but the studySetStore set them as ref
+const studySetTitle = studySetStore.getStudySetTitle();
+const studySetId = studySetStore.getStudySetId();
 
 const fetchFlashcardCounts = async () => {
   console.log(studySetId);
@@ -29,7 +29,7 @@ const fetchFlashcardCounts = async () => {
 
 const isSuccessful_test = ref(false);
 const message_test = ref('');
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'refresh']);
 
 const numberOfQuestions = ref(null);
 
@@ -40,6 +40,7 @@ const errors = ref({
 const errorMessage = ref({
   numberOfQuestions: null,
 });
+
 
 const randomizeTestUrl = '/test/randomize/'
 
@@ -85,9 +86,10 @@ const redirectToTestMode = async () => {
     testModeStore.setNumberOfQuestions(numberOfQuestions.value);
 
     emit('close');
+
+    await randomizeTestQuestions();
   }
 
-  await randomizeTestQuestions();
 }
 
 const randomizeTestQuestions = async () => {
@@ -123,7 +125,7 @@ const randomizeTestQuestions = async () => {
     isLoading.value = false;
 
     await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle, studySetId: studySetId, batchId: testModeStore.batchId } });
-    router.go(0); // Refresh the page (alternative for location.reload);
+    emit('refresh');
   }
 };
 
@@ -149,7 +151,11 @@ const randomizeTestQuestions = async () => {
           <div class="flex flex-col space-y-4 p-6 items-center justify-between">
             <h1 class="text-athAIna-lg font-medium">Number of Questions to be Taken</h1>
             <div class="px-2">
-              <input type="number" v-model="numberOfQuestions" class="text-athAIna-base font-medium text-athAIna-violet w-52 placeholder-athAIna-violet rounded-xl border-1 ring-2 ring-athAIna-violet border-athAIna-violet pl-4 focus: outline-none" />
+              <input
+                  type="number"
+                  v-model="numberOfQuestions"
+                  min="0"
+                  class="text-athAIna-base font-medium text-athAIna-violet w-52 placeholder-athAIna-violet rounded-xl border-1 ring-2 ring-athAIna-violet border-athAIna-violet pl-4 focus: outline-none" />
             </div>
             <div :style="{ visibility: errors.numberOfQuestions ? 'visible' : 'hidden' }" class="text-athAIna-red text-athAIna-base">
               {{ errorMessage.numberOfQuestions }}

@@ -71,16 +71,16 @@ const login = async () => {
       userStore.setDateJoined(response.data.user_date_joined);
       userStore.setEmail(response.data.email);
       userStore.setLoginTime(response.data.login_date);
-      Cookies.set("access_token", `${response.data.access}`, {
-        secure: true,
-        sameSite: "Strict",
-        expires: 3600 / (24 * 60 * 60),
-      });
-      Cookies.set("refresh_token", `${response.data.refresh}`, {
-        secure: true,
-        sameSite: "Strict",
-        expires: 1209600 / (24 * 60 * 60),
-      });
+      // Cookies.set("access_token", `${response.data.access}`, {
+      //   secure: true,
+      //   sameSite: "Strict",
+      //   expires: 3600 / (24 * 60 * 60),
+      // });
+      // Cookies.set("refresh_token", `${response.data.refresh}`, {
+      //   secure: true,
+      //   sameSite: "Strict",
+      //   expires: 1209600 / (24 * 60 * 60),
+      // });
 
       authStore.setTokens({
         access: response.data.access,
@@ -95,7 +95,7 @@ const login = async () => {
 
       // router.replace("/library_of_studysets");
       // window.location.href = "/library_of_studysets";
-      router.push("/library_of_studysets");
+      router.push({ name: "Library_Page_Studyset" });
     } else {
       console.log(response.data.error);
     }
@@ -217,19 +217,14 @@ const handleFailedAttempt = (userId) => {
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          stroke-width="2"
+          stroke-width="1.5"
           stroke="currentColor"
           class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
         >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
           />
         </svg>
         <input
@@ -278,7 +273,9 @@ const handleFailedAttempt = (userId) => {
       <!-- Forgot Password -->
       <div class="w-full flex justify-end mt-5 mr-5 text-[16px] font-medium">
         <span class="underline">
-          <router-link to="/forgot_password"> Forgot Password? </router-link>
+          <router-link :to="{ name: 'Forgot_Password' }">
+            Forgot Password?
+          </router-link>
         </span>
       </div>
 
@@ -291,7 +288,7 @@ const handleFailedAttempt = (userId) => {
       <div class="text-center">
         Don't have an account?
         <span class="font-semibold underline">
-          <RouterLink to="/signup"> Sign Up </RouterLink>
+          <RouterLink :to="{ name: 'Signup' }"> Sign Up </RouterLink>
         </span>
       </div>
 

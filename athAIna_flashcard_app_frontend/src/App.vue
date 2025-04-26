@@ -15,7 +15,7 @@ const isLoggedIn = computed(() => authStore.isLoggedIn);
     <Learner_Navbar v-if="isLoggedIn" />
   </header>
 
-  <main>
+  <main class="bg-athAIna-white">
     <router-view />
   </main>
 

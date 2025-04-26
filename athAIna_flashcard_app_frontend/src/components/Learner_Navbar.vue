@@ -12,10 +12,12 @@ import { useFlashcardSearchStore } from "../../stores/flashcardSearchStore.js";
 import { useStudysetStore } from "../../stores/studySetStore.js";
 import { useStudySetSearchStore } from "../../stores/studySetSearchStore.js";
 import { useTestModeStore } from "../../stores/testModeStore.js";
+import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
 const isLoading = ref(false);
+const isLoadingModalVisible = ref(false);
 
 const flashcardSearchStore = useFlashcardSearchStore();
 const studysetStore = useStudysetStore();
@@ -59,7 +61,8 @@ const handleLogout = async (reason) => {
       studySetSearchStore.clear();
       testModeStore.clear();
 
-      router.push("/login");
+      // router.push("/login");
+      router.push({ name: "Login" });
       emit("close");
     } else {
       console.log(response.error);
@@ -82,6 +85,7 @@ const handleChangePassword = async () => {
     toggleModal("accSettings");
 
     isLoading.value = true;
+    isLoadingModalVisible.value = true; // Show loading modal
     const email = userStore.getEmail();
 
     if (!email) {
@@ -103,7 +107,7 @@ const handleChangePassword = async () => {
       // Navigate directly to the OTP verification page
       router.push({
         name: "change_password_otp",
-        params: { email: email },
+        query: { email: email }, // Changed from params to query to match what Change_OTP expects
       });
     } else {
       throw new Error(
@@ -115,15 +119,18 @@ const handleChangePassword = async () => {
     // You could show an error message here
   } finally {
     isLoading.value = false;
+    isLoadingModalVisible.value = false; // Hide loading modal
   }
 };
-
+// Add this method to close the loading modal
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
 // Function to check session and log out if no session exists
 const checkSessionAndLogout = () => {
   const session = sessionStorage.getItem("session"); // Replace "userSession" with your session key
   if (!session) {
     handleLogout(); // Assuming `logout` is a method in your auth store
-    router.push("/login"); // Redirect to login page
   }
 };
 
@@ -139,14 +146,39 @@ onMounted(() => {
     @close="toggleModal('Delete_Account')"
   />
   <Logout :isVisible="modals.logout" @close="toggleModal('logout')" />
+
+  <!-- Loading Modal -->
+  <Loading_Modal
+    loadingMessage="Sending verification code to your email..."
+    loadingHeader="Please wait"
+    :isVisible="isLoadingModalVisible"
+    :condition="!isLoading"
+    @close="closeLoadingModal"
+  />
+
   <div
     v-if="modals.accSettings"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
   >
     <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
       <div class="athAIna-border-inner p-4 text-center">
         <div class="flex justify-end pl-4 text-athAIna-lg">
-          <button @click="toggleModal('accSettings')">x</button>
+          <button @click="toggleModal('accSettings')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18 18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
         <div class="flex flex-col items-center justify-between p-5">
           <span class="font-semibold">User Profile</span>
@@ -192,45 +224,59 @@ onMounted(() => {
   </div>
 
   <div
-    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-50 bg-athAIna-white sticky font-poppins shadow-md"
+    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-40 bg-athAIna-white sticky font-poppins shadow-md"
   >
     <div
       class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"
     >
-      <router-link to="/"
+      <router-link :to="{ name: 'Landing_Page' }"
         ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
       /></router-link>
       <div>
-        <router-link to="/features" exact-active-class="active-link">
+        <router-link
+          :to="{ name: 'Features_Page' }"
+          exact-active-class="active-link"
+        >
           Features
         </router-link>
       </div>
       <div>
-        <router-link to="/faqs" exact-active-class="active-link"
+        <router-link
+          :to="{ name: 'FAQs_Page' }"
+          exact-active-class="active-link"
           >FAQS</router-link
         >
       </div>
       <div>
-        <router-link to="/contact_us" exact-active-class="active-link">
+        <router-link
+          :to="{ name: 'Create_Contact_Inquiry' }"
+          exact-active-class="active-link"
+        >
           Contact us
         </router-link>
       </div>
       <div>
-        <router-link to="/demo" exact-active-class="active-link"
+        <router-link
+          :to="{ name: 'Demo_Page' }"
+          exact-active-class="active-link"
           >Demo</router-link
         >
       </div>
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-20">
-      <router-link to="/library_of_studysets" exact-active-class="active-link">
+      <router-link
+        :to="{ name: 'Library_Page_Studyset' }"
+        exact-active-class="active-link"
+      >
         <div>Library</div>
       </router-link>
 
-      <router-link :to="{ name: 'View_Learning_Progress' }" exact-active-class="active-link">
-        <div>
-          Reports
-        </div>
+      <router-link
+        :to="{ name: 'View_Learning_Progress' }"
+        exact-active-class="active-link"
+      >
+        <div>Reports</div>
       </router-link>
       <button class="" @click="toggleModal('profile')">
         <svg

@@ -9,7 +9,9 @@ import Loading_Modal from "@/components/Loading_Modal.vue";
 import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
 
 const goBackToLibrary = () => {
-  router.push("/library_of_studysets");
+  router.push({
+    name: "Library_Page_Studyset",
+  });
 };
 
 const isLoading = ref(false);
@@ -61,7 +63,6 @@ const togglePassword2 = () => {
 const togglePassword3 = () => {
   showPassword3.value = !showPassword3.value;
 };
-
 // Enhanced updatePassword function with better error handling
 const updatePassword = async () => {
   // Clear previous errors
@@ -93,7 +94,7 @@ const updatePassword = async () => {
   }
 
   if (newPassword.value !== confirmPassword.value) {
-    errors.general = "New passwords do not match";
+    errors.confirm_new_password = "Passwords do not match";
 
     return;
   }
@@ -167,7 +168,9 @@ const updatePassword = async () => {
 
       // Redirect to login page after successful password reset
       setTimeout(() => {
-        router.push("/library_of_studysets");
+        router.push({
+          name: "Library_Page_Studyset",
+        });
       }, 2000);
     }
   } catch (err) {
@@ -264,12 +267,7 @@ const closeSuccessMessage = () => {
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
               />
             </svg>
             <input
@@ -330,12 +328,7 @@ const closeSuccessMessage = () => {
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
               />
             </svg>
             <input
@@ -396,12 +389,7 @@ const closeSuccessMessage = () => {
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
               />
             </svg>
             <input
@@ -455,9 +443,8 @@ const closeSuccessMessage = () => {
         <!-- <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
           {{ errors.general }}
         </div> -->
-
         <!-- Change Password Button -->
-        <div class="flex m-10 justify-center">
+        <div class="flex mt-6 justify-center">
           <button @click="updatePassword" class="btn w-full">
             {{ "Change Password" }}
           </button>
@@ -474,7 +461,7 @@ const closeSuccessMessage = () => {
 
     <Success_Message
       :successHeader="'Password Change Successful'"
-      :successMessage="'Your password has been updated. Redirecting to login page...'"
+      :successMessage="'Your password has been updated. Redirecting to Library Of StudySet...'"
       :isVisible="isSuccessMessageVisible"
       @close="closeSuccessMessage"
     />
