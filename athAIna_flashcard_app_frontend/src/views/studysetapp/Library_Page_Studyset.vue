@@ -15,8 +15,9 @@ import { useStudySetFilterStore } from "../../../stores/studySetFilterStore.js";
 import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
 import { dropdownOptions } from "@/components/constants/SubjectDropDownOptions.js";
 import { useUserStore } from "../../../stores/userStore.js";
+import { useRoute } from "vue-router";
 
-const isPageVisible = ref(false);
+const route = useRoute();
 const studySetSearchStore = useStudySetSearchStore();
 const studySetFilterStore = useStudySetFilterStore();
 
@@ -59,8 +60,9 @@ const openModal = () => {
 };
 
 const closeModal = async () => {
-  await fetchStudySetFromDb();
   isModalVisible.value = false;
+  await fetchStudySetFromDb();
+
 };
 
 const isSuccessful_studySetFilterSearch = computed(() => {
@@ -240,7 +242,7 @@ const fetchStudySetFromDb = async () => {
 };
 
 onMounted(() => {
-  document.title = "Study Sets"; // Set the document title first
+  document.title = route.meta.title;
   fetchStudySetFromDb(); // Fetch the study set data
 });
 </script>
