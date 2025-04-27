@@ -32,6 +32,13 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 const close = () => {
+
+  title.value = "";
+  description.value = "";
+  subject.value = { key: "No subject", value: "Choose a subject" };
+
+  message.value = "";
+  field_errors.value = {};
   emit('close');
 };
 const modals = ref({ subjectSelectModal: false });
