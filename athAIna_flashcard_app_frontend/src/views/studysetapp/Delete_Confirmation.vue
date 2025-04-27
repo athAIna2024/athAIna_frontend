@@ -1,5 +1,10 @@
 <script setup>
 import { watch, defineProps, defineEmits } from 'vue';
+import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
 
 const props = defineProps({
   isVisible: {
@@ -22,7 +27,7 @@ watch(() => props.isVisible, (newValue) => {
   if (newValue) {
     document.title = `${props.title}`;
   } else {
-    document.title = `Library – athAIna`;
+    document.title = route.meta.title;
   }
 });
 </script>
