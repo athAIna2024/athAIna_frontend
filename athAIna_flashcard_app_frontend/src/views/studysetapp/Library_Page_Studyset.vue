@@ -60,8 +60,9 @@ const openModal = () => {
 };
 
 const closeModal = async () => {
-  await fetchStudySetFromDb();
   isModalVisible.value = false;
+  await fetchStudySetFromDb();
+
 };
 
 const isSuccessful_studySetFilterSearch = computed(() => {
