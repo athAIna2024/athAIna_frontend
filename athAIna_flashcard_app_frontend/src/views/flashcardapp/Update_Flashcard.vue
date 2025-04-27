@@ -147,6 +147,7 @@ const fetchFlashcardData = async () => {
 };
 
 const navigateToLibraryPage = () => {
+  showSuccessMessage.value = false;
   setTimeout(() => {
     router.push({
       name: 'Library_Page_Flashcard',
