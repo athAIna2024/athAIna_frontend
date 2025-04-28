@@ -88,20 +88,21 @@ axiosInstance.interceptors.response.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.error("Access denied:", error.response.data);
-      const refreshToken = Cookies.get("refresh_token");
-      if (refreshToken && isTokenExpired(refreshToken)) {
-        console.error("Refresh token expired. Redirecting to login.");
-        Cookies.remove("access_token");
-        Cookies.remove("refresh_token");
-        Cookies.remove("athAIna_csrfToken");
-        router.push({ name: "Login" });
-      } else {
+    if (error.response) {
+      if (error.response.status === 401) {
         console.error("Access denied:", error.response.data);
+        if (
+          error.response.data.error === "Refresh token is expired or invalid" 
+        ) {
+          console.error("Refresh token expired or invalid. Redirecting to login.");
+          // Cookies.remove("access_token"); // Clear access token
+          // Cookies.remove("refresh_token"); // Clear refresh token
+          router.push({ name: "Login" }); // Redirect to login page
+        }
       }
     }
-    return Promise.reject(error);
+
+    return Promise.reject(error); // Reject other errors
   }
 );
 
