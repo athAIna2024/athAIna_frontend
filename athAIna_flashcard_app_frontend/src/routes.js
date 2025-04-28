@@ -68,68 +68,6 @@ const routes = [
     meta: { title: "Contact Us – athAIna" },
   },
   {
-
-    path: "/:studySetTitle/:studySetId/flashcards/save",
-    name: "Create_Flashcard_Manually",
-    component: Create_Flashcard_Manually,
-    meta: { title: "Create Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/generate_flashcard_with_ai/",
-    name: "Generate_Flashcard_with_AI",
-    component: Generate_Flashcard_with_AI,
-    meta: { title: "Generate AI Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/flashcards",
-    name: "Library_Page_Flashcard",
-    component: Library_Page_Flashcard,
-    meta: { title: "Flashcards – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/test/:batchId",
-    name: "Test_Mode",
-    component: Test_mode,
-    meta: { title: "Test Mode – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/update_flashcard/:flashcardId",
-    name: "Update_Flashcard",
-    component: Update_Flashcard,
-    meta: { title: "Update Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/delete_flashcard/",
-    name: "Delete_Flashcard",
-    component: Delete_Flashcard,
-    meta: { title: "Delete Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/create_studyset/",
-    name: "Create_Studyset",
-    component: Create_Studyset,
-    meta: { title: "Create Study Set – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/update_studyset/",
-    name: "Update_Studyset",
-    component: Update_Studyset,
-    meta: { title: "Update Study Set – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/delete_studyset/",
-    name: "Delete_Studyset",
-    component: Delete_Studyset,
-    meta: { title: "Delete Study Set – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/report/",
-    name: "View_Learning_Progress",
-    component: View_Learning_Progress,
-    meta: { title: "Report – athAIna", requiresAuth: true },
-  },
-
-  {
     path: "/account",
     children: [
       {
@@ -246,7 +184,7 @@ const routes = [
       {
 
         path: "create",
-        name: "Create_Studyset1",
+        name: "Create_Studyset",
         component: Create_Studyset,
         meta: { title: "Create Study Set – athAIna", requiresAuth: true },
       },
@@ -260,13 +198,13 @@ const routes = [
 
       {
         path: "update",
-        name: "Update_Studyset1",
+        name: "Update_Studyset",
         component: Update_Studyset,
         meta: { title: "Update Study Set – athAIna", requiresAuth: true },
       },
       {
         path: "delete",
-        name: "Delete_Studyset1",
+        name: "Delete_Studyset",
         component: Delete_Studyset,
         meta: { title: "Delete Study Set – athAIna", requiresAuth: true },
       },

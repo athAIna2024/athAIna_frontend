@@ -32,6 +32,13 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 const close = () => {
+
+  title.value = "";
+  description.value = "";
+  subject.value = { key: "No subject", value: "Choose a subject" };
+
+  message.value = "";
+  field_errors.value = {};
   emit('close');
 };
 const modals = ref({ subjectSelectModal: false });
@@ -72,7 +79,7 @@ const saveStudySet = async () => {
 
     const newStudySet = {
       id: Number(request.data.data.id),
-      learner_instance: Number(learnerId.value),
+      learner_instance: Number(learnerId), // remove .value (causing NaN error to studyset
       title: String(request.data.data.title),
       description: String(request.data.data.description),
       subject: String(request.data.data.subject),

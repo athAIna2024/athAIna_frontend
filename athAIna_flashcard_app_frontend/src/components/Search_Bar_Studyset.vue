@@ -13,13 +13,22 @@ const emit = defineEmits(['update:modelValue']);
 const searchResults = ref([]);
 
 const updateValue = (event) => {
-  emit('update:modelValue', event.target.value);
+  const value = event.target.value;
+  emit('update:modelValue', value);
+
+  if (!value) {
+    studySetSearchStore.clear(); // Clear results when input is empty
+  }
 };
 
 const handleKeyPress = async (event) => {
-  emit('update:modelValue', event.target.value);
-  searchResults.value = await searchStudySets(event.target.value);
-  studySetSearchStore.setSearchResults(searchResults.value);
+  const value = event.target.value;
+  emit('update:modelValue', value);
+
+  if (value) {
+    searchResults.value = await searchStudySets(value);
+    studySetSearchStore.setSearchResults(searchResults.value);
+  }
 };
 
 const searchStudySets = async (query) => {

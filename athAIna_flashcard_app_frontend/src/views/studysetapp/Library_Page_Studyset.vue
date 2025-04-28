@@ -15,8 +15,9 @@ import { useStudySetFilterStore } from "../../../stores/studySetFilterStore.js";
 import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
 import { dropdownOptions } from "@/components/constants/SubjectDropDownOptions.js";
 import { useUserStore } from "../../../stores/userStore.js";
+import { useRoute } from "vue-router";
 
-const isPageVisible = ref(false);
+const route = useRoute();
 const studySetSearchStore = useStudySetSearchStore();
 const studySetFilterStore = useStudySetFilterStore();
 
@@ -59,8 +60,9 @@ const openModal = () => {
 };
 
 const closeModal = async () => {
-  await fetchStudySetFromDb();
   isModalVisible.value = false;
+  await fetchStudySetFromDb();
+
 };
 
 const isSuccessful_studySetFilterSearch = computed(() => {
@@ -84,26 +86,39 @@ const message_studySetFilterSearch = computed(() => {
   }
 });
 
+// <Pagination
+//             :total-items="studySetCounts"
+// :items-per-page="itemsPerPage"
+// :current-page="currentPage"
+// @update:currentPage="currentPage = $event"
+//     />
+
 const currentStudySets = computed(() => {
   const isFilterActive = studySetFilterStore.getFilterActiveStatus();
   const isSearchActive = studySetSearchStore.getSearchActiveStatus();
 
   if (isFilterActive) {
     console.log("IsFilterActive", isFilterActive);
-    return studySetFilterStore.getFilterResults();
+    studySetCounts.value = studySetFilterStore.getFilterResults().length;
+    return applyPagination(studySetFilterStore.getFilterResults());
   }
 
   if (isSearchActive) {
     console.log("IsSearchActive", isSearchActive);
     subject.value = "Choose Subject"; // Reset subject when search is active
-
-    return studySetSearchStore.getSearchResults();
+    studySetCounts.value = studySetSearchStore.getSearchResults().length;
+    return applyPagination(studySetSearchStore.getSearchResults());
   }
+
+    return applyPagination(studySet_db.value);
+});
+
+const applyPagination = (data) => {
 
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return studySet_db.value.slice(startIndex, endIndex);
-});
+  return data.slice(startIndex, endIndex);
+};
 
 const getSubjectName = (abbreviation) => {
   return dropdownOptions[abbreviation] || abbreviation;
@@ -240,7 +255,7 @@ const fetchStudySetFromDb = async () => {
 };
 
 onMounted(() => {
-  document.title = "Study Sets"; // Set the document title first
+  document.title = route.meta.title;
   fetchStudySetFromDb(); // Fetch the study set data
 });
 </script>
@@ -253,6 +268,7 @@ onMounted(() => {
           <Search_Bar_Studyset
               v-model="input"
               class="'lg:w-[700px] w-full" />
+
           <div class="flex flex-row mt-4 lg:mt-0 space-x-[50px] justify-evenly content-center">
             <div class="relative lg:w-[350px] w-full">
               <Subject_Selector

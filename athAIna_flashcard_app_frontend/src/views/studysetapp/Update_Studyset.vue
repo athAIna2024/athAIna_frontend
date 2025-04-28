@@ -53,6 +53,10 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'refreshLibrary']);
 const close = () => {
+
+  message_updated.value = "";
+  field_errors.value = {};
+
   emit('close');
 };
 
