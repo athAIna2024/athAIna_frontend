@@ -35,6 +35,8 @@ import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue
 
 import { useTestModeStore } from "../stores/testModeStore.js";
 import { useAuthStore } from "../stores/authStore.js";
+import Forgot_OTP from "./views/accountapp/Forgot_OTP.vue";
+import Email_OTP from "./views/accountapp/Email_OTP.vue";
 
 const routes = [
   {
@@ -89,6 +91,13 @@ const routes = [
         meta: { title: "Sign In – athAIna" },
       },
       {
+        path: "/Verify_Email",
+        name: "verify_Email_OTP",
+        component: Email_OTP,
+        props: (route) => ({ email: route.query.email }),
+        meta: { title: "Verify Email OTP – athAIna" },
+      },
+      {
         path: "/verify_email",
         name: "Verify_Email",
         component: OTP_Page,
@@ -122,6 +131,13 @@ const routes = [
         name: "Forgot_Password",
         component: Forgot_Password,
         meta: { title: "Forgot Password – athAIna" },
+      },
+      {
+        path: "forgot_otp",
+        name: "Forgot_OTP",
+        component: Forgot_OTP,
+        props: (route) => ({ email: route.query.email }),
+        meta: { title: "Forgot Password  OTP – athAIna" },
       },
       {
         path: "forgot_password_page/:uidb64/:token",
@@ -182,14 +198,12 @@ const routes = [
     path: "/studysets",
     children: [
       {
-
         path: "create",
         name: "Create_Studyset",
         component: Create_Studyset,
         meta: { title: "Create Study Set – athAIna", requiresAuth: true },
       },
       {
-
         path: "library",
         name: "Library_Page_Studyset",
         component: Library_Page_Studyset,
