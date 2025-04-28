@@ -38,13 +38,6 @@ const flashcard_db = ref([]);
 
 const itemsPerPage = 6;
 
-const flashcardCounts = computed(() => {
-  return (
-    flashcardSearchStore.getSearchResults(studySetId).length ||
-    flashcard_db.value.length
-  );
-});
-
 const input = ref("");
 const currentPage = ref(1);
 
@@ -101,11 +94,27 @@ const fetchFlashcardsFromDb = async () => {
   }
 };
 
-const currentFlashcards = computed(() => {
+const flashcardCounts = ref(0);
+
+const applyPagination = (data) => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return flashcard_db.value.slice(startIndex, endIndex);
+  return data.slice(startIndex, endIndex);
+}
+
+const currentFlashcards = computed(() => {
+  const searchResults = flashcardSearchStore.getSearchResults(studySetId);
+
+  if (searchResults.length > 0) {
+    flashcardCounts.value = searchResults.length;
+    return applyPagination(searchResults);
+  } else {
+    flashcardCounts.value = flashcard_db.value.length;
+    return applyPagination(flashcard_db.value);
+  }
+
 });
+
 
 const navigateToLibraryPage = () => {
   router.push({ name: "Library_Page_Studyset" });
@@ -237,15 +246,7 @@ onMounted(() => {
               </div>
 
               <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-                <div
-                    class="list-none"
-                    v-for="(
-                flashcard, index
-              ) in flashcardSearchStore.getSearchResults(studySetId).length
-                ? flashcardSearchStore.getSearchResults(studySetId)
-                : currentFlashcards"
-                    :key="index"
-                >
+                <div class="list-none" v-for="(flashcard, index) in currentFlashcards" :key="index">
                   <Flashcard_Card
                       :flashcardId="flashcard.id"
                       :question="flashcard.question"
