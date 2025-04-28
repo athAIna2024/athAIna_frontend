@@ -342,7 +342,7 @@ const closeLoadingModal = () => {
           <!-- Sign Up Button -->
           <div class="flex m-10 justify-center w-auto">
             <button
-              class="btn w-full"
+              class="btn !rounded-full w-full"
               @click="createUser"
               :disabled="isOTPVisible || isLoading"
             >
