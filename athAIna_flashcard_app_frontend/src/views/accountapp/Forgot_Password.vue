@@ -1,40 +1,19 @@
 <script setup>
 import { ref } from "vue";
-import axios from "@/axios"; // Make sure this is your configured axios instance
-import OTP from "@/views/accountapp/Forgot_OTP.vue";
-import Loading_Modal from "@/components/Loading_Modal.vue"; // Import the Loading_Modal component
+import axios from "@/axios";
+import Loading_Modal from "@/components/Loading_Modal.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 const email = ref("");
 const error = ref("");
-const success = ref("");
-const isOTPVisible = ref(false);
 const isSubmitting = ref(false);
-const isLoading = ref(false); // State for loading modal
-
-// Store email in OTP component
-const storedEmail = ref("");
+const isLoading = ref(false);
 
 const goBackToLogin = () => {
   router.push({
     name: "Login",
   });
-};
-
-const openOTP = () => {
-  storedEmail.value = email.value; // Store email for OTP component
-  isOTPVisible.value = true;
-};
-
-const closeOTP = () => {
-  isOTPVisible.value = false;
-  // Optionally reset the form after OTP verification is cancelled
-  if (!success.value) {
-    email.value = "";
-    error.value = "";
-    success.value = "";
-  }
 };
 
 const validateEmail = (email) => {
@@ -44,22 +23,21 @@ const validateEmail = (email) => {
 
 const sendResetEmail = async () => {
   error.value = "";
-  success.value = "";
   isSubmitting.value = true;
-  isLoading.value = true; // Show loading modal
+  isLoading.value = true;
 
   // Validate email
   if (!email.value) {
     error.value = "Email is required";
     isSubmitting.value = false;
-    isLoading.value = false; // Hide loading modal
+    isLoading.value = false;
     return;
   }
 
   if (!validateEmail(email.value)) {
     error.value = "Please enter a valid email address";
     isSubmitting.value = false;
-    isLoading.value = false; // Hide loading modal
+    isLoading.value = false;
     return;
   }
 
@@ -75,10 +53,11 @@ const sendResetEmail = async () => {
     );
 
     if (response.data.successful) {
-      success.value =
-        response.data.message ||
-        "Password reset instructions sent to your email";
-      openOTP(); // Show OTP component on success
+      // Route to OTP page instead of showing modal
+      router.push({
+        name: "Forgot_OTP",
+        query: { email: email.value },
+      });
     } else {
       error.value = response.data.message || "Failed to send reset email";
     }
@@ -90,14 +69,8 @@ const sendResetEmail = async () => {
       "Error sending reset email. Please try again later.";
   } finally {
     isSubmitting.value = false;
-    isLoading.value = false; // Hide loading modal on completion
+    isLoading.value = false;
   }
-};
-
-// Handle successful OTP verification
-const handleOTPSuccess = () => {
-  success.value = "Email verified successfully";
-  // The OTP component will handle the navigation to the password reset page
 };
 </script>
 
@@ -164,12 +137,9 @@ const handleOTPSuccess = () => {
 
         <!-- Content Container -->
         <div class="mt-8 w-full">
-          <!-- Error/Success Messages -->
+          <!-- Error Message -->
           <div v-if="error" class="text-athAIna-red text-center mt-2 mb-3">
             {{ error }}
-          </div>
-          <div v-if="success" class="text-green-500 text-center mt-2 mb-3">
-            {{ success }}
           </div>
 
           <!-- Email Field -->
@@ -195,11 +165,9 @@ const handleOTPSuccess = () => {
                 v-model="email"
                 type="email"
                 placeholder="Email"
-                :disabled="isSubmitting || isOTPVisible"
+                :disabled="isSubmitting"
                 class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
-                @keyup.enter="
-                  !isSubmitting && !isOTPVisible && sendResetEmail()
-                "
+                @keyup.enter="!isSubmitting && sendResetEmail()"
               />
             </div>
           </div>
@@ -209,7 +177,7 @@ const handleOTPSuccess = () => {
             <button
               @click="sendResetEmail"
               class="btn w-full"
-              :disabled="isSubmitting || isOTPVisible"
+              :disabled="isSubmitting"
             >
               <span v-if="isSubmitting">Sending...</span>
               <span v-else>Send Reset Email</span>
@@ -218,29 +186,13 @@ const handleOTPSuccess = () => {
         </div>
       </div>
 
-      <!-- Use the Loading_Modal component -->
+      <!-- Loading Modal -->
       <Loading_Modal
         :loadingMessage="'Please wait while we send the reset email'"
         :loadingHeader="'Processing...'"
         :isVisible="isLoading"
         :condition="!isLoading"
       />
-
-      <!-- OTP Component -->
-      <OTP
-        :is-visible="isOTPVisible"
-        :email="storedEmail"
-        title="OTP Verification"
-        @close="closeOTP"
-        @verification-success="handleOTPSuccess"
-      />
     </div>
   </div>
 </template>
-
-<style scoped>
-.btn {
-  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
-  color: white;
-}
-</style>
