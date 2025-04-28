@@ -4,6 +4,12 @@ import Delete_Confirmation from "@/views/studysetapp/Delete_Confirmation.vue";
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+
 const studyset_url = "/studyset/delete/";
 const studyset_title = ref("");
 const isSuccessful = ref(false);
@@ -25,8 +31,6 @@ const props = defineProps({
   },
 });
 
-const studySetId = Number(props.studySetId);
-
 const emit = defineEmits(['close']);
 const isDeleteConfirmationModalVisible = ref(false);
 
@@ -47,7 +51,7 @@ watch(() => props.isVisible, (newValue) => {
     fetchStudySetTitle();
     document.title = `${props.title}`;
   } else {
-    document.title = `Library – athAIna`;
+    document.title = route.meta.title;
   }
 });
 
@@ -59,26 +63,31 @@ watch(isDeleteConfirmationModalVisible, (newValue) => {
       close();
     }, 500);
   } else {
-    document.title = `Delete Studyset – athAIna`;
+    document.title = 'Delete Study Set - athAIna';
   }
 });
 
 const deleteStudySet = async () => {
   try {
-    const request = await axios.delete(`${studyset_url}${studySetId}/`);
+    const request = await axios.delete(`${studyset_url}${props.studySetId}/`);
 
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;
 
     if (isSuccessful) {
-      const flashcards = await flashcardsDB.flashcards.where({ studyset_id: studySetId }).toArray();
+      const flashcards = await flashcardsDB.flashcards.where({ studyset_id: props.studySetId }).toArray();
       const flashcardIds = flashcards.map(flashcard => flashcard.id);
       await flashcardsDB.flashcards.bulkDelete(flashcardIds);
 
       await studySetDb.studysets.delete(props.studySetId);
 
       openDeleteConfirmationModal();
-      location.reload();
+
+      router.push({
+        name: 'Library_Page_Studyset'
+      });
+      router.go();
+
     } else {
       isSuccessful.value = false;
       message.value = request.data.message;
@@ -104,6 +113,7 @@ const fetchStudySetTitle = async () => {
     }
 
     console.log("studyset_title", studyset_title.value);
+    console.log("studyset id", props.studySetId);
   } catch (error) {
     console.error(error);
   }
