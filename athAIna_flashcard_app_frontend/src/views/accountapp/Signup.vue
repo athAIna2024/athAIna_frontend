@@ -87,7 +87,7 @@ const createUser = async () => {
     if (err.response.status === 400) {
       isSuccessful.value = false;
       // Handle field-specific errors
-      if (err.response.data.email) errors.email = err.response.data.email;
+      if (err.response.data.email) errors.email = err.response.data.email[0];
       if (err.response.data.password)
         errors.password = err.response.data.password;
       if (err.response.data.password2)
