@@ -86,12 +86,9 @@ const message_studySetFilterSearch = computed(() => {
   }
 });
 
-// <Pagination
-//             :total-items="studySetCounts"
-// :items-per-page="itemsPerPage"
-// :current-page="currentPage"
-// @update:currentPage="currentPage = $event"
-//     />
+const clearFilterResults = () => {
+  studySetFilterStore.clear();
+}
 
 const currentStudySets = computed(() => {
   const isFilterActive = studySetFilterStore.getFilterActiveStatus();
@@ -273,6 +270,7 @@ onMounted(() => {
             <div class="relative lg:w-[350px] w-full max-h-full min-w-[175px]">
               <Subject_Selector
                   @click="toggleModal('subjectSelectModal')"
+                  @cancel="clearFilterResults"
                   class="relative mb-3 w-full"
                   :placeholder="'Choose Subject'"
                   :outerClass="'athAIna-border-outer'"

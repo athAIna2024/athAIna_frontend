@@ -23,13 +23,13 @@ const props = defineProps({
 
 
 });
-const emit = defineEmits(['update:modelValue', 'click']);
+const emit = defineEmits(['update:modelValue', 'click', 'cancel']);
 
 const isCancelActive = ref(props.modelValue !== "");
 
 const clearFilterResults = () => {
   emit("update:modelValue", "");
-  studySetFilterStore.clear();
+  emit('cancel')
 };
 
 watch(
