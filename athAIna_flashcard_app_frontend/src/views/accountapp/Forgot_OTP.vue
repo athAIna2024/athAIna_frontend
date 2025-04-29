@@ -1,32 +1,22 @@
 <script setup>
-import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import axios from "@/axios";
+import Success_Message from "@/components/Success_Message.vue";
 import Loading_Modal from "@/components/Loading_Modal.vue";
 
 const router = useRouter();
+const route = useRoute();
 
-const props = defineProps({
-  isVisible: {
-    type: Boolean,
-    required: true,
-  },
-  title: {
-    type: String,
-    default: "Modal Title",
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-});
-
-const emit = defineEmits(["close"]);
-const isResendingOTP = ref(false);
-
-const step = ref(1);
+// Get email from query parameters
+const userEmail = ref(route.query.email || "");
 const error = ref("");
-const isVerified = ref("false");
+const isVerified = ref(false);
+
+// States for loading and modals
+const isLoading = ref(false);
+const isLoadingModalVisible = ref(false);
+const isSuccessMessageVisible = ref(false);
 
 const otpValue = ref("");
 const displayOTP = ref(["", "", "", "", "", ""]);
@@ -35,6 +25,23 @@ const displayOTP = ref(["", "", "", "", "", ""]);
 const countdown = ref(5);
 const isCountdownActive = ref(false);
 let countdownInterval = null;
+
+onMounted(() => {
+  // Check if email exists, if not redirect to forgot password page
+  if (!userEmail.value) {
+    router.push({ name: "Forgot_Password" });
+    return;
+  }
+
+  startCountdown();
+});
+
+onBeforeUnmount(() => {
+  // Clear interval when component is unmounted
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+});
 
 const startCountdown = () => {
   isCountdownActive.value = true;
@@ -48,56 +55,6 @@ const startCountdown = () => {
     }
   }, 1000);
 };
-
-const resendOTP = async () => {
-  try {
-    isResendingOTP.value = true; // Show loading modal
-    error.value = "";
-    // Use the correct payload format for your backend
-    const response = await axios.post("/account/resend-otp/", {
-      email: props.email, // Email must be passed from parent component
-      purpose: "forgot_password", // Using the purpose defined in your serializer
-    });
-
-    if (response.data.successful) {
-      // Clear the current OTP input fields
-      otpValue.value = "";
-      displayOTP.value = ["", "", "", "", "", ""];
-      // Start countdown again
-      startCountdown();
-    }
-  } catch (err) {
-    error.value = err.response?.data?.message || "Failed to resend OTP";
-    console.error("Error resending OTP", err);
-  } finally {
-    isResendingOTP.value = false; // Hide loading modal when done
-  }
-};
-
-onMounted(() => {
-  // Start countdown when component is mounted
-  if (props.isVisible) {
-    startCountdown();
-  }
-});
-
-onBeforeUnmount(() => {
-  // Clear interval when component is unmounted
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
-  }
-});
-
-watch(
-  () => props.isVisible,
-  (newValue) => {
-    if (newValue) {
-      startCountdown();
-    } else if (countdownInterval) {
-      clearInterval(countdownInterval);
-    }
-  }
-);
 
 const handleOTPChange = (e) => {
   const value = e.target.value.replace(/[^0-9]/g, "");
@@ -123,64 +80,18 @@ const handleBoxInput = (boxIndex, event) => {
 };
 
 const handleBoxKeydown = (boxIndex, event) => {
-  if (event.key === "Backspace") {
-    if (displayOTP.value[boxIndex]) {
-      // If current box has a value, clear it
-      displayOTP.value[boxIndex] = "";
+  if (
+    event.key === "Backspace" &&
+    !displayOTP.value[boxIndex] &&
+    boxIndex > 0
+  ) {
+    event.preventDefault();
+    const prevInput = event.target.previousElementSibling;
+    if (prevInput) {
+      prevInput.focus();
+      displayOTP.value[boxIndex - 1] = "";
       otpValue.value = displayOTP.value.join("");
-    } else if (boxIndex > 0) {
-      // If current box is empty and not the first box, go to previous box
-      event.preventDefault();
-      const prevInput = event.target.previousElementSibling;
-      if (prevInput) {
-        prevInput.focus();
-        displayOTP.value[boxIndex - 1] = "";
-        otpValue.value = displayOTP.value.join("");
-      }
     }
-  }
-};
-
-const verifyOTP = async () => {
-  try {
-    const response = await axios.post("/account/verify-forgot-password-otp/", {
-      otp: otpValue.value,
-    });
-
-    if (response.data.successful) {
-      isVerified.value = true;
-      step.value++;
-
-      // Extract the uidb64 and token from the password_reset_link
-      const resetLink = response.data.password_reset_link;
-      const [uidb64, token] = resetLink.split("/").slice(-3, -1);
-
-      // Redirect to the reset password page with the tokens
-      setTimeout(() => {
-        close();
-        router.push({
-          name: "Forgot_password_page",
-          params: { uidb64, token },
-        });
-      });
-    }
-  } catch (err) {
-    error.value = err.response?.data?.message || "Invalid OTP code";
-    console.error("OTP verification error", err);
-  }
-};
-
-const close = () => {
-  emit("close");
-  step.value = 1;
-  error.value = "";
-  otpValue.value = "";
-  displayOTP.value = ["", "", "", "", "", ""];
-
-  // Clear countdown interval when closing
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
-    isCountdownActive.value = false;
   }
 };
 
@@ -192,67 +103,94 @@ const nextStep = () => {
   }
 };
 
-const previousStep = () => {
-  if (step.value > 1) {
-    step.value--;
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
+
+const closeSuccessMessage = () => {
+  isSuccessMessageVisible.value = false;
+};
+
+const verifyOTP = async () => {
+  try {
+    isLoading.value = true;
+    isLoadingModalVisible.value = true;
+    error.value = "";
+
+    const response = await axios.post("/account/verify-forgot-password-otp/", {
+      otp: otpValue.value,
+      email: userEmail.value,
+    });
+
+    if (response.data.successful) {
+      isVerified.value = true;
+      isLoadingModalVisible.value = false;
+      isSuccessMessageVisible.value = true;
+
+      // Extract the uidb64 and token from the password_reset_link
+      const resetLink = response.data.password_reset_link;
+      const urlParts = resetLink.split("/");
+      const uidb64 = urlParts[urlParts.length - 3];
+      const token = urlParts[urlParts.length - 2];
+
+      // After short delay, redirect to reset password page with tokens
+      setTimeout(() => {
+        router.push({
+          name: "Forgot_password_page",
+          params: { uidb64, token },
+        });
+      }, 1000);
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || "Invalid OTP code";
+    isLoadingModalVisible.value = false;
+  } finally {
+    isLoading.value = false;
   }
 };
 
-watch(step, (newValue) => {
-  if (newValue === 3) {
-    setTimeout(() => {
-      close();
-      try {
-        router.push({ name: "Forgot_Password_Page" });
-      } catch (err) {
-        console.error("Error redirecting to Forgot page", err);
-      }
-    }, 2000);
-  }
-});
+const resendOTP = async () => {
+  try {
+    if (isCountdownActive.value) return;
 
-// Computed properties
-const stepText = computed(() => {
-  switch (step.value) {
-    case 1:
-      return "OTP Verification";
-    case 2:
-      return "Verification Successful";
-    default:
-      return "";
+    error.value = "";
+    isLoading.value = true;
+    isLoadingModalVisible.value = true;
+
+    const response = await axios.post("/account/resend-otp/", {
+      email: userEmail.value,
+      purpose: "forgot_password",
+    });
+
+    if (response.data.successful) {
+      otpValue.value = "";
+      displayOTP.value = ["", "", "", "", "", ""];
+
+      isLoadingModalVisible.value = false;
+
+      setTimeout(() => {
+        startCountdown();
+      }, 500);
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || "Failed to resend OTP";
+  } finally {
+    isLoading.value = false;
+    isLoadingModalVisible.value = false;
   }
-});
+};
+
+const goBackToForgotPassword = () => {
+  router.push({ name: "Forgot_Password" });
+};
 </script>
 
 <template>
   <div
-    v-if="isVisible"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-40"
+    class="min-h-screen flex items-center justify-center bg-athAIna-dark py-12 px-4"
   >
-    <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
+    <div class="athAIna-border-outer p-1 flex flex-col w-full max-w-[550px]">
       <div class="athAIna-border-inner p-4 text-center relative">
-        <!-- Close button -->
-        <button
-          @click="close"
-          class="absolute top-2 right-2 text-athAIna-violet hover:text-athAIna-red focus:outline-none"
-          aria-label="Close"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
         <h1 class="m-8 text-athAIna-lg font-semibold">OTP VERIFICATION</h1>
         <p class="m-8 text-athAIna-md">
           We've sent a One Time Password (OTP) to verify your email.
@@ -271,7 +209,7 @@ const stepText = computed(() => {
               :key="boxIndex"
               type="text"
               maxlength="1"
-              :value="digit"
+              v-model="displayOTP[boxIndex]"
               @input="handleBoxInput(boxIndex, $event)"
               @keydown="handleBoxKeydown(boxIndex, $event)"
               class="w-12 h-12 text-center text-2xl font-bold border-2 border-athAIna-violet text-athAIna-violet rounded-lg focus:outline-none focus:border-athAIna-yellow"
@@ -296,7 +234,7 @@ const stepText = computed(() => {
         <div class="m-8 flex justify-center">
           <button
             @click="nextStep"
-            class="btn w-48 bg-athAIna-orange text-white py-2 px-8 rounded-xl hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn w-48"
             :disabled="otpValue.length !== 6"
           >
             Verify
@@ -305,19 +243,28 @@ const stepText = computed(() => {
       </div>
     </div>
 
-    <!-- Using the Loading_Modal component -->
+    <!-- Loading Modal -->
     <Loading_Modal
-      :isVisible="isResendingOTP"
-      loadingHeader="Resending OTP"
-      loadingMessage="Processing your request"
-      :condition="false"
-      @close="isResendingOTP = false"
+      :loadingMessage="
+        isVerified ? 'Verifying your email' : 'Processing your request'
+      "
+      :loadingHeader="'Please wait'"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+
+    <!-- Success Message -->
+    <Success_Message
+      :successHeader="'Verification Successful!'"
+      :successMessage="'Redirecting to reset your password...'"
+      :isVisible="isSuccessMessageVisible"
+      @close="closeSuccessMessage"
     />
   </div>
 </template>
 
 <style scoped>
-/* Component-specific styles */
 .athAIna-border-outer {
   border-radius: 1rem;
   background-image: linear-gradient(to bottom right, #da384c, #f5a524);
@@ -327,5 +274,10 @@ const stepText = computed(() => {
   border-radius: 0.75rem;
   background-color: white;
   height: 100%;
+}
+
+.btn {
+  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  color: white;
 }
 </style>

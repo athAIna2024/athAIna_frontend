@@ -12,7 +12,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "showLearnerProfile"]);
 const router = useRouter();
 const authStore = useAuthStore();
 const deleteError = ref("");
@@ -44,7 +44,13 @@ const deleteAccount = async () => {
       authStore.logout();
 
       // Redirect to login page
-      router.push("/login");
+      setTimeout(() => {
+        isSuccessMessageVisible.value = false;
+        close();
+        router.push({
+          name: "Login",
+        });
+      }, 2000);
     }
   } catch (error) {
     console.error("Error deleting account:", error);
@@ -88,7 +94,12 @@ const deleteAccount = async () => {
 
           <div class="flex space-x-4">
             <button
-              @click="$emit('close')"
+              @click="
+                () => {
+                  $emit('close');
+                  $emit('showLearnerProfile'); // Add this to show the learner profile
+                }
+              "
               class="border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
             >
               Cancel
