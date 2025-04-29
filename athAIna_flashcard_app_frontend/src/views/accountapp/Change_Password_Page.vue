@@ -155,9 +155,7 @@ const updatePassword = async () => {
         confirm_new_password: confirmPassword.value,
       },
       {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("access_token")}`,
-        },
+        withCredentials: true,
       }
     );
 

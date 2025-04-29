@@ -141,10 +141,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <Delete_Account
-    :is-open="modals.Delete_Account"
-    @close="toggleModal('Delete_Account')"
-  />
+  <div class="delete-account-wrapper" style="z-index: 100">
+    <Delete_Account
+      :is-open="modals.Delete_Account"
+      @close="toggleModal('Delete_Account')"
+      @showLearnerProfile="toggleModal('accSettings')"
+    />
+  </div>
   <Logout :isVisible="modals.logout" @close="toggleModal('logout')" />
 
   <!-- Loading Modal -->
@@ -181,7 +184,7 @@ onMounted(() => {
           </button>
         </div>
         <div class="flex flex-col items-center justify-between p-5">
-          <span class="font-semibold">User Profile</span>
+          <span class="font-semibold">Learner Profile</span>
           <div class="flex flex-col">
             <span> {{ userStore.getEmail() }} </span>
             <span>
@@ -202,7 +205,12 @@ onMounted(() => {
           </button>
 
           <button
-            @click="toggleModal('Delete_Account')"
+            @click="
+              () => {
+                toggleModal('accSettings'); // Close the account settings modal
+                toggleModal('Delete_Account'); // Open the delete account modal
+              }
+            "
             class="text-base border-athAIna-red border-[3.5px] w-52 py-[10px] px-[30px] rounded-2xl text-sm text-red-500"
           >
             Delete Account
