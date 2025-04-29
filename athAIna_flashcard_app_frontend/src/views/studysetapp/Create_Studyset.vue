@@ -157,7 +157,7 @@ const saveStudySet = async () => {
               <Subject_Selector
                   @click="toggleModal('subjectSelectModal')"
                   class="relative w-full mb-3"
-                  :placeholder="''"
+                  :placeholder="'Choose a subject'"
                   :outerClass="''"
                   :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
                   v-model="subject.value"
