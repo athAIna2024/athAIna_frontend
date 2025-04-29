@@ -163,7 +163,7 @@ const saveStudySet = async () => {
               <Subject_Selector
                   @click="toggleModal('subjectSelectModal')"
                   @cancel="clearSubjectSelected"
-                  class="relative w-full mt-3"
+                  class="relative w-full"
                   :placeholder="'Choose Subject'"
                   :outerClass="''"
                   :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
