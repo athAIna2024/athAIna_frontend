@@ -7,6 +7,7 @@ import Success_Message from "@/components/Success_Message.vue";
 import {useUserStore} from "../../../stores/userStore.js";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
+import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
 
 const studyset_url = "/studyset/save/";
 const field_errors = ref({});
@@ -153,7 +154,7 @@ const saveStudySet = async () => {
 
           <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
             <p> Subject </p>
-            <div class="relative">
+            <div class="relative flex w-full max-h-full">
               <Subject_Selector
                   @click="toggleModal('subjectSelectModal')"
                   class="relative w-full mb-3"
@@ -163,14 +164,17 @@ const saveStudySet = async () => {
                   v-model="subject.value"
               />
 
-              <Floating_Dropdown
-                  v-if="modals.subjectSelectModal"
-                  top="50px"
-                  right="0px"
-                  height="max-content"
-                  width="553px"
-                  @update:modelValue="({ key, value }) => updateSubject(key, value)"
-              />
+              <div class="">
+                <Floating_Dropdown
+                    v-if="modals.subjectSelectModal"
+                    class="lg:w-full w-full sm:w-full"
+                    top="50px"
+                    right="0px"
+                    height="max-content"
+                    width="full"
+                    @update:modelValue="({ key, value }) => updateSubject(key, value)"
+                />
+              </div>
 
             </div>
 

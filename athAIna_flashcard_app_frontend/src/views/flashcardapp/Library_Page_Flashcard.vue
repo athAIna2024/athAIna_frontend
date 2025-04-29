@@ -177,9 +177,9 @@ onMounted(() => {
                 </div>
 
                 <div class="flex flex-row justify-between gap-x-6 items-center">
-                  <Search_Bar v-model="input" class=""/>
+                  <Search_Bar v-model="input" />
                   <button
-                      class="relative btn w-[300px] px-0 m-0 text-[16px] font-semibold"
+                      class="relative btn w-[300px] px-0 mx-0 text-[16px] font-semibold"
                       @click="toggleModal('learningMode')"
                   >
                     Learning Mode
