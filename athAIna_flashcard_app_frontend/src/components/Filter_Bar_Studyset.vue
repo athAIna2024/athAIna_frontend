@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref, onMounted, onBeforeUnmount } from "vue";
 import studySetDb from "@/views/studysetapp/dexie.js";
 import {useStudySetFilterStore} from "../../stores/studySetFilterStore.js";
 import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
@@ -12,8 +12,6 @@ const props = defineProps({
   height: String,
   width: String,
 });
-
-
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -46,10 +44,12 @@ const filterStudySets = async (query) => {
     <div class="max-h-[150px] overflow-y-auto minimalistic-scrollbar flex flex-col gap-y-3 p-3 w-full">
       <div v-for="[key, value] in Object.entries(dropdownOptions)" :key="key" class="w-full">
         <button
-            class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full"
+            class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[5px] px-[30px] rounded-3xl text-sm w-full
+            min-w-[100px] max-w-full truncate hover:gradient-hover transition-colors duration-300"
             :class="value.active
             ? 'bg-athAIna-orange text-athAIna-white'
             : 'border-athAIna-orange border-[3.5px]'"
+            :title="value"
             @click="() => updateValue(key, value)"
         >
           {{ value }}
@@ -81,5 +81,14 @@ const filterStudySets = async (query) => {
 .minimalistic-scrollbar {
   scrollbar-width: thin; /* Thin scrollbar */
   scrollbar-color: #888 #f1f1f1; /* Color of the scrollbar thumb and track */
+}
+
+button:hover {
+  @apply bg-gradient-to-r from-athAIna-yellow to-athAIna-red;
+  @apply text-athAIna-white;
+  @apply font-semibold;
+  @apply border-none;
+  @apply py-[8px];
+  @apply px-[33.5px];
 }
 </style>
