@@ -17,28 +17,29 @@ const props = defineProps({
     required: true
   },
   modelValue: {
-    type: String,
-    default: ""
+    type: [String, Object], // Allows both String and Object types
+    default: () => "" // Default can remain a string or an empty object
   }
 
 
 });
 const emit = defineEmits(['update:modelValue', 'click', 'cancel']);
 
-const isCancelActive = ref(props.modelValue !== "");
+const isCancelActive = computed(() => {
+  if (typeof props.modelValue === "string") {
+    return props.modelValue !== "";
+  }
+
+  if (props.modelValue && typeof props.modelValue === "object") {
+    return props.modelValue.key !== "";
+  }
+  return false;
+});
 
 const clearFilterResults = () => {
   emit("update:modelValue", "");
-  emit('cancel')
+  emit("cancel");
 };
-
-watch(
-    () => props.modelValue,
-    (newValue) => {
-      isCancelActive.value = newValue !== "";
-    },
-    { immediate: true }
-);
 
 </script>
 
