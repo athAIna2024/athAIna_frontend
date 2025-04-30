@@ -15,7 +15,7 @@ const isSuccessful = ref(false);
 const message = ref("");
 const title = ref("");
 const description = ref("");
-const subject = ref({ key: "No subject", value: "Choose a subject" });
+const subject = ref({});
 
 const userStore = useUserStore();
 const learnerId = userStore.getUserID();
@@ -32,11 +32,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+
+const clearSubjectSelected = () => {
+  subject.value = {};
+};
+
 const close = () => {
 
   title.value = "";
   description.value = "";
-  subject.value = { key: "No subject", value: "Choose a subject" };
+  subject.value = {};
 
   message.value = "";
   field_errors.value = {};
@@ -157,8 +162,9 @@ const saveStudySet = async () => {
             <div class="relative flex w-full max-h-full">
               <Subject_Selector
                   @click="toggleModal('subjectSelectModal')"
-                  class="relative w-full mb-3"
-                  :placeholder="''"
+                  @cancel="clearSubjectSelected"
+                  class="relative w-full"
+                  :placeholder="'Choose Subject'"
                   :outerClass="''"
                   :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
                   v-model="subject.value"
