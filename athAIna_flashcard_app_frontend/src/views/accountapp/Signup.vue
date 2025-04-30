@@ -1,6 +1,5 @@
 <script setup>
 import { reactive, ref } from "vue";
-import OTP from "@/views/accountapp/Email_OTP.vue";
 import { useRouter } from "vue-router";
 import axios from "@/axios";
 import Loading_Modal from "@/components/Loading_Modal.vue";
@@ -16,21 +15,6 @@ const isLoading = ref(false);
 const isLoadingModalVisible = ref(false);
 
 const router = useRouter();
-
-const isOTPVisible = ref(false);
-
-const openOTP = () => {
-  // Store email in localStorage for OTP resending functionality
-  localStorage.setItem("signupEmail", email.value);
-
-  // Hide loading modal and show OTP with success flag
-  isLoadingModalVisible.value = false;
-  isOTPVisible.value = true;
-};
-
-const closeOTP = () => {
-  isOTPVisible.value = false;
-};
 
 // Initialize to false (eyes closed/password hidden)
 const showPassword = ref(false);
@@ -76,18 +60,27 @@ const createUser = async () => {
       password: password.value,
       password2: password2.value,
     });
-    console.log(response.data);
+
     isSuccessful.value = response.data.successful;
 
     if (isSuccessful.value === true) {
-      openOTP();
+      // Store email in localStorage for OTP page
+      localStorage.setItem("signupEmail", email.value);
+
+      // Hide loading modal and redirect to OTP page
+      isLoadingModalVisible.value = false;
+
+      // Redirect to the OTP verification page with email as query parameter
+      router.push({
+        name: "verify_Email_OTP",
+        query: { email: email.value },
+      });
     }
   } catch (err) {
-    console.log(err.response.data);
-    if (err.response.status === 400) {
+    if (err.response && err.response.status === 400) {
       isSuccessful.value = false;
       // Handle field-specific errors
-      if (err.response.data.email) errors.email = err.response.data.email;
+      if (err.response.data.email) errors.email = err.response.data.email[0];
       if (err.response.data.password)
         errors.password = err.response.data.password;
       if (err.response.data.password2)
@@ -342,9 +335,9 @@ const closeLoadingModal = () => {
           <!-- Sign Up Button -->
           <div class="flex m-10 justify-center w-auto">
             <button
-              class="btn w-full"
+              class="btn !rounded-full w-full"
               @click="createUser"
-              :disabled="isOTPVisible || isLoading"
+              :disabled="isLoading"
             >
               Sign Up
             </button>
@@ -367,14 +360,6 @@ const closeLoadingModal = () => {
       :isVisible="isLoadingModalVisible"
       :condition="!isLoading"
       @close="closeLoadingModal"
-    />
-
-    <!-- Pass email prop to OTP component with flag for displaying success message -->
-    <OTP
-      :is-visible="isOTPVisible"
-      :email="email"
-      :show-success="isSuccessful"
-      @close="closeOTP"
     />
   </div>
 </template>

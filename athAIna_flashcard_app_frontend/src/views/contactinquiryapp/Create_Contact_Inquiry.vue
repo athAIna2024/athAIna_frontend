@@ -70,8 +70,8 @@ const closeSuccessMessage = () => {
 
       <!-- Error Message -->
       <div
-          v-if="error"
-          class="mb-0 bg-red-100 text-athAIna-red rounded-lg w-full"
+        v-if="error"
+        class="mb-0 bg-red-100 text-athAIna-red rounded-lg w-full"
       >
         {{ error }}
       </div>
@@ -104,12 +104,12 @@ const closeSuccessMessage = () => {
       <div class="m-5 mb-4 px-2 border-[2.5px] border-athAIna-violet rounded-[20px] h-[40px] w-full relative flex flex-row items-center">
         <div class="relative flex flex-row items-center w-full">
           <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="size-5 absolute left-[4px] top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="size-5 absolute left-[4px] top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
           >
             <path
                 stroke-linecap="round"
@@ -130,12 +130,12 @@ const closeSuccessMessage = () => {
       <div class="m-5 mb-4 px-2 border-[2.5px] border-athAIna-violet rounded-[20px] h-[136px] w-full relative flex flex-row items-center">
         <div class="relative flex flex-row items-center w-full">
           <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              class="size-5 absolute left-1 top-[75px] transform -translate-y-1/2 text-athAIna-violet -mt-12 ml-2 mr-3"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="size-5 absolute left-1 top-[75px] transform -translate-y-1/2 text-athAIna-violet -mt-12 ml-2 mr-3"
           >
             <path
                 stroke-linecap="round"
@@ -144,9 +144,9 @@ const closeSuccessMessage = () => {
             />
           </svg>
           <textarea
-              v-model="formData.message"
-              placeholder="Inquiry"
-              class="text-[14px] py-3 text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[128px] flex flex-row items-center pl-[50px]"
+            v-model="formData.message"
+            placeholder="Inquiry"
+            class="text-[14px] py-3 text-athAIna-violet placeholder-athAIna-violet focus:outline-none ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[128px] flex flex-row items-center pl-[50px]"
           ></textarea>
         </div>
       </div>

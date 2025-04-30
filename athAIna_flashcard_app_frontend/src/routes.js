@@ -35,6 +35,8 @@ import View_Learning_Progress from "@/views/reportapp/View_Learning_Progress.vue
 
 import { useTestModeStore } from "../stores/testModeStore.js";
 import { useAuthStore } from "../stores/authStore.js";
+import Forgot_OTP from "./views/accountapp/Forgot_OTP.vue";
+import Email_OTP from "./views/accountapp/Email_OTP.vue";
 
 const routes = [
   {
@@ -68,68 +70,6 @@ const routes = [
     meta: { title: "Contact Us – athAIna" },
   },
   {
-
-    path: "/:studySetTitle/:studySetId/flashcards/save",
-    name: "Create_Flashcard_Manually",
-    component: Create_Flashcard_Manually,
-    meta: { title: "Create Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/generate_flashcard_with_ai/",
-    name: "Generate_Flashcard_with_AI",
-    component: Generate_Flashcard_with_AI,
-    meta: { title: "Generate AI Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/flashcards",
-    name: "Library_Page_Flashcard",
-    component: Library_Page_Flashcard,
-    meta: { title: "Flashcards – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/test/:batchId",
-    name: "Test_Mode",
-    component: Test_mode,
-    meta: { title: "Test Mode – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/:studySetTitle/:studySetId/update_flashcard/:flashcardId",
-    name: "Update_Flashcard",
-    component: Update_Flashcard,
-    meta: { title: "Update Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/delete_flashcard/",
-    name: "Delete_Flashcard",
-    component: Delete_Flashcard,
-    meta: { title: "Delete Flashcard – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/create_studyset/",
-    name: "Create_Studyset",
-    component: Create_Studyset,
-    meta: { title: "Create Study Set – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/update_studyset/",
-    name: "Update_Studyset",
-    component: Update_Studyset,
-    meta: { title: "Update Study Set – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/delete_studyset/",
-    name: "Delete_Studyset",
-    component: Delete_Studyset,
-    meta: { title: "Delete Study Set – athAIna", requiresAuth: true },
-  },
-  {
-    path: "/report/",
-    name: "View_Learning_Progress",
-    component: View_Learning_Progress,
-    meta: { title: "Report – athAIna", requiresAuth: true },
-  },
-
-  {
     path: "/account",
     children: [
       {
@@ -149,6 +89,13 @@ const routes = [
         name: "Signup",
         component: Signup,
         meta: { title: "Sign In – athAIna" },
+      },
+      {
+        path: "/Verify_Email",
+        name: "verify_Email_OTP",
+        component: Email_OTP,
+        props: (route) => ({ email: route.query.email }),
+        meta: { title: "Verify Email OTP – athAIna" },
       },
       {
         path: "/verify_email",
@@ -184,6 +131,13 @@ const routes = [
         name: "Forgot_Password",
         component: Forgot_Password,
         meta: { title: "Forgot Password – athAIna" },
+      },
+      {
+        path: "forgot_otp",
+        name: "Forgot_OTP",
+        component: Forgot_OTP,
+        props: (route) => ({ email: route.query.email }),
+        meta: { title: "Forgot Password  OTP – athAIna" },
       },
       {
         path: "forgot_password_page/:uidb64/:token",
@@ -244,14 +198,12 @@ const routes = [
     path: "/studysets",
     children: [
       {
-
         path: "create",
-        name: "Create_Studyset1",
+        name: "Create_Studyset",
         component: Create_Studyset,
         meta: { title: "Create Study Set – athAIna", requiresAuth: true },
       },
       {
-
         path: "library",
         name: "Library_Page_Studyset",
         component: Library_Page_Studyset,
@@ -260,13 +212,13 @@ const routes = [
 
       {
         path: "update",
-        name: "Update_Studyset1",
+        name: "Update_Studyset",
         component: Update_Studyset,
         meta: { title: "Update Study Set – athAIna", requiresAuth: true },
       },
       {
         path: "delete",
-        name: "Delete_Studyset1",
+        name: "Delete_Studyset",
         component: Delete_Studyset,
         meta: { title: "Delete Study Set – athAIna", requiresAuth: true },
       },

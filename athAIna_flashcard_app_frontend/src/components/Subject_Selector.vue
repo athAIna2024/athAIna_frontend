@@ -1,6 +1,11 @@
 <script setup>
 import { defineProps, defineEmits } from "vue";
+import { ref } from "vue";
+import { computed } from "vue";
+import { watch } from "vue";
+import { useStudySetFilterStore} from "../../stores/studySetFilterStore.js";
 
+const studySetFilterStore = useStudySetFilterStore();
 const props = defineProps({
   placeholder: String,
   outerClass: {
@@ -12,14 +17,29 @@ const props = defineProps({
     required: true
   },
   modelValue: {
-    type: String,
-    default: ""
+    type: [String, Object], // Allows both String and Object types
+    default: () => "" // Default can remain a string or an empty object
   }
 
 
 });
-const emit = defineEmits(['update:modelValue', 'click']);
+const emit = defineEmits(['update:modelValue', 'click', 'cancel']);
 
+const isCancelActive = computed(() => {
+  if (typeof props.modelValue === "string") {
+    return props.modelValue !== "";
+  }
+
+  if (props.modelValue && typeof props.modelValue === "object") {
+    return props.modelValue.key !== "";
+  }
+  return false;
+});
+
+const clearFilterResults = () => {
+  emit("update:modelValue", "");
+  emit("cancel");
+};
 
 </script>
 
@@ -30,7 +50,17 @@ const emit = defineEmits(['update:modelValue', 'click']);
       @click="$emit('click')"
   >
     <span class="text-athAIna-orange">{{ modelValue || placeholder }}</span>
-    <svg
+    <svg v-if="isCancelActive"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none" viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-5 text-athAIna-violet hover:cursor-pointer"
+        @click="clearFilterResults()"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+    <svg v-else
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -44,6 +74,7 @@ const emit = defineEmits(['update:modelValue', 'click']);
           d="m19.5 8.25-7.5 7.5-7.5-7.5"
       />
     </svg>
+
   </div>
 </div>
 </template>
