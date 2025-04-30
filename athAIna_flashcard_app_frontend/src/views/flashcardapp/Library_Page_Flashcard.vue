@@ -38,13 +38,6 @@ const flashcard_db = ref([]);
 
 const itemsPerPage = 6;
 
-const flashcardCounts = computed(() => {
-  return (
-    flashcardSearchStore.getSearchResults(studySetId).length ||
-    flashcard_db.value.length
-  );
-});
-
 const input = ref("");
 const currentPage = ref(1);
 
@@ -101,11 +94,27 @@ const fetchFlashcardsFromDb = async () => {
   }
 };
 
-const currentFlashcards = computed(() => {
+const flashcardCounts = ref(0);
+
+const applyPagination = (data) => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return flashcard_db.value.slice(startIndex, endIndex);
+  return data.slice(startIndex, endIndex);
+}
+
+const currentFlashcards = computed(() => {
+  const searchResults = flashcardSearchStore.getSearchResults(studySetId);
+
+  if (searchResults.length > 0) {
+    flashcardCounts.value = searchResults.length;
+    return applyPagination(searchResults);
+  } else {
+    flashcardCounts.value = flashcard_db.value.length;
+    return applyPagination(flashcard_db.value);
+  }
+
 });
+
 
 const navigateToLibraryPage = () => {
   router.push({ name: "Library_Page_Studyset" });
@@ -139,11 +148,11 @@ onMounted(() => {
   <transition appear name="fade">
     <div>
       <div class="m-4">
-        <div class="athAIna-border-outer p-1 shadow-xl">
-          <div class="athAIna-border-inner py-4">
-            <div class="flex flex-col m-10">
+        <div class="athAIna-border-outer p-1 shadow-xl h-auto">
+          <div class="athAIna-border-inner py-4 h-auto">
+            <div class="flex flex-col m-10 justify-between min-h-screen">
               <div
-                  class="text-athAIna-lg text-center flex flex-row justify-between space-x-20 items-center"
+                  class="text-athAIna-lg text-center flex flex-row justify-between space-x-6 items-center"
               >
                 <div class="flex flex-row space-x-6 items-center">
                   <button @click="navigateToLibraryPage">
@@ -167,10 +176,10 @@ onMounted(() => {
                   </h1>
                 </div>
 
-                <div class="flex flex-row justify-between space-x-6 items-center">
+                <div class="flex flex-row justify-between gap-x-6 items-center">
                   <Search_Bar v-model="input" />
                   <button
-                      class="relative btn w-60 text-[16px] font-semibold"
+                      class="relative btn w-[300px] px-0 mx-0 text-[16px] font-semibold"
                       @click="toggleModal('learningMode')"
                   >
                     Learning Mode
@@ -193,7 +202,7 @@ onMounted(() => {
                     </button>
                   </div>
                   <button
-                      class="relative btn w-60 text-[16px] font-semibold"
+                      class="relative btn w-[300px] px-0 text-[16px] font-semibold"
                       @click="toggleModal('addFlashcard')"
                   >
                     Add Flashcard
@@ -236,16 +245,8 @@ onMounted(() => {
                 </div>
               </div>
 
-              <div class="grid grid-cols-3 gap-12 mt-10 mb-12">
-                <div
-                    class="list-none"
-                    v-for="(
-                flashcard, index
-              ) in flashcardSearchStore.getSearchResults(studySetId).length
-                ? flashcardSearchStore.getSearchResults(studySetId)
-                : currentFlashcards"
-                    :key="index"
-                >
+              <div class="grid grid-cols-3 gap-12 mt-10 mb-12 flex-grow">
+                <div class="list-none" v-for="(flashcard, index) in currentFlashcards" :key="index">
                   <Flashcard_Card
                       :flashcardId="flashcard.id"
                       :question="flashcard.question"

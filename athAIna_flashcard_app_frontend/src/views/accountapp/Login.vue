@@ -143,25 +143,25 @@ const handleFailedAttempt = (userId) => {
     :condition="!isLoading"
   />
 
-  <div class="flex flex-row gap-x-0 mt-16 my-16 mr-16 ml-14 p-0 max-h-screen">
+  <div class="flex flex-row gap-x-0 mt-8 my-16 mr-16 ml-14 p-0 max-h-screen">
     <!-- Sample Card Display -->
-    <div class="ml-0 mr-28 pr-0 flex justify-center w-1/2 mt-10 mb-10">
+    <div class="ml-0 mr-28 pr-0 flex justify-center w-1/2 mt-8 mb-10">
       <!-- Lowermost Card -->
       <div
-        class="mr-28 mt-7 absolute rotate-[-4deg] shadow-md w-[360px] h-[490px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
+        class="mr-28 mt-7 absolute rotate-[-4deg] shadow-md w-[360px] h-[480px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
       ></div>
 
       <!-- Middle Card-->
       <div
-        class="mr-12 mt-3 absolute rotate-[0deg] shadow-md w-[360px] h-[490px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
+        class="mr-12 mt-3 absolute rotate-[0deg] shadow-md w-[360px] h-[480px] rounded-[15px] bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
       ></div>
 
       <!-- Topmost Card -->
       <div
-        class="absolute ml-3 p-[5px] shadow-md bg-gradient-to-br rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red rotate-[4deg] w-[360px] h-[490px]"
+        class="absolute ml-3 p-[5px] shadow-md bg-gradient-to-br rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red rotate-[4deg] w-[360px] h-[480px]"
       >
         <div
-          class="absolute ml-0 rotate-[0deg] w-[350px] h-[480px] rounded-[10px] bg-athAIna-white flex"
+          class="absolute ml-0 rotate-[0deg] w-[350px] h-[470px] rounded-[10px] bg-athAIna-white flex"
         >
           <span class="absolute p-8 bottom-1 font-semibold">
             What is the largest star in the universe?

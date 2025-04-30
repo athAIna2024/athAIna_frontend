@@ -67,7 +67,7 @@ const scrollToFeatures = () => {
           class="absolute ml-5 p-[5px] shadow-md bg-gradient-to-br rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red rotate-[4deg] w-[600px] h-[720px]"
       >
         <div
-            class="absolute ml-0 rotate-[0deg] w-[590px] h-[710px] rounded-[10px] bg-athAIna-white flex align-middle items-center"
+            class="absolute ml-0 rotate-[0deg] w-[600px] h-[710px] rounded-[10px] bg-athAIna-white flex align-middle items-center"
         >
           <span class="absolute p-10 ml-4 text-lg font-semibold">
             What is the largest star in the universe?

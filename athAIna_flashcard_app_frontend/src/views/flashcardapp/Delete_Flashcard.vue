@@ -5,6 +5,11 @@ import axios from "@/axios";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 import studySetDb from "@/views/studysetapp/dexie.js";
 import Delete_Confirmation from "@/views/flashcardapp/Delete_Confirmation.vue";
+import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
 
 const flashcard_url = "/flashcard/delete/";
 
@@ -25,13 +30,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-function smoothReload() {
-  document.body.classList.add("fade-out");
-  setTimeout(() => {
-    location.reload();
-  }, 500); // Match the duration of the CSS transition
-}
 
 const emit = defineEmits(["close"]);
 
@@ -55,7 +53,7 @@ watch(
     if (newValue) {
       document.title = `${props.title}`;
     } else {
-      document.title = "athAIna";
+      document.title = route.meta.title;
     }
   }
 );
@@ -74,6 +72,7 @@ watch(isDeleteConfirmationModalVisible, (newValue) => {
 
 const deleteFlashcard = async () => {
   try {
+    console.log("FLASHCARD ID ", props.flashcardId);
     const request = await axios.delete(`${flashcard_url}${props.flashcardId}/`);
 
     isSuccessful.value = request.data.successful;
@@ -89,7 +88,16 @@ const deleteFlashcard = async () => {
       .modify({ flashcard_count: studySet.flashcard_count - 1 });
 
     if (isSuccessful) {
-      smoothReload();
+
+      router.push({
+        name: 'Library_Page_Flashcard',
+        params: {
+          studySetId: studySet.id,
+          studySetTitle: studySet.title,
+        },
+      });
+      router.go();
+
     }
   } catch (error) {
     if (error.response.status === 400) {

@@ -14,7 +14,8 @@ const field_errors = ref({});
 
 const title = ref("");
 const description = ref("");
-const subject = ref({ key: "", value: "" });
+const subject = ref({});
+const previousSubject = ref({});
 
 const isSuccessful_retrieved = ref(false);
 const message_retrieved = ref("");
@@ -51,8 +52,16 @@ const props = defineProps({
   }
 });
 
+const clearSubjectSelected = () => {
+  subject.value = {};
+};
+
 const emit = defineEmits(['close', 'refreshLibrary']);
 const close = () => {
+
+  message_updated.value = "";
+  field_errors.value = {};
+
   emit('close');
 };
 
@@ -79,7 +88,8 @@ const fetchStudySetData = async () => {
       description.value = response.data.description;
 
       const subjectKey = response.data.subject;
-      subject.value = { key: subjectKey, value: dropdownOptions[subjectKey] };
+      previousSubject.value = { key: subjectKey, value: dropdownOptions[subjectKey] };
+      subject.value = {...previousSubject.value};
 
       isSuccessful_retrieved.value = response.data.successful;
       message_retrieved.value = response.data.message;
@@ -90,7 +100,7 @@ const fetchStudySetData = async () => {
     }
 
   } catch (error) {
-    if (error.response.status === 404) {
+    if (error.response.status === 400) {
       isSuccessful_retrieved.value = false;
       message_retrieved.value = error.response.message;
 
@@ -136,7 +146,9 @@ const updateStudySet = async () => {
       close();
     }
 
+
   } catch (error) {
+
     if (error.response.status === 400) {
 
       isSuccessful_updated.value = error.response.data.successful;
@@ -195,7 +207,8 @@ const updateStudySet = async () => {
             <div class="relative">
                 <Subject_Selector
                     @click="toggleModal('subjectSelectModal')"
-                    class="relative w-full mb-3"
+                    @cancel="clearSubjectSelected"
+                    class="relative w-full"
                     :placeholder="'Choose Subject'"
                     :outerClass="''"
                     :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
