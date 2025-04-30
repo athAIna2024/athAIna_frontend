@@ -2,14 +2,16 @@
 
 <template>
   <div
-    class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-40 bg-athAIna-white sticky font-poppins shadow-md"
+      class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-40 bg-athAIna-white sticky font-poppins shadow-md"
   >
     <div
-      class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"
+        class="lg:w-100 xl:text-lg flex flex-row justify-between items-center space-x-20"
     >
       <router-link :to="{ name: 'Landing_Page' }"
-        ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
+        ><img src="@/assets/athAIna.svg" alt="Logo" class="h-auto max-w-14"
       /></router-link>
+      <div class="invisible lg:w-full w-0 lg:visible flex flex-row justify-between items-center space-x-20">
+
       <div>
         <router-link
           :to="{ name: 'Features_Page' }"
@@ -40,17 +42,21 @@
           >Demo</router-link
         >
       </div>
+      </div>
     </div>
 
+
     <div class="flex flex-row justify-between items-center space-x-20">
-      <div>
-        <router-link :to="{ name: 'Login' }" exact-active-class="active-link">
-          Login
+      <div class="flex flex-row invisible sm:visible sm:w-full w-0 justify-between items-center space-x-20">
+        <div>
+          <router-link :to="{ name: 'Login' }" exact-active-class="active-link">
+            Login
+          </router-link>
+        </div>
+        <router-link :to="{ name: 'Signup' }">
+          <button class="btn px-10">Sign up</button>
         </router-link>
       </div>
-      <router-link :to="{ name: 'Signup' }">
-        <button class="btn px-10">Sign up</button>
-      </router-link>
     </div>
   </div>
 </template>
