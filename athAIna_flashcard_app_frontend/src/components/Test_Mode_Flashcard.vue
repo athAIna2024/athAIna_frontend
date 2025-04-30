@@ -56,6 +56,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: false,
+  },
   answer: {
     type: String,
     required: true,
@@ -260,6 +264,14 @@ const saveTestScore = async () => {
   }
 };
 
+const isValidImage = computed(() => {
+  return (
+      typeof props.image === "string" &&
+      props.image.trim() !== "" &&
+      props.image.startsWith("http")
+  );
+});
+
 </script>
 
 <template>
@@ -267,9 +279,23 @@ const saveTestScore = async () => {
 <!--  <Transition name="fade">-->
     <div v-if="showQuestion" class="athAIna-border-outer p-1 my-4">
       <div class="athAIna-border-inner">
-        <div class="text-athAIna-violet m-auto flex items-center justify-center h-96">
-          {{ props.question }}
+
+
+        <div class="flex lg:flex-row items-center justify-center p-10 md:flex-col-reverse sm:flex-col-reverse">
+          <div class="text-athAIna-violet m-auto flex items-center justify-center">
+            {{ props.question }}
+          </div>
+          <div v-if="isValidImage">
+            <img
+                :src="props.image"
+                alt="Flashcard Image"
+                class="max-w-lg rounded-lg"
+            />
+          </div>
         </div>
+
+
+
         <div class="h-20">
           <div class="px-12 py-4 flex flex-row gap-10 justify-between ">
             <div class="athAIna-border-outer p-1 rounded-[20px] h-[40px]">
