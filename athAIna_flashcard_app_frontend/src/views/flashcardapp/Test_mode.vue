@@ -26,6 +26,7 @@ const questionLength = ref(Number(testModeStore.numberOfQuestions));
 
 const flashcard = ref(null);
 const flashcardQuestion = ref('');
+const flashcardImage = ref('');
 const flashcardAnswer = ref('');
 
 const showConfirmation = ref(false);
@@ -75,6 +76,7 @@ const loadQuestion = async () => {
 
       flashcardQuestion.value = flashcard.value?.question || '';
       flashcardAnswer.value = flashcard.value?.answer || '';
+      flashcardImage.value = flashcard.value?.image || '';
 
       console.log("Question", flashcardQuestion.value);
     } else {
@@ -128,7 +130,7 @@ onMounted(() => {
         <span class="font-bold"> {{progress}} / {{questionLength}} </span>
       </div>
 
-      <Test_Mode_Flashcard :question="flashcardQuestion" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
+      <Test_Mode_Flashcard :question="flashcardQuestion" :image="flashcardImage" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
 
       <div v-if="testModeStore.isTestCompleted">
         <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
