@@ -35,43 +35,102 @@ const modals = ref({
 const handleLogout = async (reason) => {
   console.log(`[Logout] Logging out: ${reason}`);
 
-  try {
-    const response = await axiosInstance.post("/account/logout/", {});
+  // Check if session exists in storage
+  const sessionExists = sessionStorage.getItem("session");
+  const isLoggedIn = authStore.isLoggedIn;
 
-    console.log("response: ", response);
-    console.log("response data: ", response.data);
-    console.log("response status: ", response.status);
-    console.log("response error: ", response.error);
-    console.log("response message: ", response.message);
+  // If no session but authenticated in store, attempt token refresh
+  if (!sessionExists && isLoggedIn) {
+    try {
+      // With server-side cookies, we need to call the refresh endpoint with explicit credentials
+      try {
+        const refreshResponse = await axiosInstance.post(
+          "/account/token/refresh/",
+          {}, // Empty body is important
+          {
+            withCredentials: true, // Explicitly enable credentials
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (refreshResponse.status === 200) {
+          console.log("[Logout] Token refreshed successfully");
+          // Set new session timestamp
+          sessionStorage.setItem("session", new Date());
+        }
+      } catch (refreshError) {
+        console.log(
+          "[Logout] Token refresh failed - forcing logout:",
+          refreshError
+        );
+        // Token refresh failed - force client-side logout
+        performClientSideLogout();
+        return;
+      }
+    } catch (error) {
+      console.log("[Logout] Error during refresh check:", error);
+    }
+  }
+
+  // Try server-side logout
+  try {
+    const response = await axiosInstance.post(
+      "/account/logout/",
+      {}, // Empty body is important
+      {
+        withCredentials: true, // Explicitly enable credentials
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("response status:", response.status);
 
     if (response.status === 204) {
-      Cookies.remove("access_token");
-      Cookies.remove("refresh_token");
-      Cookies.remove("athAIna_csrfToken");
-
-      let dbs = await indexedDB.databases();
-      dbs.forEach((db) => {
-        indexedDB.deleteDatabase(db.name);
-      });
-
-      authStore.logout();
-
-      flashcardSearchStore.clear();
-      studysetStore.clear();
-      studySetSearchStore.clear();
-      testModeStore.clear();
-
-      // router.push("/login");
-      router.push({ name: "Login" });
-      emit("close");
+      performClientSideLogout();
     } else {
-      console.log(response.error);
+      console.log("Unexpected response:", response);
+      performClientSideLogout();
     }
   } catch (error) {
-    console.log(error);
-  } finally {
-    userStore.clear();
+    console.log("Error during logout:", error);
+    // Even if server-side logout fails, perform client-side logout
+    performClientSideLogout();
   }
+};
+
+// Helper function to perform client-side logout cleanup
+const performClientSideLogout = async () => {
+  // Don't call logout endpoint again as it was already called in handleLogout
+
+  // Remove session
+  sessionStorage.removeItem("session");
+
+  // Clear IndexedDB
+  try {
+    let dbs = await indexedDB.databases();
+    dbs.forEach((db) => {
+      indexedDB.deleteDatabase(db.name);
+    });
+  } catch (dbError) {
+    console.log("Error clearing IndexedDB:", dbError);
+  }
+
+  // Update auth state in store
+  authStore.logout();
+
+  // Clear all stores
+  flashcardSearchStore.clear();
+  studysetStore.clear();
+  studySetSearchStore.clear();
+  testModeStore.clear();
+  userStore.clear();
+
+  // Navigate to login
+  router.push({ name: "Login" });
 };
 
 const userStore = useUserStore();
