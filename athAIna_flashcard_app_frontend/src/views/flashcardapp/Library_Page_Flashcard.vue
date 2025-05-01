@@ -150,11 +150,13 @@ onMounted(() => {
       <div class="m-4">
         <div class="athAIna-border-outer p-1 shadow-xl h-auto">
           <div class="athAIna-border-inner py-4 h-auto">
-            <div class="flex flex-col m-10 justify-between min-h-screen">
+            <div class="flex flex-col m-10">
               <div
-                  class="text-athAIna-lg text-center flex flex-row justify-between space-x-6 items-center"
+                  class="text-athAIna-lg text-center flex space-y-6 items-left flex-col justify-between
+                  md:flex-row md:space-y-0 md:items-center
+                  lg:flex-row lg:space-x-0"
               >
-                <div class="flex flex-row space-x-6 items-center">
+                <div class="flex flex-row space-x-6 items-center mr-10 md:min-w-[250px]">
                   <button @click="navigateToLibraryPage">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -171,64 +173,67 @@ onMounted(() => {
                       />
                     </svg>
                   </button>
-                  <h1 class="text-athAIna-violet font-semibold flex">
+                  <h1 class="text-athAIna-violet font-semibold flex mr-10">
                     {{ studySetTitle }}
                   </h1>
                 </div>
 
-                <div class="flex flex-row justify-between gap-x-6 items-center">
-                  <Search_Bar v-model="input" />
-                  <button
-                      class="relative btn w-[300px] px-0 mx-0 text-[16px] font-semibold"
-                      @click="toggleModal('learningMode')"
-                  >
-                    Learning Mode
-                  </button>
-                  <div
-                      v-if="modals.learningMode"
-                      class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
-                  >
+                <div class="flex flex-col justify-end min-w-auto
+                md:flex-col md:w-full md:space-y-1
+                lg:flex-row lg:w-auto lg:space-x-4 lg:items-center">
+                  <Search_Bar v-model="input" class="mb-2 lg:mb-0 lg:w-full min-w-[300px] md:w-full"/>
+                  <div class="flex flex-row space-x-4 items-center sm:w-full md:w-full lg:w-auto justify-between">
                     <button
-                        @click="redirectToReviewMode"
-                        class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
+                        class="relative btn sm:w-full text-[16px] font-semibold md:w-full lg:w-[200px]"
                     >
-                      Review Mode
+                      Learning Mode
                     </button>
+<!--                    <div-->
+<!--                        v-if="modals.learningMode"-->
+<!--                        class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange-->
+<!--                        border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"                    >-->
+<!--                      <button-->
+<!--                          @click="redirectToReviewMode"-->
+<!--                          class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"-->
+<!--                      >-->
+<!--                        Review Mode-->
+<!--                      </button>-->
+<!--                      <button-->
+<!--                          class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"-->
+<!--                          @click="openTest_Mode"-->
+<!--                      >-->
+<!--                        Test Mode-->
+<!--                      </button>-->
+<!--                    </div>-->
                     <button
-                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
-                        @click="openTest_Mode"
+                        class="relative btn sm:w-full text-[16px] font-semibold md:w-full lg:w-[200px]"
+                        @click="toggleModal('addFlashcard')"
                     >
-                      Test Mode
+                      Add Flashcard
                     </button>
-                  </div>
-                  <button
-                      class="relative btn w-[300px] px-0 text-[16px] font-semibold"
-                      @click="toggleModal('addFlashcard')"
-                  >
-                    Add Flashcard
-                  </button>
-                  <div
-                      v-if="modals.addFlashcard"
-                      class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"
-                  >
-                    <!--               CLEAN UP CODE ROUTER LINK SHOULD NOT BE USED INSTEAD USE @CLICK LOGIC-->
-                    <router-link :to="{ name: 'Create_Flashcard_Manually' }">
-                      <button
-                          class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"
-                      >
-                        Create Manually
-                      </button>
-                    </router-link>
+<!--                  <div-->
+<!--                      v-if="modals.addFlashcard"-->
+<!--                      class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"-->
+<!--                  >-->
+<!--                    &lt;!&ndash;               CLEAN UP CODE ROUTER LINK SHOULD NOT BE USED INSTEAD USE @CLICK LOGIC&ndash;&gt;-->
+<!--                    <router-link :to="{ name: 'Create_Flashcard_Manually' }">-->
+<!--                      <button-->
+<!--                          class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"-->
+<!--                      >-->
+<!--                        Create Manually-->
+<!--                      </button>-->
+<!--                    </router-link>-->
 
-                    <button
-                        @click="openAI_Flashcard"
-                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"
-                    >
-                      Generate with AI
-                    </button>
-                  </div>
+<!--                    <button-->
+<!--                        @click="openAI_Flashcard"-->
+<!--                        class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"-->
+<!--                    >-->
+<!--                      Generate with AI-->
+<!--                    </button>-->
+<!--                  </div>-->
                 </div>
               </div>
+            </div>
 
               <div class="mt-4 mb-6">
                 <div
