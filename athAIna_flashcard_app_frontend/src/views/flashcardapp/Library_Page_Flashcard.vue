@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { computed } from "vue";
 import { onMounted } from "vue";
 import { watch } from "vue";
@@ -15,6 +15,12 @@ import { useFlashcardSearchStore } from "../../../stores/flashcardSearchStore.js
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
+import {dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
+import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
+import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
+import {flashcardCreationModes, learningModes} from "@/components/constants/SubjectDropDownOptions.js";
+import Basic_Dropdown from "@/components/Basic_Dropdown.vue";
+import Create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
 
 const route = useRoute();
 
@@ -41,18 +47,24 @@ const itemsPerPage = 6;
 const input = ref("");
 const currentPage = ref(1);
 
-const modals = ref({
+const modals = reactive({
   deleteModal: false,
   learningMode: false,
   addFlashcard: false,
   takeTest: false,
 });
 
+const isManualFlashcardVisible = ref(false);
 const isAIFlashcardVisible = ref(false);
 const isTestModeVisible = ref(false);
+const isLibraryPageVisible = ref(true);
 
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
+};
+
+const openManual_Flashcard = () => {
+  router.push({ name: 'Create_Flashcard_Manually' });
 };
 
 const openAI_Flashcard = () => {
@@ -115,7 +127,6 @@ const currentFlashcards = computed(() => {
 
 });
 
-
 const navigateToLibraryPage = () => {
   router.push({ name: "Library_Page_Studyset" });
 };
@@ -142,6 +153,37 @@ onMounted(() => {
   fetchFlashcardsFromDb();
   document.title = `${studySetTitle} - Flashcards`;
 });
+
+const isLearningModeClicked = () => {
+  modals.learningMode = !modals.learningMode;
+  console.log(modals.learningMode);
+}
+
+const handleLearningModeClick = (option) => {
+  if (option === "Review") {
+    console.log("Review Mode selected");
+    redirectToReviewMode()
+  } else if (option === "Test") {
+    console.log("Test Mode selected");
+    openTest_Mode()
+  }
+};
+
+const handleAddFlashcardClick = (option) => {
+  if (option === "Manual") {
+    console.log("Manual Mode selected");
+    openManual_Flashcard()
+  } else if (option === "AI-Generated") {
+    console.log("AI Mode selected");
+    openAI_Flashcard()
+  }
+};
+
+const isAddFlashcardClicked = () => {
+  modals.addFlashcard = !modals.addFlashcard;
+  console.log(modals.addFlashcard);
+}
+
 </script>
 
 <template>
@@ -183,34 +225,45 @@ onMounted(() => {
                 lg:flex-row lg:w-auto lg:space-x-4 lg:items-center">
                   <Search_Bar v-model="input" class="mb-2 lg:mb-0 lg:w-full min-w-[300px] md:w-full"/>
                   <div class="flex flex-row space-x-4 items-center sm:w-full md:w-full lg:w-auto justify-between">
-                    <button
-                        class="relative btn sm:w-full text-[16px] font-semibold md:w-full lg:w-[200px]"
-                    >
-                      Learning Mode
-                    </button>
-<!--                    <div-->
-<!--                        v-if="modals.learningMode"-->
-<!--                        class="absolute top-[230px] right-[315px] h-[150px] w-[235px] border-athAIna-orange-->
-<!--                        border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"                    >-->
-<!--                      <button-->
-<!--                          @click="redirectToReviewMode"-->
-<!--                          class="text-athAIna-base border-athAIna-orange border-[3.5px] py-[10px] px-[30px] rounded-2xl text-sm"-->
-<!--                      >-->
-<!--                        Review Mode-->
-<!--                      </button>-->
-<!--                      <button-->
-<!--                          class="text-athAIna-base bg-athAIna-orange py-[10px] px-[30px] rounded-2xl text-sm text-athAIna-white"-->
-<!--                          @click="openTest_Mode"-->
-<!--                      >-->
-<!--                        Test Mode-->
-<!--                      </button>-->
-<!--                    </div>-->
-                    <button
-                        class="relative btn sm:w-full text-[16px] font-semibold md:w-full lg:w-[200px]"
-                        @click="toggleModal('addFlashcard')"
-                    >
-                      Add Flashcard
-                    </button>
+                    <div class="relative flex-col min-w-[180px] sm:w-full text-[16px] font-semibold md:w-full lg:w-[250px]">
+                      <button class="relative btn sm:w-full text-[16px] font-semibold md:w-full lg:w-[full]" @click="isLearningModeClicked">
+                        Learning Mode
+                      </button>
+                      <Basic_Dropdown
+                          class="w-full"
+                          v-if="modals.learningMode"
+                          :items="learningModes"
+                          :itemList="learningModes"
+                          top="50px"
+                          right="0px"
+                          height="max-content"
+                          width="full"
+                          @itemClick="handleLearningModeClick"
+                      >
+                      </Basic_Dropdown>
+                    </div>
+
+                    <div class="relative flex-col min-w-[180px] sm:w-full text-[16px] font-semibold md:w-full lg:w-[250px]">
+                      <button
+                          class="relative btn sm:w-full text-[16px] font-semibold md:w-full lg:w-full"
+                          @click="isAddFlashcardClicked"
+                      >
+                        Add Flashcard
+                      </button>
+                      <Basic_Dropdown
+                          class="w-full"
+                          v-if="modals.addFlashcard"
+                          :items="flashcardCreationModes"
+                          :itemList="flashcardCreationModes"
+                          top="50px"
+                          right="0px"
+                          height="max-content"
+                          width="full"
+                          @itemClick="handleAddFlashcardClick"
+                      >
+                      </Basic_Dropdown>
+                    </div>
+
 <!--                  <div-->
 <!--                      v-if="modals.addFlashcard"-->
 <!--                      class="absolute top-[230px] right-[47px] h-[150px] w-[240px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col justify-between p-5"-->
@@ -285,7 +338,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
       <AI_Flashcard :is-visible="isAIFlashcardVisible" @close="closeAI_Flashcard" />
       <Test_Mode_Number_Of_Questions_Prompt
           :is-visible="isTestModeVisible"
@@ -293,8 +345,6 @@ onMounted(() => {
       />
     </div>
   </transition>
-
-
 </template>
 <style scoped>
 .fade-enter-active, .fade-leave-active {
