@@ -250,7 +250,7 @@ onMounted(() => {
                 </div>
               </div>
 
-              <div class="grid grid-cols-3 gap-12 mt-10 mb-12 flex-grow">
+              <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-12 mt-10 mb-12 flex-grow">
                 <div
                     class="list-none"
                     v-for="(
@@ -265,6 +265,7 @@ onMounted(() => {
                       :question="flashcard.question"
                       :answer="flashcard.answer"
                       :image="flashcard.image"
+                      class="md:min-w-[1000px]"
                   />
                 </div>
                 <div class="item error" v-if="!isSuccessful">
