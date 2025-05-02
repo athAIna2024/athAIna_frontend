@@ -8,9 +8,9 @@ import {defineProps} from 'vue';
 import {useRouter} from 'vue-router';
 import { ref } from 'vue';
 import Loading_Modal from "@/components/Loading_Modal.vue";
-
 import axios from "@/axios.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import { onMounted } from "vue";
 
 const router = useRouter();
 const flashcard_url = "/flashcard/";
@@ -157,9 +157,6 @@ const fetchFlashcardsIfNotExisting = async (id) => {
 };
 
 const navigateToLibraryPageFlashcard = async () => {
-  // Fetch flashcards if they do not exist
-  await fetchFlashcardsIfNotExisting(props.studySetId);
-
   // Store the props details in the store
   store.setStudySetId(props.studySetId);
   store.setStudySetTitle(props.title);
@@ -177,19 +174,25 @@ const navigateToLibraryPageFlashcard = async () => {
 const refreshLibrary =  () => {
   location.reload();
 };
+
+onMounted(async () => {
+  await fetchFlashcardsIfNotExisting(props.studySetId);
+});
 </script>
 
 <template>
-  <Loading_Modal
-      :loadingMessage="'Please wait for a couple of seconds'"
-      :loadingHeader="'Fetching flashcards...'"
-      :condition="isSuccessful"
-      :isVisible="isLoading"
-  />
+<!--  Should be at library page of flashcards not at studyset card-->
+<!--  <Loading_Modal-->
+<!--      :loadingMessage="'Please wait for a couple of seconds'"-->
+<!--      :loadingHeader="'Fetching flashcards...'"-->
+<!--      :condition="isSuccessful"-->
+<!--      :isVisible="isLoading"-->
+<!--  />-->
 
   <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
-    <div class="flex flex-col h-40 bg-athAIna-white rounded-[15px] p-[15px]">
-        <div @click="navigateToLibraryPageFlashcard" class="text-[20px] font-semibold hover:cursor-pointer"> {{ title }}</div>
+    <div @click="navigateToLibraryPageFlashcard"
+        class="flex flex-col h-40 bg-athAIna-white rounded-[15px] p-[15px] hover:cursor-pointer">
+        <div class="text-[20px] font-semibold"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px] h-12">
       <span v-if="description !== 'null' && description.length < 50">
