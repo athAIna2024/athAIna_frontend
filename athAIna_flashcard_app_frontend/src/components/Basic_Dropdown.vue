@@ -1,7 +1,5 @@
 <script setup>
 import { defineProps, ref } from "vue";
-import { dropdownOptions} from "@/components/constants/SubjectDropDownOptions.js";
-import {learningModes} from "@/components/constants/LearningModes.js";
 
 const props = defineProps({
   top: String,
