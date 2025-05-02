@@ -58,6 +58,5 @@
 <style scoped>
 .active-link {
   font-weight: bold;
-  color: #da384c;
 }
 </style>

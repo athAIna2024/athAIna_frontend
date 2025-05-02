@@ -157,20 +157,34 @@ const navigateToPreviousFlashcard = () => {
 </script>
 
 <template>
-  <div v-if="flashcard" class="flex flex-row items-center">
+  <div v-if="flashcard" class="flex flex-row space-x-6 items-center">
     <router-link
-        :to="{
-            name: 'Library_Page_Flashcard',
-            params: {
-              studySetTitle: studysetName.value,
-              studySetID: flashcard.studyset_id,
-            },
-          }"
+      :to="{
+        name: 'Library_Page_Flashcard',
+        params: {
+          studySetTitle: studysetName.value,
+          studySetID: flashcard.studyset_id,
+        },
+      }"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="size-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+        />
       </svg>
     </router-link>
+    <h1 class="text-athAIna-violet font-semibold flex">
+      {{ studysetName }}
+    </h1>
   </div>
 
   <div class="review-mode-container">
@@ -210,7 +224,9 @@ const navigateToPreviousFlashcard = () => {
                 </div>
                 <div v-if="isValidImage" class="flex flex-row p-0 items-center">
                   <div>
-                    <h1 class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-20 w-full">
+                    <h1
+                      class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-20 w-full"
+                    >
                       {{ currentFlashcard.question }}
                     </h1>
                   </div>

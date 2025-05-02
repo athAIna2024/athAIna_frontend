@@ -7,81 +7,86 @@ const router = useRouter();
 
 const axiosInstance = axios.create({
   baseURL: "https://athaina.software",
-  withCredentials: true,
+  withCredentials: true, // Always send cookies
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-const isTokenExpired = (token) => {
-  try {
-    const { exp } = jwtDecode(token);
-    return Date.now() >= exp * 1000;
-  } catch (error) {
-    console.error("Error decoding token:", error);
-    return true; // If there's an error decoding, consider the token expired
-  }
-};
-
+// Request interceptor to ensure cookies are always sent
 axiosInstance.interceptors.request.use(
   (config) => {
-    const csrfToken = Cookies.get("athAIna_csrfToken");
-    if (csrfToken) {
-      config.headers["X-CSRFToken"] = csrfToken;
-    }
+    config.withCredentials = true; // Ensure this is set for every request
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
+// Single response interceptor handling both token refresh and authentication errors
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response; // Pass through successful responses
-  },
+  (response) => response,
   async (error) => {
-    console.error("Interceptor caught an error:", error); // Debug log
     const originalRequest = error.config;
 
+    // Prevent infinite loops
+    if (!originalRequest) return Promise.reject(error);
+
+    console.log("API Error:", error.response?.status, error.response?.data);
+
+    // Handle 401 Unauthorized errors
     if (
       error.response &&
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
+      // Mark this request as retried to prevent loops
       originalRequest._retry = true;
 
+      // Skip token refresh for login/refresh token endpoints to prevent loops
+      if (
+        originalRequest.url?.includes("login") ||
+        originalRequest.url?.includes("token/refresh")
+      ) {
+        console.log("Not attempting refresh for auth endpoints");
+        return Promise.reject(error);
+      }
+
       try {
-        const refreshResponse = await axios.post(
-          "https://athaina.software/account/token/refresh/",
-          {}, // No need to include the refresh token manually if it's HttpOnly
-          { withCredentials: true }
+        console.log("Attempting token refresh...");
+        const refreshResponse = await axiosInstance.post(
+          "/account/token/refresh/",
+          {}, // Empty body
+          {
+            withCredentials: true,
+            _retry: true, // Mark to prevent loops
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
 
-        console.log("Token refresh successful:", refreshResponse.data);
+        console.log("Token refresh successful");
 
         // Retry the original request
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.error(
-          "Token refresh failed:",
-          refreshError.response?.data || refreshError
-        );
+        console.error("Token refresh failed:", refreshError.message);
+
+        // Clear session storage
+        sessionStorage.removeItem("session");
+
+        // Check if we're already on the login page to prevent redirect loops
+        if (window.location.pathname !== "/login") {
+          console.log("Redirecting to login after auth failure");
+          // Use history mode navigation to avoid page reload
+          router.push({ name: "Login" });
+        }
+
         return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(error); // Reject other errors
+    return Promise.reject(error);
   }
 );
 
@@ -92,17 +97,18 @@ axiosInstance.interceptors.response.use(
       if (error.response.status === 401) {
         console.error("Access denied:", error.response.data);
         if (
-          error.response.data.error === "Refresh token is expired or invalid" 
+          error.response.data.error === "Refresh token is expired or invalid"
         ) {
-          console.error("Refresh token expired or invalid. Redirecting to login.");
-          // Cookies.remove("access_token"); // Clear access token
-          // Cookies.remove("refresh_token"); // Clear refresh token
-          router.push({ name: "Login" }); // Redirect to login page
+          console.error(
+            "Refresh token expired or invalid. Redirecting to login."
+          );
+        
+          router.push({ name: "Login" });
         }
       }
     }
 
-    return Promise.reject(error); // Reject other errors
+    return Promise.reject(error); 
   }
 );
 
