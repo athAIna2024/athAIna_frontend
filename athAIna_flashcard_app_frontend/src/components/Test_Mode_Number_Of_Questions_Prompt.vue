@@ -131,6 +131,7 @@ const randomizeTestQuestions = async () => {
   }
 };
 
+// NEWLY ADDED CODE
 watch(
     () => studySetStore.getStudySetTitle(),
     (newTitle, oldTitle) => {
