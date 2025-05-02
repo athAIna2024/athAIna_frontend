@@ -7,6 +7,8 @@ import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import { v4 as uuidv4 } from 'uuid';
 import Loading_Modal from "@/components/Loading_Modal.vue";
+import { onMounted } from "vue";
+import { watch } from "vue";
 
 const props = defineProps({
   isVisible: Boolean,
@@ -17,12 +19,12 @@ const router = useRouter();
 const testModeStore = useTestModeStore();
 const studySetStore = useStudysetStore();
 
-const studySetTitle = studySetStore.getStudySetTitle();
-const studySetId = studySetStore.getStudySetId();
+const studySetTitle = ref(studySetStore.getStudySetTitle());
+const studySetId = ref(studySetStore.getStudySetId());
 
 const fetchFlashcardCounts = async () => {
-  console.log(studySetId);
-  const flashcard = await studySetDb.studysets.get(Number(studySetId));
+  console.log("ID", studySetId.value);
+  const flashcard = await studySetDb.studysets.get(Number(studySetId.value));
   flashcardCounts.value = flashcard ? flashcard.flashcard_count : 0;
   console.log("FLASHCARD COUNTS FROM INDEXEDDB: ", flashcardCounts.value);
 };
@@ -53,7 +55,7 @@ const randomizeTestModeFlashcards = async () => {
   try {
     const response = await axios.get(`${randomizeTestUrl}`,{
       params: {
-        studyset_id: Number(studySetId),
+        studyset_id: studySetId.value,
         number_of_questions: numberOfQuestions
       }
     });
@@ -124,11 +126,30 @@ const randomizeTestQuestions = async () => {
     }
     isLoading.value = false;
 
-    await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle, studySetId: studySetId, batchId: testModeStore.batchId } });
+    await router.push({ name: 'Test_Mode', params: { studySetTitle: studySetTitle.value, studySetId: studySetId.value, batchId: testModeStore.batchId } });
     emit('refresh');
   }
 };
 
+watch(
+    () => studySetStore.getStudySetTitle(),
+    (newTitle, oldTitle) => {
+      console.log(`StudySetTitle changed from ${oldTitle} to ${newTitle}`);
+      if (newTitle) {
+        studySetTitle.value = String(newTitle);
+      }
+    }
+);
+
+watch(
+    () => studySetStore.getStudySetId(),
+    (newId, oldId) => {
+      console.log(`StudySetId changed from ${oldId} to ${newId}`);
+      if (newId) {
+        studySetId.value = Number(newId);
+      }
+    }
+);
 </script>
 <template>
   <Loading_Modal
