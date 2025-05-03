@@ -205,7 +205,7 @@ const navigateToPreviousFlashcard = () => {
       </svg>
     </button>
     <div @click="flipCard" class="flashcard h-full">
-      <div v-if="flashcard" class="card mx-48 h-48 py-80">
+      <div v-if="flashcard" class="card mx-12 h-48 py-80">
         <div
           :class="{
             'card-content transition-transform duration-1000': true,
@@ -217,24 +217,24 @@ const navigateToPreviousFlashcard = () => {
           >
             <div class="athAIna-border-outer p-1">
               <div
-                class="athAIna-border-inner h-96 py-60 flex flex-row justify-between items-center"
+                class="athAIna-border-inner overflow h-96 py-60 flex flex-row justify-between items-center"
               >
                 <div class="font-semibold text-lg">
                   <h1></h1>
                 </div>
-                <div v-if="isValidImage" class="flex flex-row p-0 items-center">
+                <div v-if="isValidImage" class="flex flex-col-reverse xl:flex-row p-0 items-center">
                   <div>
                     <h1
-                      class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-20 w-full"
+                      class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-10 lg:p-20 w-full"
                     >
                       {{ currentFlashcard.question }}
                     </h1>
                   </div>
-                  <div class="p-10">
+                  <div class="p-10 w-[50%] items-center flex justify-center">
                     <img
                       :src="currentFlashcard.image"
                       alt="Flashcard Image"
-                      class="max-w-xs invisible md:visible h-48 lg:h-64 object-cover rounded-lg"
+                      class="max-w-xs invisible md:visible h-64 lg:h-64 object-cover rounded-lg"
                     />
                   </div>
                 </div>
@@ -322,7 +322,6 @@ const navigateToPreviousFlashcard = () => {
 
 .flashcard {
   flex: 1;
-  margin: 0 20px;
 }
 
 .prev-button,

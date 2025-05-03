@@ -210,13 +210,19 @@ onMounted(() => {
   <Logout :isVisible="modals.logout" @close="toggleModal('logout')" />
 
   <!-- Loading Modal -->
-  <Loading_Modal
-    loadingMessage="Sending verification code to your email..."
-    loadingHeader="Please wait"
-    :isVisible="isLoadingModalVisible"
-    :condition="!isLoading"
-    @close="closeLoadingModal"
-  />
+  <div
+    v-if="isLoadingModalVisible"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
+  >
+    <Loading_Modal
+      loadingMessage="Sending verification code to your email..."
+      loadingHeader="Please wait"
+      headerClass="text-gray-500"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+  </div>
 
   <div
     v-if="modals.accSettings"
@@ -294,16 +300,18 @@ onMounted(() => {
     class="w-full flex flex-row justify-between items-center p-7 pr-12 pl-12 z-40 bg-athAIna-white sticky font-poppins shadow-md"
   >
     <div
-      class="invisible lg:w-100 lg:visible flex flex-row justify-between items-center space-x-20"
+        class="lg:w-100 xl:text-lg flex flex-row justify-between items-center space-x-20"
     >
       <router-link :to="{ name: 'Landing_Page' }"
-        ><img src="@/assets/athAIna.svg" alt="Logo" class="14 w-14"
+      ><img src="@/assets/athAIna.svg" alt="Logo" class="h-auto max-w-14"
       /></router-link>
-      <div>
-        <router-link
-          :to="{ name: 'Features_Page' }"
-          exact-active-class="active-link"
-        >
+      <div class="invisible lg:w-full w-0 lg:visible flex flex-row justify-between items-center space-x-20">
+
+        <div>
+          <router-link
+              :to="{ name: 'Features_Page' }"
+              exact-active-class="active-link"
+          >
           Features
         </router-link>
       </div>
@@ -329,22 +337,26 @@ onMounted(() => {
           >Demo</router-link
         >
       </div>
+      </div>
     </div>
 
     <div class="flex flex-row justify-between items-center space-x-20">
-      <router-link
-        :to="{ name: 'Library_Page_Studyset' }"
-        exact-active-class="active-link"
-      >
-        <div>Library</div>
-      </router-link>
+      <div class="flex flex-row invisible sm:visible sm:w-full w-0 justify-between items-center space-x-20">
 
-      <router-link
-        :to="{ name: 'View_Learning_Progress' }"
-        exact-active-class="active-link"
-      >
-        <div>Reports</div>
-      </router-link>
+        <router-link
+          :to="{ name: 'Library_Page_Studyset' }"
+          exact-active-class="active-link"
+        >
+          <div>Library</div>
+        </router-link>
+
+        <router-link
+          :to="{ name: 'View_Learning_Progress' }"
+          exact-active-class="active-link"
+        >
+          <div>Reports</div>
+        </router-link>
+      </div>
       <button class="" @click="toggleModal('profile')">
         <svg
           xmlns="http://www.w3.org/2000/svg"
