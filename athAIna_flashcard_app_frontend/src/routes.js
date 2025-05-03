@@ -91,10 +91,9 @@ const routes = [
         meta: { title: "Sign In – athAIna" },
       },
       {
-        path: "/Verify_Email",
+        path: "/Verify_Email_OTP",
         name: "verify_Email_OTP",
         component: Email_OTP,
-        props: (route) => ({ email: route.query.email }),
         meta: { title: "Verify Email OTP – athAIna" },
       },
       {
