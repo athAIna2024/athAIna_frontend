@@ -34,7 +34,7 @@ defineComponent({
             materials tailored to your needs
           </p>
 
-          <RouterLink to="/signup" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full">Generate My Flashcards</button>
           </RouterLink>        </div>      </div>
 
@@ -61,7 +61,7 @@ defineComponent({
             strengthen your knowledge and identify areas for improvement.
           </p>
 
-          <RouterLink to="/signup" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full"> Generate My Test </button>
           </RouterLink>
         </div>
@@ -80,7 +80,7 @@ defineComponent({
             time to ensure you're on the path to success.
           </p>
 
-          <RouterLink to="/signup" class="w-full mx-4">
+          <RouterLink :to="{ name: 'Signup' }" class="w-full mx-4">
             <button class="btn h-[45px] rounded-[15px] !font-semibold mt-8 w-full"> Generate My Report </button>
           </RouterLink>
         </div>
