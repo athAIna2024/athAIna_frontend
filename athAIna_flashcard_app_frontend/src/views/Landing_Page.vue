@@ -129,15 +129,15 @@ const scrollToFeatures = () => {
       </div>
     </div>
     <!-- Floating Image -->
-    <div class="absolute bottom-[-60px] right-[-25px] rounded-[15px]"
+    <div class="absolute bottom-[-60px] rounded-[15px]"
     >
       <img src="/book-icon.svg" class="h-[240px]">
     </div>
   </div>
 
   <!-- Third Card -->
-  <div class="w-full flex flex-row ml-10 pr-16 relative mt-[10px] mb-32">
-    <div class="athAIna-border-outer p-1 w-1-5-3 relative">
+  <div class="relative mb-32">
+    <div class="ml-10 flex-row flex athAIna-border-outer p-1 w-1-5-3 relative">
       <div class="athAIna-border-inner px-12 py-10 pb-8">
         <div class="mt-5 mb-8 text-[20px] font-semibold">
           Conquer Exams with Test Questions
