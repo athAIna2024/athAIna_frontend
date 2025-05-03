@@ -127,6 +127,7 @@ const verifyOTP = async () => {
       isVerified.value = true;
       isLoadingModalVisible.value = false;
       isSuccessMessageVisible.value = true;
+      localStorage.removeItem("signupEmail")
 
       // After success message, redirect to login
       setTimeout(() => {
