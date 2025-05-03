@@ -73,6 +73,7 @@ const createUser = async () => {
       // Redirect to the OTP verification page with email as query parameter
       router.push({
         name: "verify_Email_OTP",
+        query: { email: email.value },
       });
     }
   } catch (err) {
