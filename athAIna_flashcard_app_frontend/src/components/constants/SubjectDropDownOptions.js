@@ -15,3 +15,7 @@ export const dropdownOptions = {
   TECH: "Technology",
   WRIT_LIT: "Writing and Literature"
 };
+
+export const learningModes = ["Review", "Test"];
+
+export const flashcardCreationModes = ["Manual", "AI-Generated"];
