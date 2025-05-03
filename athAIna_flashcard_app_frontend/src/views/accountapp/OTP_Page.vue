@@ -86,6 +86,7 @@ const resendOTP = async () => {
       // Show success message
       isLoadingModalVisible.value = false;
       isSuccessMessageVisible.value = true;
+      localStorage.removeItem("signupEmail");
 
       setTimeout(() => {
         isSuccessMessageVisible.value = false;

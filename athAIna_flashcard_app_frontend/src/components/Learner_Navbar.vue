@@ -210,13 +210,19 @@ onMounted(() => {
   <Logout :isVisible="modals.logout" @close="toggleModal('logout')" />
 
   <!-- Loading Modal -->
-  <Loading_Modal
-    loadingMessage="Sending verification code to your email..."
-    loadingHeader="Please wait"
-    :isVisible="isLoadingModalVisible"
-    :condition="!isLoading"
-    @close="closeLoadingModal"
-  />
+  <div
+    v-if="isLoadingModalVisible"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
+  >
+    <Loading_Modal
+      loadingMessage="Sending verification code to your email..."
+      loadingHeader="Please wait"
+      headerClass="text-gray-500"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+  </div>
 
   <div
     v-if="modals.accSettings"
