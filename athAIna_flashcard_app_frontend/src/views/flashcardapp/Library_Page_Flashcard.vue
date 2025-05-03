@@ -192,7 +192,7 @@ const isAddFlashcardClicked = () => {
       <div class="m-4">
         <div class="athAIna-border-outer p-1 shadow-xl h-auto">
           <div class="athAIna-border-inner py-4 h-auto">
-            <div class="flex flex-col m-10">
+            <div class="flex flex-col m-10 min-h-screen">
               <div
                   class="text-athAIna-lg text-center flex space-y-6 items-left flex-col justify-between
                   md:flex-row md:space-y-0 md:items-center
