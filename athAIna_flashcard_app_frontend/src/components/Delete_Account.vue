@@ -56,9 +56,7 @@ const deleteAccount = async () => {
 
   try {
     const response = await axiosInstance.delete("/account/delete-account/", {
-      headers: {
-        Authorization: `Bearer ${Cookies.get("access_token")}`,
-      },
+      withCredentials: true,
     });
 
     if (response.status === 200) {
