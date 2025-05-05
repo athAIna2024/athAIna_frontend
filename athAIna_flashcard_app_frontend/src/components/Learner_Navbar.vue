@@ -119,6 +119,10 @@ const performClientSideLogout = async () => {
     // console.log("Error clearing IndexedDB:", dbError);
   }
 
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
+  Cookies.remove("athAIna_csrfToken");
+
   // Update auth state in store
   authStore.logout();
 
