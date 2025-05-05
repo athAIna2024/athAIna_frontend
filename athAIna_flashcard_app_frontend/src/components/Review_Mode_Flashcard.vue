@@ -20,7 +20,7 @@ const isNavigatingBack = ref(false);
 
 const flipCard = () => {
   isFlipped.value = !isFlipped.value;
-  console.log(isFlipped.value);
+  // console.log(isFlipped.value);
 };
 
 const fetchStudysetName = async (studysetId) => {
@@ -46,16 +46,16 @@ watch(
       // Only add to history if not navigating back
       if (!isNavigatingBack.value) {
         flashcardHistory.value.push(newFlashcard.id);
-        console.log(
-          "Added to history:",
-          newFlashcard.id,
-          "New history:",
-          flashcardHistory.value
-        );
+        // console.log(
+        //   "Added to history:",
+        //   newFlashcard.id,
+        //   "New history:",
+        //   flashcardHistory.value
+        // );
       } else {
         // Reset the flag after navigation is complete
         isNavigatingBack.value = false;
-        console.log("Backtracking - not adding to history");
+        // console.log("Backtracking - not adding to history");
       }
 
       // Reset flip state when flashcard changes
@@ -76,7 +76,7 @@ watch(
           fetchStudysetName(flashcard.studyset_id);
         }
       } catch (error) {
-        console.error("Failed to fetch flashcard:", error);
+        // console.error("Failed to fetch flashcard:", error);
       }
     }
   },
@@ -92,7 +92,7 @@ const isValidImage = computed(() => {
 });
 
 const navigateToRandomFlashcard = async () => {
-  console.log("history ", flashcardHistory.value);
+  // console.log("history ", flashcardHistory.value);
 
   try {
     fetchStudysetName(currentFlashcard.value.studyset_id);
@@ -125,19 +125,19 @@ const navigateToRandomFlashcard = async () => {
       );
     }
   } catch (error) {
-    console.error("Failed to fetch flashcards:", error);
+    // console.error("Failed to fetch flashcards:", error);
   }
 };
 
 const navigateToPreviousFlashcard = () => {
-  console.log("Current history before backtracking:", flashcardHistory.value);
+  // console.log("Current history before backtracking:", flashcardHistory.value);
 
   if (flashcardHistory.value.length > 1) {
     flashcardHistory.value.pop();
 
     const previousFlashcardId =
       flashcardHistory.value[flashcardHistory.value.length - 1];
-    console.log("Navigating to previous flashcard:", previousFlashcardId);
+    // console.log("Navigating to previous flashcard:", previousFlashcardId);
 
     isNavigatingBack.value = true;
     isFlipped.value = false;
@@ -151,7 +151,7 @@ const navigateToPreviousFlashcard = () => {
       },
     });
   } else {
-    console.warn("No previous flashcards in history");
+    // console.warn("No previous flashcards in history");
   }
 };
 </script>
