@@ -10,7 +10,7 @@ const isLoggedIn = computed(() => authStore.isLoggedIn);
 </script>
 
 <template class="flex flex-col min-h-screen">
-  <header>
+  <header v-if="$route.name !== 'NotFound'">
     <Guest_Navbar v-if="!isLoggedIn" />
     <Learner_Navbar v-if="isLoggedIn" />
   </header>
@@ -19,7 +19,7 @@ const isLoggedIn = computed(() => authStore.isLoggedIn);
     <router-view />
   </main>
 
-  <footer>
+  <footer v-if="$route.name !== 'NotFound'">
     <Footer_Navbar />
   </footer>
 </template>
