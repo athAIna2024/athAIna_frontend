@@ -129,7 +129,7 @@ const resetPassword = async () => {
       });
     }, 2000);
   } catch (err) {
-    console.log(err.response?.data);
+    // console.log(err.response?.data);
     errors.general =
       err.response?.data?.error ||
       "An error occurred while resetting your password";
