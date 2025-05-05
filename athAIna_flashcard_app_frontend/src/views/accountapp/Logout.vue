@@ -39,11 +39,11 @@ const logout = async () => {
   try {
     const response = await axiosInstance.post("/account/logout/", {});
 
-    console.log("response: ", response);
-    console.log("response data: ", response.data);
-    console.log("response status: ", response.status);
-    console.log("response error: ", response.error);
-    console.log("response message: ", response.message);
+    // console.log("response: ", response);
+    // console.log("response data: ", response.data);
+    // console.log("response status: ", response.status);
+    // console.log("response error: ", response.error);
+    // console.log("response message: ", response.message);
 
     if (response.status === 204) {
       // Cookies.remove("access_token");
@@ -69,10 +69,10 @@ const logout = async () => {
       });
       emit("close");
     } else {
-      console.log(response.error);
+      // console.log(response.error);
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   } finally {
     userStore.clear();
   }

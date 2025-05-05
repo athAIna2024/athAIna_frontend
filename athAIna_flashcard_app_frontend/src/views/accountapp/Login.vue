@@ -18,7 +18,7 @@ const lockedUsersStore = useLockedUsersStore();
 const failedAttempts = ref(0);
 const maxAttempts = 3;
 
-console.log(userStore.getUserID());
+// console.log(userStore.getUserID());
 
 const router = useRouter();
 const email = ref("");
@@ -37,14 +37,14 @@ const errors = ref({
 
 const login = async () => {
   isLoading.value = true;
-  console.log("Logging in...", isLoading.value);
+  // console.log("Logging in...", isLoading.value);
 
   const userId = email.value;
 
   if (lockedUsersStore.isUserLocked(userId)) {
     errors.value.general = "You are locked out. Please try again later.";
     isLoading.value = false;
-    console.log("user is locked out :", isLoading.value);
+    // console.log("user is locked out :", isLoading.value);
     return;
   }
 
@@ -60,7 +60,7 @@ const login = async () => {
       }
     );
 
-    console.log(response.data);
+    // console.log(response.data);
 
     if (response.data.successful) {
       const sessionTime = new Date();
@@ -89,7 +89,7 @@ const login = async () => {
 
       authStore.setUserID(response.data.user_id);
       userStore.setEmail(response.data.email);
-      console.log(userStore.getEmail());
+      // console.log(userStore.getEmail());
 
       authStore.login();
 
@@ -97,10 +97,10 @@ const login = async () => {
       // window.location.href = "/library_of_studysets";
       router.push({ name: "Library_Page_Studyset" });
     } else {
-      console.log(response.data.error);
+      // console.log(response.data.error);
     }
   } catch (error) {
-    console.log(error.value);
+    // console.log(error.value);
     if (error.response.status === 400) {
       errors.value.email = error.response.data.email || [];
 
@@ -118,14 +118,14 @@ const login = async () => {
     }
   } finally {
     isLoading.value = false;
-    console.log("Logging in done...", isLoading.value);
+    // console.log("Logging in done...", isLoading.value);
   }
 };
 
 const handleFailedAttempt = (userId) => {
   // Add this function at the end
   failedAttempts.value += 1;
-  console.log("Failed attempts: ", failedAttempts.value);
+  // console.log("Failed attempts: ", failedAttempts.value);
   if (failedAttempts.value >= maxAttempts) {
     const lockoutEndTime = Date.now() + 60 * 1000; // Lock out for 1 minute
     lockedUsersStore.setLockedUsers(userId, lockoutEndTime);

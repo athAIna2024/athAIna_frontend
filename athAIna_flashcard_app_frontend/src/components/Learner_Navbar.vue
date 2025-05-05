@@ -33,7 +33,7 @@ const modals = ref({
 
 // Handle logout
 const handleLogout = async (reason) => {
-  console.log(`[Logout] Logging out: ${reason}`);
+  // console.log(`[Logout] Logging out: ${reason}`);
 
   // Check if session exists in storage
   const sessionExists = sessionStorage.getItem("session");
@@ -56,21 +56,21 @@ const handleLogout = async (reason) => {
         );
 
         if (refreshResponse.status === 200) {
-          console.log("[Logout] Token refreshed successfully");
+          // console.log("[Logout] Token refreshed successfully");
           // Set new session timestamp
           sessionStorage.setItem("session", new Date());
         }
       } catch (refreshError) {
-        console.log(
-          "[Logout] Token refresh failed - forcing logout:",
-          refreshError
-        );
+        // console.log(
+        //   "[Logout] Token refresh failed - forcing logout:",
+        //   refreshError
+        // );
         // Token refresh failed - force client-side logout
         performClientSideLogout();
         return;
       }
     } catch (error) {
-      console.log("[Logout] Error during refresh check:", error);
+      // console.log("[Logout] Error during refresh check:", error);
     }
   }
 
@@ -87,16 +87,16 @@ const handleLogout = async (reason) => {
       }
     );
 
-    console.log("response status:", response.status);
+    // console.log("response status:", response.status);
 
     if (response.status === 204) {
       performClientSideLogout();
     } else {
-      console.log("Unexpected response:", response);
+      // console.log("Unexpected response:", response);
       performClientSideLogout();
     }
   } catch (error) {
-    console.log("Error during logout:", error);
+    // console.log("Error during logout:", error);
     // Even if server-side logout fails, perform client-side logout
     performClientSideLogout();
   }
@@ -116,7 +116,7 @@ const performClientSideLogout = async () => {
       indexedDB.deleteDatabase(db.name);
     });
   } catch (dbError) {
-    console.log("Error clearing IndexedDB:", dbError);
+    // console.log("Error clearing IndexedDB:", dbError);
   }
 
   // Update auth state in store
