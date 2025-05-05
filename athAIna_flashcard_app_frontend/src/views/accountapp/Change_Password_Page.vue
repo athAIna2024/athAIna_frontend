@@ -45,8 +45,8 @@ const errors = reactive({
 // Get token and uidb64 from URL parameters
 const token = route.params.token;
 const uidb64 = route.params.uidb64;
-console.log("uidb64:", uidb64);
-console.log("token:", token);
+// console.log("uidb64:", uidb64);
+// console.log("token:", token);
 
 const showPassword = ref(false);
 const showPassword2 = ref(false);
