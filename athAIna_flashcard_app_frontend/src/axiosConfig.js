@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
     // Prevent infinite loops
     if (!originalRequest) return Promise.reject(error);
 
-    console.log("API Error:", error.response?.status, error.response?.data);
+    // console.log("API Error:", error.response?.status, error.response?.data);
 
     // Handle 401 Unauthorized errors
     if (
@@ -47,12 +47,12 @@ axiosInstance.interceptors.response.use(
         originalRequest.url?.includes("login") ||
         originalRequest.url?.includes("token/refresh")
       ) {
-        console.log("Not attempting refresh for auth endpoints");
+        // console.log("Not attempting refresh for auth endpoints");
         return Promise.reject(error);
       }
 
       try {
-        console.log("Attempting token refresh...");
+        // console.log("Attempting token refresh...");
         const refreshResponse = await axiosInstance.post(
           "/account/token/refresh/",
           {}, // Empty body
@@ -65,19 +65,19 @@ axiosInstance.interceptors.response.use(
           }
         );
 
-        console.log("Token refresh successful");
+        // console.log("Token refresh successful");
 
         // Retry the original request
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError.message);
+        // console.error("Token refresh failed:", refreshError.message);
 
         // Clear session storage
         sessionStorage.removeItem("session");
 
         // Check if we're already on the login page to prevent redirect loops
         if (window.location.pathname !== "/login") {
-          console.log("Redirecting to login after auth failure");
+          // console.log("Redirecting to login after auth failure");
           // Use history mode navigation to avoid page reload
           router.push({ name: "Login" });
         }
@@ -95,13 +95,13 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response) {
       if (error.response.status === 401) {
-        console.error("Access denied:", error.response.data);
+        // console.error("Access denied:", error.response.data);
         if (
           error.response.data.error === "Refresh token is expired or invalid"
         ) {
-          console.error(
-            "Refresh token expired or invalid. Redirecting to login."
-          );
+          // console.error(
+          //   "Refresh token expired or invalid. Redirecting to login."
+          // );
         
           router.push({ name: "Login" });
         }
