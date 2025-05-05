@@ -245,7 +245,7 @@ router.beforeEach((to, from, next) => {
     to.matched.some((record) => record.meta.requiresAuth) &&
     !authStore.isLoggedIn
   ) {
-    next({ path: "/login" });
+    next({ name:"Login" });
   } else {
     next();
   }
