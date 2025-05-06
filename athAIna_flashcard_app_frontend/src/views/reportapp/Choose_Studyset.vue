@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { onMounted } from "vue";
+import { watch } from "vue";
 import { useRouter } from "vue-router";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
@@ -9,6 +9,15 @@ import studySetDb from "@/views/studysetapp/dexie.js";
 import { useStudysetStore } from "../../../stores/studySetStore.js";
 import Warning_Message from "@/components/Warning_Message.vue";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
+import axios from "@/axios";
+import {  useUserStore } from "../../../stores/userStore.js";
+
+const studyset_url = "/studyset/";
+const flashcard_url = "/flashcard/";
+const userStore = useUserStore();
+const learnerId = userStore.getUserID();
+const studySet_result = ref([]);
+
 
 const props = defineProps({
   isVisible: Boolean,
@@ -21,11 +30,8 @@ const refreshTest_Mode = () => {
 };
 
 const studySetStore = useStudysetStore();
-const studySetId = studySetStore.studySetId;
-const studySetTitle = studySetStore.studySetTitle;
 const flashcardsCount = ref(0);
 
-// Related to studysets dropdown
 const studySetSelected = ref({ id: null, title: null });
 const modals = ref({
   studySetSelectModal: false,
@@ -38,8 +44,109 @@ const studySets = ref({});
 const addStudySet = (id, title) => {
   studySets.value[id] = title;
 };
+
+
+const fetchFlashcardCountFromAPI = async (studysetId) => {
+  try {
+    const response = await axios.get(flashcard_url, {
+      params: { studyset_id: studysetId },
+    });
+    if (response.data && Array.isArray(response.data.data)) {
+
+      const flashcard_result = response.data.data.map(flashcard => {
+        return {
+          id: Number(flashcard.id),
+          question: String(flashcard.question),
+          answer: String(flashcard.answer),
+          image: String(flashcard.image),
+          studyset_id: Number(flashcard.studyset_instance),
+          created_at: Date(flashcard.created_at),
+          updated_at: Date(flashcard.updated_at),
+          is_ai_generated: Boolean(flashcard.is_ai_generated),
+        };
+      });
+
+
+      const serializableFlashcards = flashcard_result.map(flashcard => {
+        return {
+          id: flashcard.id,
+          question: flashcard.question,
+          answer: flashcard.answer,
+          image: flashcard.image,
+          studyset_id: flashcard.studyset_id,
+          created_at: flashcard.created_at,
+          updated_at: flashcard.updated_at,
+          is_ai_generated: flashcard.is_ai_generated,
+        };
+      });
+
+      await flashcardsDB.flashcards.bulkPut(serializableFlashcards);
+
+      return response.data.data.length;
+    } else {
+      return 0;
+    }
+  } catch (error) {
+    console.error("Error fetching flashcard count:", error);
+    return 0;
+  }
+};
+
+const fetchStudySetFromAPI = async () => {
+  try {
+    // API Call
+    const response = await axios.get(studyset_url, {
+      params: { user_id: Number(learnerId) },
+    });
+
+    if (response.data && Array.isArray(response.data.data)) {
+      studySet_result.value = response.data.data.map((studyset) => {
+        return {
+          id: Number(studyset.id),
+          title: String(studyset.title),
+          description: String(studyset.description),
+          subject: String(studyset.subject),
+          flashcard_count: Number(0),
+          created_at: Date(studyset.created_at),
+          updated_at: Date(studyset.updated_at),
+        };
+      });
+
+      const flashcardCountPromises = studySet_result.value.map(
+          async (studyset) => {
+            studyset.flashcard_count = await fetchFlashcardCountFromAPI(studyset.id);
+          }
+      );
+      await Promise.all(flashcardCountPromises);
+
+      const serializableStudySets = studySet_result.value.map((studyset) => {
+        return {
+          id: studyset.id,
+          title: studyset.title,
+          description: studyset.description,
+          subject: studyset.subject,
+          flashcard_count: studyset.flashcard_count,
+          created_at: studyset.created_at,
+          updated_at: studyset.updated_at,
+        };
+      });
+
+      await studySetDb.studysets.bulkPut(serializableStudySets);
+    } else {
+      studySet_result.value = [];
+    }
+    return studySet_result;
+  } catch (error) {
+    studySet_result.value = [];
+    return studySet_result;
+  }
+};
+
+
 const fetchStudySets = async () => {
   try {
+    await fetchStudySetFromAPI();
+
     const studySetsArray = await studySetDb.studysets.toArray();
     studySetsArray.forEach((studySet) => {
       addStudySet(studySet.id, studySet.title);
@@ -52,11 +159,18 @@ const updateStudySet = (id, title) => {
   studySetSelected.value = { id, title };
   toggleModal("studySetSelectModal");
 };
-// end of related to studysets dropdown
 
 const isNoOfQuestionsVisible = ref(false);
 
 const emit = defineEmits(["close"]);
+
+const fetchFlashcardCount = async () => {
+  const flashcardsArray = await flashcardsDB.flashcards
+      .where("studyset_id")
+      .equals(Number(studySetSelected.value.id))
+      .toArray();
+  flashcardsCount.value = flashcardsArray.length;
+};
 
 const close = async () => {
   emit("close");
@@ -72,13 +186,7 @@ const close = async () => {
   }
 };
 
-const fetchFlashcardCount = async () => {
-  const flashcardsArray = await flashcardsDB.flashcards
-    .where("studyset_id")
-    .equals(Number(studySetSelected.value.id))
-    .toArray();
-  flashcardsCount.value = flashcardsArray.length;
-};
+
 const isWarningVisible = ref(false);
 
 const closeWarning = () => {
@@ -99,8 +207,10 @@ const redirectToLibraryPageFlashcard = () => {
   });
 };
 
-onMounted(() => {
-  fetchStudySets();
+watch(() => props.isVisible, async (newVal) => {
+  if (newVal) {
+    await fetchStudySets();
+  }
 });
 </script>
 
