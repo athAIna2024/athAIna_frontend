@@ -323,9 +323,11 @@ onMounted(() => {
 
         <div v-if="isSuccessful_studyset">
           <div
+            :key="currentPage"
             class="grid mt-[60px] mb-[60px] gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           >
-            <div v-for="(s, index) in currentStudySets" :key="index">
+            <div
+                v-for="(s, index) in currentStudySets" :key="index">
               <Studyset_Card
                 :title="s.title"
                 :description="s.description"
