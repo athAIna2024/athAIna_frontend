@@ -90,7 +90,7 @@ const fetchFlashcardsFromDb = async () => {
       .sortBy("updated_at")
       .then((array) => array.reverse());
 
-    console.log(flashcard_db);
+    // console.log(flashcard_db);
 
     if (flashcard_db.value.length === 0) {
       isSuccessful.value = false;
@@ -100,7 +100,7 @@ const fetchFlashcardsFromDb = async () => {
       message.value = "Flashcards retrieved successfully.";
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     isSuccessful.value = false;
     message.value = "An error occurred. Please try again later.";
   }
@@ -156,32 +156,32 @@ onMounted(() => {
 
 const isLearningModeClicked = () => {
   modals.learningMode = !modals.learningMode;
-  console.log(modals.learningMode);
+  // console.log(modals.learningMode);
 }
 
 const handleLearningModeClick = (option) => {
   if (option === "Review") {
-    console.log("Review Mode selected");
+    // console.log("Review Mode selected");
     redirectToReviewMode()
   } else if (option === "Test") {
-    console.log("Test Mode selected");
+    // console.log("Test Mode selected");
     openTest_Mode()
   }
 };
 
 const handleAddFlashcardClick = (option) => {
   if (option === "Manual") {
-    console.log("Manual Mode selected");
+    // console.log("Manual Mode selected");
     openManual_Flashcard()
   } else if (option === "AI-Generated") {
-    console.log("AI Mode selected");
+    // console.log("AI Mode selected");
     openAI_Flashcard()
   }
 };
 
 const isAddFlashcardClicked = () => {
   modals.addFlashcard = !modals.addFlashcard;
-  console.log(modals.addFlashcard);
+  // console.log(modals.addFlashcard);
 }
 </script>
 
@@ -305,19 +305,13 @@ const isAddFlashcardClicked = () => {
               <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-12 mt-10 mb-12 flex-grow">
                 <div
                     class="list-none"
-                    v-for="(
-                flashcard, index
-              ) in flashcardSearchStore.getSearchResults(studySetId).length
-                ? flashcardSearchStore.getSearchResults(studySetId)
-                : currentFlashcards"
-                    :key="index"
+                    v-for="(flashcard, index) in currentFlashcards" :key="index"
                 >
                   <Flashcard_Card
                       :flashcardId="flashcard.id"
                       :question="flashcard.question"
                       :answer="flashcard.answer"
                       :image="flashcard.image"
-                      class="md:min-w-[1000px]"
                   />
                 </div>
                 <div class="item error" v-if="!isSuccessful">

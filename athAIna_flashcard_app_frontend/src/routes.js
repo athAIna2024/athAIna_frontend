@@ -3,6 +3,7 @@ import Landing_Page from "@/views/Landing_Page.vue";
 import Features_Page from "@/views/Features_Page.vue";
 import Demo_Page from "@/views/Demo_Page.vue";
 import FAQs_Page from "@/views/FAQs_Page.vue";
+import NotFound from "@/NotFound.vue";
 
 import Create_Contact_Inquiry from "@/views/contactinquiryapp/Create_Contact_Inquiry.vue";
 
@@ -230,6 +231,12 @@ const routes = [
     component: View_Learning_Progress,
     meta: { title: "Report – athAIna", requiresAuth: true },
   },
+  {
+
+    name: 'NotFound',
+    component: NotFound,
+    meta: { title: '404 Not Found' }
+    },
 ];
 
 const router = createRouter({
@@ -245,7 +252,7 @@ router.beforeEach((to, from, next) => {
     to.matched.some((record) => record.meta.requiresAuth) &&
     !authStore.isLoggedIn
   ) {
-    next({ path: "/login" });
+    next({ name:"Login" });
   } else {
     next();
   }
