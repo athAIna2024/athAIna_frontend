@@ -222,10 +222,8 @@ const handleToggleViewClick = (option) => {
             v-if="barChartSelected"
             :scores="testScores"
         />
-      </div>
 
-      <div class="h-[400px] w-full flex justify-center">
-        <Line_Chart
+       <Line_Chart
             v-if="lineChartSelected"
             :scores="testScores"
         />
