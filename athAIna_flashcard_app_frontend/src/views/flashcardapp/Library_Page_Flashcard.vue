@@ -183,7 +183,6 @@ const isAddFlashcardClicked = () => {
   modals.addFlashcard = !modals.addFlashcard;
   // console.log(modals.addFlashcard);
 }
-
 </script>
 
 <template>
