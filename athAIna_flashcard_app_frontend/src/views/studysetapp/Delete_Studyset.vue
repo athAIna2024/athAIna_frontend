@@ -112,8 +112,8 @@ const fetchStudySetTitle = async () => {
       studyset_title.value = response.data.title;
     }
 
-    console.log("studyset_title", studyset_title.value);
-    console.log("studyset id", props.studySetId);
+    // console.log("studyset_title", studyset_title.value);
+    // console.log("studyset id", props.studySetId);
   } catch (error) {
     console.error(error);
   }

@@ -72,7 +72,7 @@ watch(isDeleteConfirmationModalVisible, (newValue) => {
 
 const deleteFlashcard = async () => {
   try {
-    console.log("FLASHCARD ID ", props.flashcardId);
+    // console.log("FLASHCARD ID ", props.flashcardId);
     const request = await axios.delete(`${flashcard_url}${props.flashcardId}/`);
 
     isSuccessful.value = request.data.successful;

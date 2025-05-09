@@ -55,7 +55,7 @@ const saveFlashcard = async () => {
       }
     });
 
-    console.log("REQUEST", request.data);
+    // console.log("REQUEST", request.data);
 
     isSuccessful.value = request.data.successful;
     message.value = request.data.message;

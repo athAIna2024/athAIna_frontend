@@ -127,7 +127,7 @@ const updateStudySet = async () => {
     isSuccessful_updated.value = request.data.successful;
     message_updated.value = request.data.message;
 
-    console.log(request.data);
+    // console.log(request.data);
 
 
     const updateStudySet = {
