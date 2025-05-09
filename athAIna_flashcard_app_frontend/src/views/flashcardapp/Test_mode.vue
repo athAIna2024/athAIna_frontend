@@ -113,7 +113,7 @@ onMounted(() => {
 <template>
 
   <div class="mx-6">
-    <div class="athAIna-border-inner p-6">
+    <div class="athAIna-border-inner p-6 h-[500px]]">
       <div class="flex flex-row justify-between">
         <div class="flex flex-row space-x-6 my-2 items-center">
           <button @click="navigateToLibraryPage">
@@ -133,9 +133,9 @@ onMounted(() => {
       <Test_Mode_Flashcard :question="flashcardQuestion" :image="flashcardImage" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
 
       <div v-if="testModeStore.isTestCompleted">
-        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
-          <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
-            <div class="athAIna-border-inner p-4 text-center">
+        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50 min-h-screen">
+          <div class="athAIna-border-outer p-1 flex flex-col w-[550px] min-h-screen">
+            <div class="athAIna-border-inner p-4 text-center min-h-">
 
               <button @click="navigateBackToLibraryPage" class="flex flex-start">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
