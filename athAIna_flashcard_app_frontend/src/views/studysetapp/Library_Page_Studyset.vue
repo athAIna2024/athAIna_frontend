@@ -259,7 +259,7 @@ onMounted(() => {
 
 <template>
   <transition appear name="fade">
-    <div>
+    <div class="min-h-screen">
       <div class="my-16 ml-12 mr-12">
         <div class="flex flex-col lg:flex-row justify-between lg:space-x-[50px] content-center">
           <Search_Bar_Studyset
@@ -338,7 +338,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <Pagination
+          <Pagination class="flex flex-grow justify-end"
             :total-items="studySetCounts"
             :items-per-page="itemsPerPage"
             :current-page="currentPage"
