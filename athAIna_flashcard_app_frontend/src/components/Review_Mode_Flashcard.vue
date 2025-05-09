@@ -31,7 +31,7 @@ const fetchStudysetName = async (studysetId) => {
       .first();
     studysetName.value = studyset ? studyset.title : "Unknown Studyset";
   } catch (error) {
-    console.error("Failed to fetch study set:", error);
+    // console.error("Failed to fetch study set:", error);
     studysetName.value = "Unknown Studyset";
   }
 };
@@ -163,7 +163,7 @@ const navigateToPreviousFlashcard = () => {
         name: 'Library_Page_Flashcard',
         params: {
           studySetTitle: studysetName.value,
-          studySetID: flashcard.studyset_id,
+          studySetId: flashcard.studyset_id,
         },
       }"
     >
@@ -222,7 +222,10 @@ const navigateToPreviousFlashcard = () => {
                 <div class="font-semibold text-lg">
                   <h1></h1>
                 </div>
-                <div v-if="isValidImage" class="flex flex-col-reverse xl:flex-row p-0 items-center">
+                <div
+                  v-if="isValidImage"
+                  class="flex flex-col-reverse xl:flex-row p-0 items-center"
+                >
                   <div>
                     <h1
                       class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-10 lg:p-20 w-full"
