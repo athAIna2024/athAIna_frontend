@@ -95,7 +95,7 @@ const saveStudySet = async () => {
     }
 
     await studySetDb.studysets.add(newStudySet);
-    console.log(studySetDb.studysets.get({ id: newStudySet.id }));
+    // console.log(studySetDb.studysets.get({ id: newStudySet.id }));
 
     if (isSuccessful.value) {
       close();

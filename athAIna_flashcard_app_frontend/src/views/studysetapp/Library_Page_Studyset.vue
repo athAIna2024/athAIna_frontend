@@ -95,13 +95,13 @@ const currentStudySets = computed(() => {
   const isSearchActive = studySetSearchStore.getSearchActiveStatus();
 
   if (isFilterActive) {
-    console.log("IsFilterActive", isFilterActive);
+    // console.log("IsFilterActive", isFilterActive);
     studySetCounts.value = studySetFilterStore.getFilterResults().length;
     return applyPagination(studySetFilterStore.getFilterResults());
   }
 
   if (isSearchActive) {
-    console.log("IsSearchActive", isSearchActive);
+    // console.log("IsSearchActive", isSearchActive);
     subject.value = "Choose Subject"; // Reset subject when search is active
     studySetCounts.value = studySetSearchStore.getSearchResults().length;
     return applyPagination(studySetSearchStore.getSearchResults());

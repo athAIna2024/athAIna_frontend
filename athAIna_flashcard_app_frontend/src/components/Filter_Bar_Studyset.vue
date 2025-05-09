@@ -21,7 +21,7 @@ const updateValue = async (key, value) => {
 
   filterResults.value = await filterStudySets(query);
   studySetFilterStore.setFilterResults(filterResults.value);
-  console.log("Filtered results:", filterResults.value);
+  // console.log("Filtered results:", filterResults.value);
 };
 
 const filterStudySets = async (query) => {

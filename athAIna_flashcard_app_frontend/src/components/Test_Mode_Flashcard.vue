@@ -156,7 +156,7 @@ const transitionToNext = () => {
       testModeStore.setIsTestCompleted(true);
 
       if (testModeStore.isTestCompleted) {
-        console.log("Test Completed");
+        // console.log("Test Completed");
         saveTestResults();
         emit('showScore')
       }
@@ -178,7 +178,7 @@ const saveTestResults = async () => {
 
     const testResults = await testModeDB.test_field.where('batch_id').equals(batchId).toArray();
     correctAnswersCount.value = testResults.filter(result => result.is_correct).length;
-    console.log("Correct Answers Count", correctAnswersCount.value);
+    // console.log("Correct Answers Count", correctAnswersCount.value);
 
     const cleanTestResults = testResults.map((result) => {
       return {
@@ -190,15 +190,15 @@ const saveTestResults = async () => {
         corrected_at: new Date(result.corrected_at).toISOString() // Convert to ISO string
       };
     });
-    console.log("Clean Test Results", cleanTestResults);
+    // console.log("Clean Test Results", cleanTestResults);
 
     const request = await axios.post(save_test_results_url, cleanTestResults);
 
-    console.log(request.data);
+    // console.log(request.data);
 
     isSuccessful_save.value = request.data.successful;
     message_save.value = request.data.message;
-    console.log("Did it save successfully?", isSuccessful_save.value);
+    // console.log("Did it save successfully?", isSuccessful_save.value);
 
 
     await saveTestScore();
@@ -216,7 +216,7 @@ const saveTestBatch = async () => {
       batch_id: batchId,
     });
 
-    console.log("SAVE BATCH ID", request.data.data.id);
+    // console.log("SAVE BATCH ID", request.data.data.id);
 
     batch_pk.value = request.data.data.id;
     testModeStore.setBatchPk(batch_pk.value);
@@ -243,17 +243,17 @@ const saveTestScore = async () => {
       submitted_at: new Date().toISOString(),
     };
 
-    console.log("Saving test score for report", newTestScore);
+    // console.log("Saving test score for report", newTestScore);
     const request = await axios.post(test_score_url, newTestScore);
 
-    console.log(request.data);
+    // console.log(request.data);
 
     isSuccessful_save_score.value = request.data.successful;
     message_save_score.value = request.data.message;
 
     if (isSuccessful_save_score.value) {
-      console.log("Test score saved successfully");
-      console.log(request.data);
+      // console.log("Test score saved successfully");
+      // console.log(request.data);
     } else {
       console.error("Error saving test score:", message_save_score.value);
     }
@@ -277,24 +277,21 @@ const isValidImage = computed(() => {
 <template>
 
 <!--  <Transition name="fade">-->
-    <div v-if="showQuestion" class="athAIna-border-outer p-1 my-4">
-      <div class="athAIna-border-inner">
-
-
-        <div class="flex lg:flex-row items-center justify-center p-10 md:flex-col-reverse sm:flex-col-reverse">
-          <div class="text-athAIna-violet m-auto flex items-center justify-center h-96">
+    <div v-if="showQuestion" class="athAIna-border-outer p-1 my-4 h-[500px]">
+      <div class="athAIna-border-inner h-[491px]">
+        <div class="flex lg:flex-row items-center justify-center p-10 md:flex-col-reverse sm:flex-col-reverse flex-col-reverse h-[400px]">
+          <div class="text-athAIna-violet m-auto mx-16 h-auto w-full flex items-center justify-center flex-wrap break-words overflow-hidden break-all">
             {{ props.question }}
           </div>
-          <div v-if="isValidImage">
+          <div v-if="isValidImage"
+               class="flex w-full h-auto justify-center align-middle items-center lg:h-auto">
             <img
                 :src="props.image"
                 alt="Flashcard Image"
-                class="max-w-lg rounded-lg"
+                class="sm:max-w-sm lg:max-w-sm rounded-lg items-center align-middle justify-center h-1/2"
             />
           </div>
         </div>
-
-
 
         <div class="h-20">
           <div class="px-12 py-4 flex flex-row gap-10 justify-between ">

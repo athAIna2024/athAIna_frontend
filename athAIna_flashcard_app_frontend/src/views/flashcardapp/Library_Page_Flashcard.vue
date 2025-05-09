@@ -13,18 +13,14 @@ import { onBeforeRouteLeave } from "vue-router";
 import { useStudysetStore } from "../../../stores/studySetStore.js";
 import { useFlashcardSearchStore } from "../../../stores/flashcardSearchStore.js";
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
-import Error_Message from "@/components/Error_Message.vue"; // Import Error_Message component
 
 import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
-import { dropdownOptions } from "@/components/constants/SubjectDropDownOptions.js";
-import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
-import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 import {
   flashcardCreationModes,
   learningModes,
 } from "@/components/constants/SubjectDropDownOptions.js";
 import Basic_Dropdown from "@/components/Basic_Dropdown.vue";
-import Create_Flashcard_Manually from "@/views/flashcardapp/Create_Flashcard_Manually.vue";
+import Warning_Message from "@/components/Warning_Message.vue";
 
 const route = useRoute();
 
@@ -86,8 +82,28 @@ const closeAI_Flashcard = () => {
   isAIFlashcardVisible.value = false;
 };
 
+const warningModal = reactive({
+  isVisible: false,
+  header: "",
+  message: "",
+});
+
+const closeWarningModal = () => {
+  closeTest_Mode();
+  warningModal.isVisible = false;
+}
 const openTest_Mode = () => {
-  isTestModeVisible.value = true;
+
+  if (flashcard_db.value.length === 0) {
+    isTestModeVisible.value = false;
+
+    warningModal.isVisible = true;
+    warningModal.header = "No Flashcards Available";
+    warningModal.message =
+      "There are no flashcards in this study set yet. Please add some flashcards before using Test Mode.";
+  } else {
+    isTestModeVisible.value = true;
+  }
 };
 
 const closeTest_Mode = () => {
@@ -97,6 +113,7 @@ const closeTest_Mode = () => {
 // Function to close error modal
 const closeErrorModal = () => {
   errorModal.isVisible = false;
+
 };
 
 const fetchFlashcardsFromDb = async () => {
@@ -159,7 +176,7 @@ const redirectToReviewMode = async () => {
     errorModal.isVisible = true;
     errorModal.header = "No Flashcards Available";
     errorModal.message =
-      "There are no flashcards in this study set yet. Please add some flashcards before using Review Mode.";
+      "There are no flashcards in this study set yet. Please add at least two (2) flashcards before using Review Mode.";
     return;
   }
 
@@ -386,12 +403,19 @@ const isAddFlashcardClicked = () => {
       />
 
       <!-- Error Message component -->
-      <Error_Message
+      <Warning_Message
         :is-visible="errorModal.isVisible"
-        :error-header="errorModal.header"
-        :error-message="errorModal.message"
+        :warning-header="errorModal.header"
+        :warning-message="errorModal.message"
         @close="closeErrorModal"
       />
+
+      <Warning_Message
+          :is-visible="warningModal.isVisible"
+          :warning-header="warningModal.header"
+          :warning-message="warningModal.message"
+          @close="closeWarningModal"
+        />
     </div>
   </transition>
 </template>

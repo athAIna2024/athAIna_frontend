@@ -194,7 +194,7 @@ onMounted(async () => {
          @click="navigateToLibraryPageFlashcard"
     >
 
-      <div class="text-[20px] font-semibold wrap-break-word"> {{ title }}</div>
+      <div class="text-[20px] font-semibold break-words"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px] h-12">
         <span v-if="description !== 'null' && description.length < 50">
