@@ -191,21 +191,8 @@ const isWarningVisible = ref(false);
 
 const closeWarning = () => {
   isWarningVisible.value = false;
-
-  if (studySetSelected.value.id !== null) {
-    redirectToLibraryPageFlashcard();
-  }
 };
 
-const redirectToLibraryPageFlashcard = () => {
-  router.push({
-    name: "Library_Page_Flashcard",
-    params: {
-      studySetTitle: studySetStore.getStudySetTitle(),
-      studySetId: studySetStore.getStudySetId(),
-    },
-  });
-};
 
 watch(() => props.isVisible, async (newVal) => {
   if (newVal) {
@@ -217,7 +204,7 @@ watch(() => props.isVisible, async (newVal) => {
 <template>
   <Warning_Message
     :warningHeader="'Oops! No questions available yet'"
-    :warningMessage="'Create flashcards in a study set to take a test.'"
+    :warningMessage="`Create flashcards in ${studySetStore.getStudySetTitle()} to take a test.`"
     :isVisible="isWarningVisible"
     @close="closeWarning"
   />

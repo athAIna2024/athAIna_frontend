@@ -68,7 +68,7 @@ const refreshTest_Mode = () => {
 const loadQuestion = async () => {
   try {
     flashcardId.value = flashcardIds.value[questionIndex.value];
-    console.log("Flashcard ID", flashcardId.value);
+    // console.log("Flashcard ID", flashcardId.value);
 
     if (flashcardId.value !== null && flashcardId.value !== undefined) {
       const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId.value);
@@ -78,7 +78,7 @@ const loadQuestion = async () => {
       flashcardAnswer.value = flashcard.value?.answer || '';
       flashcardImage.value = flashcard.value?.image || '';
 
-      console.log("Question", flashcardQuestion.value);
+      // console.log("Question", flashcardQuestion.value);
     } else {
       console.error("Invalid flashcard ID:", flashcardId.value);
     }
@@ -95,7 +95,7 @@ const showSummaryOfScore = async () => {
 
 
 watch(() => testModeStore.currentQuestionIndex, async (newValue, oldValue) => {
-  console.log("Question index changed from", oldValue, "to", newValue);
+  // console.log("Question index changed from", oldValue, "to", newValue);
   if (progress.value < questionLength.value) {
     progress.value = newValue + 1;
     questionIndex.value = newValue;
@@ -113,7 +113,7 @@ onMounted(() => {
 <template>
 
   <div class="mx-6">
-    <div class="athAIna-border-inner p-6">
+    <div class="athAIna-border-inner p-6 h-[500px]]">
       <div class="flex flex-row justify-between">
         <div class="flex flex-row space-x-6 my-2 items-center">
           <button @click="navigateToLibraryPage">
@@ -133,7 +133,7 @@ onMounted(() => {
       <Test_Mode_Flashcard :question="flashcardQuestion" :image="flashcardImage" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
 
       <div v-if="testModeStore.isTestCompleted">
-        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50">
+        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50 min-h-screen">
           <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
             <div class="athAIna-border-inner p-4 text-center">
 
