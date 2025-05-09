@@ -278,7 +278,7 @@ onMounted(() => {
     <div class="flex flex-row space-x-6 justify-end">
 
       <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
-        <button @click="navigateToLibraryPage" class="athAIna-border-inner rounded-full"> Cancel </button>
+        <button @click="(event) => { event.preventDefault(); navigateToLibraryPage(); }" class="athAIna-border-inner rounded-full"> Cancel </button>
       </div>
       <button class="btn mt-10 mx-2 w-32" type="submit"> Update </button>
     </div>
