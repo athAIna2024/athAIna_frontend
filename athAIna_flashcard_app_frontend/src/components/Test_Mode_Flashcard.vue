@@ -277,24 +277,21 @@ const isValidImage = computed(() => {
 <template>
 
 <!--  <Transition name="fade">-->
-    <div v-if="showQuestion" class="athAIna-border-outer p-1 my-4">
-      <div class="athAIna-border-inner">
-
-
-        <div class="flex lg:flex-row items-center justify-center p-10 md:flex-col-reverse sm:flex-col-reverse">
-          <div class="text-athAIna-violet m-auto flex items-center justify-center h-96">
+    <div v-if="showQuestion" class="athAIna-border-outer p-1 my-4 h-[500px]">
+      <div class="athAIna-border-inner h-[491px]">
+        <div class="flex lg:flex-row items-center justify-center p-10 md:flex-col-reverse sm:flex-col-reverse flex-col-reverse h-[400px]">
+          <div class="text-athAIna-violet m-auto mx-16 h-auto w-full flex items-center justify-center flex-wrap break-words overflow-hidden break-all">
             {{ props.question }}
           </div>
-          <div v-if="isValidImage">
+          <div v-if="isValidImage"
+               class="flex w-full h-auto justify-center align-middle items-center lg:h-auto">
             <img
                 :src="props.image"
                 alt="Flashcard Image"
-                class="max-w-lg rounded-lg"
+                class="sm:max-w-sm lg:max-w-sm rounded-lg items-center align-middle justify-center h-1/2"
             />
           </div>
         </div>
-
-
 
         <div class="h-20">
           <div class="px-12 py-4 flex flex-row gap-10 justify-between ">
