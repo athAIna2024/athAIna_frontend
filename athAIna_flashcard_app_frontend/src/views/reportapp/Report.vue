@@ -11,6 +11,9 @@ import Floating_Dropdown_Studysets from "@/components/Floating_Dropdown_Studyset
 import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import {useUserStore} from "../../../stores/userStore.js";
+import Basic_Dropdown from "@/components/Basic_Dropdown.vue";
+import {flashcardCreationModes, views} from "@/components/constants/SubjectDropDownOptions.js";
+import Line_Chart from "@/views/reportapp/Line_Chart.vue";
 
 const userStore = useUserStore();
 const learnerId = userStore.getUserID();
@@ -49,13 +52,19 @@ const updateStudySet = (id, title) => {
 
 const modals = ref({
   studySetModal: false,
+  toggleView: false,
 })
+
+const barChartSelected = ref(false);
+const lineChartSelected = ref(true);
+
 // Methods
 const toggleModal = (modalName) => {
   modals.value[modalName] = !modals.value[modalName];
 };
 
 const studySetSelected = ref({ id: null, title: null});
+const viewModeSelected = ref({ id: null, title: null});
 
 const minDate = new Date(userStore.getDateJoined());
 const maxDate = ref(new Date()); // Current date (always the current, not the date user login);
@@ -121,6 +130,29 @@ onMounted(() => {
   fetchStudySets();
 });
 
+function showLineChart() {
+
+}
+
+function showBarChart() {
+
+}
+
+const handleToggleViewClick = (option) => {
+  viewModeSelected.value.title = option;
+  toggleModal('toggleView');
+
+  if (option === "Bar") {
+    // console.log("Bar View selected");
+    barChartSelected.value = true;
+    lineChartSelected.value = false;
+  } else if (option === "Line") {
+    // console.log("Line Viw selected");
+    barChartSelected.value = false;
+    lineChartSelected.value = true;
+  }
+};
+
 </script>
 
 <template>
@@ -134,21 +166,45 @@ onMounted(() => {
             <Subject_Selector
                 :placeholder="'Choose Study Set'"
                 @click="toggleModal('studySetModal')"
-                class="relative w-[350px]"
+                class="relative w-[250px]"
                 :innerClass="'athAIna-border-inner'"
                 :outerClass="'athAIna-border-outer'"
                 v-model="studySetSelected.title"
 
             />
-            <Floating_Dropdown_Studysets v-if="modals.studySetModal"
-                               :items="studySets"
-                               top="240px"
-                               right="max-content"
-                               height="max-content"
-                               width="350px"
-                               @update:modelValue="({ key, value }) => updateStudySet(key, value)"
+            <Floating_Dropdown_Studysets
+                v-if="modals.studySetModal"
+                :items="studySets"
+                top="240px"
+                right="max-content"
+                height="max-content"
+                width="full"
+                @update:modelValue="({ key, value }) => updateStudySet(key, value)"
             />
 
+          </div>
+
+          <div class="relative flex-col min-w-[150px] sm:w-full text-[16px] md:w-full lg:w-[250px]">
+            <Subject_Selector
+                :placeholder="'Toggle View'"
+                @click="toggleModal('toggleView')"
+                class="relative w-full"
+                :innerClass="'athAIna-border-inner'"
+                :outerClass="'athAIna-border-outer'"
+                v-model="viewModeSelected.title"
+            />
+            <Basic_Dropdown
+                class="w-full"
+                v-if="modals.toggleView"
+                :items="views"
+                :itemList="views"
+                top="50px"
+                right="0px"
+                height="max-content"
+                width="full"
+                @itemClick="handleToggleViewClick"
+            >
+            </Basic_Dropdown>
           </div>
 
           <Date_Range_Selector
@@ -163,6 +219,12 @@ onMounted(() => {
 
       <div class="h-[400px] w-full flex justify-center">
         <Bar_Chart
+            v-if="barChartSelected"
+            :scores="testScores"
+        />
+
+       <Line_Chart
+            v-if="lineChartSelected"
             :scores="testScores"
         />
       </div>

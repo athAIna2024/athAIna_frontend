@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref, onMounted, onBeforeUnmount } from "vue";
 
 const props = defineProps({
   top: String,
@@ -11,10 +11,27 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "itemClick"]);
 
+const dropdownRef = ref(null);
+
+const handleClickOutside = (event) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    emit("close");
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
 </script>
 
 <template>
   <div
+      ref="dropdownRef"
       class="absolute z-50 max-h-[150px] overflow-y-auto h-[150px] w-[250px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col gap-y-3 justify-between p-3 shadow-md items-center"
       :style="{
       top: `${top}`,

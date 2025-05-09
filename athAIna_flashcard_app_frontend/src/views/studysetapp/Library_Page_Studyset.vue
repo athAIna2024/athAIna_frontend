@@ -259,8 +259,8 @@ onMounted(() => {
 
 <template>
   <transition appear name="fade">
-    <div>
-      <div class="my-16 ml-12 mr-12 min-h-screen">
+    <div class="min-h-screen">
+      <div class="my-16 ml-12 mr-12">
         <div class="flex flex-col lg:flex-row justify-between lg:space-x-[50px] content-center">
           <Search_Bar_Studyset
               v-model="input"
@@ -321,10 +321,10 @@ onMounted(() => {
           </div>
         </div>
 
-        <div v-if="isSuccessful_studyset">
+        <div v-if="isSuccessful_studyset" class="flex flex-col">
           <div
             :key="currentPage"
-            class="grid mt-[60px] mb-[60px] gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            class="grid mt-[60px] mb-[60px] gap-6 min-w-auto grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           >
             <div
                 v-for="(s, index) in currentStudySets" :key="index">
@@ -338,7 +338,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <Pagination
+          <Pagination class="flex flex-grow justify-end"
             :total-items="studySetCounts"
             :items-per-page="itemsPerPage"
             :current-page="currentPage"

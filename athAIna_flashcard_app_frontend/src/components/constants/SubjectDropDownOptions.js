@@ -19,3 +19,5 @@ export const dropdownOptions = {
 export const learningModes = ["Review", "Test"];
 
 export const flashcardCreationModes = ["Manual", "AI-Generated"];
+
+export const views = ["Bar", "Line"];

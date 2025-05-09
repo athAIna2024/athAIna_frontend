@@ -189,23 +189,23 @@ onMounted(async () => {
 <!--      :isVisible="isLoading"-->
 <!--  />-->
 
-  <div class="p-[5px] shadow-md bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
-    <div class="flex flex-col h-40 bg-athAIna-white rounded-[15px] p-[15px] hover:cursor-pointer"
+  <div class="p-[5px] shadow-md min-h-40 bg-gradient-to-br rounded-[20px] from-athAIna-yellow via-athAIna-orange to-athAIna-red">
+    <div class="flex flex-col min-h-40 bg-athAIna-white rounded-[15px] p-[15px] hover:cursor-pointer"
          @click="navigateToLibraryPageFlashcard"
     >
 
-      <div class="text-[20px] font-semibold"> {{ title }}</div>
+      <div class="text-[20px] font-semibold wrap-break-word"> {{ title }}</div>
       <div class="text-[16px] text-athAIna-orange"> {{ subject }} </div>
       <div class="text-[14px] mt-[12px] h-12">
-      <span v-if="description !== 'null' && description.length < 50">
-        {{ description }}
-      </span>
-      <span v-else-if="description !== 'null' && description.length > 50">
-        {{ description.substring(0, 50) + "..." }}
-      </span>
+        <span v-if="description !== 'null' && description.length < 50">
+          {{ description }}
+        </span>
+        <span v-else-if="description !== 'null' && description.length > 50">
+          {{ description.substring(0, 49) + "..." }}
+        </span>
       </div>
 
-      <div class="flex flex-row justify-between mt-[18px]">
+      <div class="flex flex-row justify-between mt-[10px]">
         <div>
           <span class="font-bold"> {{ flashcardCount }} </span>
           <span>{{ flashcardCount > 1 ? ' flashcards' : ' flashcard' }}</span>

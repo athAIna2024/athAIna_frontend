@@ -12,6 +12,7 @@
     "@vuepic/vue-datepicker": "^11.0.2",
     "athaina-flashcard-app-frontend": "file:",
     "axios": "^1.7.7",
+    "chart.js": "^4.4.9",
     "dexie": "^4.0.11",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
