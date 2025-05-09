@@ -1,5 +1,6 @@
 <script setup>
-import { defineProps, ref } from "vue";
+import {defineProps, onBeforeUnmount, onMounted, ref} from "vue";
+import studySetDb from "@/views/studysetapp/dexie.js";
 
 const props = defineProps({
   items: Object,
@@ -15,11 +16,33 @@ const updateValue = async (key, value) => {
   emit("update:modelValue", { key, value });
 };
 
+const floatingDropdownStudysetRef = ref(null);
+
+const filterStudySets = async (query) => {
+  return await studySetDb.studysets
+      .filter(studyset => studyset.subject === query)
+      .toArray();
+};
+
+const handleClickOutside = (event) => {
+  if (floatingDropdownStudysetRef.value && !floatingDropdownStudysetRef.value.contains(event.target)) {
+    emit("update:modelValue", false); // Hide the modal
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("mousedown", handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("mousedown", handleClickOutside);
+});
 
 </script>
 
 <template>
   <div
+      ref="floatingDropdownStudysetRef"
       class="absolute z-50 max-h-[150px] overflow-y-auto h-[150px] w-[250px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col gap-y-3 justify-between p-5 shadow-md items-center"
       :style="{
       top: `${top}`,
