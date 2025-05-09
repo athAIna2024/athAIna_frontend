@@ -156,7 +156,7 @@ const transitionToNext = () => {
       testModeStore.setIsTestCompleted(true);
 
       if (testModeStore.isTestCompleted) {
-        console.log("Test Completed");
+        // console.log("Test Completed");
         saveTestResults();
         emit('showScore')
       }
@@ -178,7 +178,7 @@ const saveTestResults = async () => {
 
     const testResults = await testModeDB.test_field.where('batch_id').equals(batchId).toArray();
     correctAnswersCount.value = testResults.filter(result => result.is_correct).length;
-    console.log("Correct Answers Count", correctAnswersCount.value);
+    // console.log("Correct Answers Count", correctAnswersCount.value);
 
     const cleanTestResults = testResults.map((result) => {
       return {
@@ -190,15 +190,15 @@ const saveTestResults = async () => {
         corrected_at: new Date(result.corrected_at).toISOString() // Convert to ISO string
       };
     });
-    console.log("Clean Test Results", cleanTestResults);
+    // console.log("Clean Test Results", cleanTestResults);
 
     const request = await axios.post(save_test_results_url, cleanTestResults);
 
-    console.log(request.data);
+    // console.log(request.data);
 
     isSuccessful_save.value = request.data.successful;
     message_save.value = request.data.message;
-    console.log("Did it save successfully?", isSuccessful_save.value);
+    // console.log("Did it save successfully?", isSuccessful_save.value);
 
 
     await saveTestScore();
@@ -216,7 +216,7 @@ const saveTestBatch = async () => {
       batch_id: batchId,
     });
 
-    console.log("SAVE BATCH ID", request.data.data.id);
+    // console.log("SAVE BATCH ID", request.data.data.id);
 
     batch_pk.value = request.data.data.id;
     testModeStore.setBatchPk(batch_pk.value);
@@ -243,17 +243,17 @@ const saveTestScore = async () => {
       submitted_at: new Date().toISOString(),
     };
 
-    console.log("Saving test score for report", newTestScore);
+    // console.log("Saving test score for report", newTestScore);
     const request = await axios.post(test_score_url, newTestScore);
 
-    console.log(request.data);
+    // console.log(request.data);
 
     isSuccessful_save_score.value = request.data.successful;
     message_save_score.value = request.data.message;
 
     if (isSuccessful_save_score.value) {
-      console.log("Test score saved successfully");
-      console.log(request.data);
+      // console.log("Test score saved successfully");
+      // console.log(request.data);
     } else {
       console.error("Error saving test score:", message_save_score.value);
     }

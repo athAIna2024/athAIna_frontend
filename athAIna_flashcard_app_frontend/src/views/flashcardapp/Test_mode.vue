@@ -68,7 +68,7 @@ const refreshTest_Mode = () => {
 const loadQuestion = async () => {
   try {
     flashcardId.value = flashcardIds.value[questionIndex.value];
-    console.log("Flashcard ID", flashcardId.value);
+    // console.log("Flashcard ID", flashcardId.value);
 
     if (flashcardId.value !== null && flashcardId.value !== undefined) {
       const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId.value);
@@ -78,7 +78,7 @@ const loadQuestion = async () => {
       flashcardAnswer.value = flashcard.value?.answer || '';
       flashcardImage.value = flashcard.value?.image || '';
 
-      console.log("Question", flashcardQuestion.value);
+      // console.log("Question", flashcardQuestion.value);
     } else {
       console.error("Invalid flashcard ID:", flashcardId.value);
     }
@@ -95,7 +95,7 @@ const showSummaryOfScore = async () => {
 
 
 watch(() => testModeStore.currentQuestionIndex, async (newValue, oldValue) => {
-  console.log("Question index changed from", oldValue, "to", newValue);
+  // console.log("Question index changed from", oldValue, "to", newValue);
   if (progress.value < questionLength.value) {
     progress.value = newValue + 1;
     questionIndex.value = newValue;
