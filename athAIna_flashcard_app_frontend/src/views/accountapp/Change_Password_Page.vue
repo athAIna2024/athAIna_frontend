@@ -7,6 +7,22 @@ import axiosInstance from "@/axiosConfig";
 import Cookies from "js-cookie";
 import Loading_Modal from "@/components/Loading_Modal.vue";
 import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
+// Import all required stores
+import { useFlashcardSearchStore } from "../../../stores/flashcardSearchStore.js";
+import { useStudysetStore } from "../../../stores/studySetStore.js";
+import { useLockedUsersStore } from "../../../stores/lockedUsersStore.js";
+import { useStudySetSearchStore } from "../../../stores/studySetSearchStore.js";
+import { useUserStore } from "../../../stores/userStore.js";
+import { useTestModeStore } from "../../../stores/testModeStore.js";
+
+// Initialize all stores
+const authStore = useAuthStore();
+const flashcardSearchStore = useFlashcardSearchStore();
+const studysetStore = useStudysetStore();
+const lockedUsersStore = useLockedUsersStore();
+const studySetSearchStore = useStudySetSearchStore();
+const userStore = useUserStore();
+const testModeStore = useTestModeStore();
 
 const goBackToLibrary = () => {
   router.push({
@@ -27,7 +43,6 @@ const props = defineProps({
 
 const route = useRoute();
 const router = useRouter();
-const authStore = useAuthStore();
 
 const oldPassword = ref("");
 const newPassword = ref("");
@@ -63,6 +78,38 @@ const togglePassword2 = () => {
 const togglePassword3 = () => {
   showPassword3.value = !showPassword3.value;
 };
+
+// Add the logout function
+const logout = async () => {
+  try {
+    // Clear all cookies
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    Cookies.remove("athAIna_csrfToken");
+
+    // Clear session storage
+    sessionStorage.clear();
+
+    // Clear IndexedDB
+    let dbs = await indexedDB.databases();
+    dbs.forEach((db) => {
+      indexedDB.deleteDatabase(db.name);
+    });
+
+    // Clear all stores
+    authStore.logout();
+    flashcardSearchStore.clear();
+    studysetStore.clear();
+    studySetSearchStore.clear();
+    testModeStore.clear();
+    userStore.clear();
+
+    // Redirect will happen after the success message timeout
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
+
 // Enhanced updatePassword function with better error handling
 const updatePassword = async () => {
   // Clear previous errors
@@ -164,10 +211,13 @@ const updatePassword = async () => {
       isLoadingModalVisible.value = false;
       isSuccessMessageVisible.value = true;
 
+      // Log out the user
+      await logout();
+
       // Redirect to login page after successful password reset
       setTimeout(() => {
         router.push({
-          name: "Library_Page_Studyset",
+          name: "Login",
         });
       }, 2000);
     }
@@ -459,7 +509,7 @@ const closeSuccessMessage = () => {
 
     <Success_Message
       :successHeader="'Password Change Successful'"
-      :successMessage="'Your password has been updated. Redirecting to Library Of StudySet...'"
+      :successMessage="'Your password has been updated. You will be logged out and redirected to login...'"
       :isVisible="isSuccessMessageVisible"
       @close="closeSuccessMessage"
     />
