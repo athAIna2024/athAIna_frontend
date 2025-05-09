@@ -38,13 +38,6 @@ const clearImage = () => {
   imageName.value = null;
 };
 
-function smoothReload() {
-  document.body.classList.add('fade-out');
-  setTimeout(() => {
-    location.reload();
-  }, 500); // Match the duration of the CSS transition
-}
-
 // SAVE FLASHCARD IN INDEXEDDB
 const saveFlashcard = async () => {
   try {
@@ -88,10 +81,11 @@ const saveFlashcard = async () => {
 
     if (isSuccessful) {
       showSuccessMessage.value = true;
-      smoothReload();
 
+      question.value = "";
+      answer.value = "";
+      image.value = "";
     }
-
 
   } catch (error) {
 
@@ -244,7 +238,7 @@ const navigateToLibraryPage = () => {
     <div class="flex flex-row space-x-6 justify-end">
 
       <div class="athAIna-border-outer p-1 mt-10 mx-2 w-32 rounded-full">
-        <button @click="navigateToLibraryPage" class="athAIna-border-inner rounded-full"> Cancel </button>
+        <button @click="(event) => { event.preventDefault(); navigateToLibraryPage(); }" class="athAIna-border-inner rounded-full"> Cancel </button>
       </div>
       <button class="btn mt-10 mx-2 w-32" type="submit"> Submit </button>
     </div>
