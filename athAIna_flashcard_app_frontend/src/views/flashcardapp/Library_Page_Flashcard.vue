@@ -21,6 +21,7 @@ import {
 } from "@/components/constants/SubjectDropDownOptions.js";
 import Basic_Dropdown from "@/components/Basic_Dropdown.vue";
 import Warning_Message from "@/components/Warning_Message.vue";
+import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
 
 const route = useRoute();
 
@@ -226,6 +227,10 @@ const isAddFlashcardClicked = () => {
   modals.addFlashcard = !modals.addFlashcard;
   // console.log(modals.addFlashcard);
 };
+
+const updateSubject = (value) => {
+  toggleModal("learningMode");
+};
 </script>
 
 <template>
@@ -291,6 +296,7 @@ const isAddFlashcardClicked = () => {
                         height="max-content"
                         width="full"
                         @itemClick="handleLearningModeClick"
+                        v-model="modals.learningMode"
                       >
                       </Basic_Dropdown>
                     </div>
@@ -314,6 +320,7 @@ const isAddFlashcardClicked = () => {
                         height="max-content"
                         width="full"
                         @itemClick="handleAddFlashcardClick"
+                        v-model="modals.addFlashcard"
                       >
                       </Basic_Dropdown>
                     </div>
