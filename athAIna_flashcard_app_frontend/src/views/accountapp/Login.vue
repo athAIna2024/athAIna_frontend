@@ -62,7 +62,7 @@ const login = async () => {
 
     // console.log(response.data);
 
-    if (response.data.successful) {
+    if (response.status === 200 && response.data.successful) {
       const sessionTime = new Date();
 
       sessionStorage.setItem("session", sessionTime);
@@ -101,7 +101,7 @@ const login = async () => {
     }
   } catch (error) {
     // console.log(error.value);
-    if (error.response.status === 400) {
+    if (error.response.status === 400 || error.response.status === 401) {
       errors.value.email = error.response.data.email || [];
 
       if (errors.value.password) {
