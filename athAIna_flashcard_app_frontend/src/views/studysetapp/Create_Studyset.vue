@@ -119,24 +119,25 @@ const saveStudySet = async () => {
   }
 };
 
-watch(() => subject.value, (newValue) => {
-  if (newValue.key !== previousSubject.value.key) {
-    field_errors.value.subject = "";
-    message.value = "";
-  }
-}, { immediate: true });
-
 watch(() => title.value, (newValue) => {
   if (newValue.trim() !== "") {
-    field_errors.value.title = null;
-    message.value = "";
+    field_errors.value.title = ""; // Clear the error
   }
+  message.value = ""; // Always reset the message
+});
+
+watch(() => subject.value, (newValue) => {
+  if (newValue?.key) {
+    field_errors.value.subject = ""; // Clear the error
+  }
+  message.value = ""; // Always reset the message
 });
 
 watch(() => description.value, (newValue) => {
-  if (newValue.trim() === "") {
-    message.value = "";
+  if (newValue.trim() !== "") {
+    field_errors.value.description = ""; // Clear the error
   }
+  message.value = ""; // Always reset the message
 });
 </script>
 

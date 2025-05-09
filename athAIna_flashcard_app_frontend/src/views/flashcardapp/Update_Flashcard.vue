@@ -177,8 +177,8 @@ watch(answer, (newValue) => {
 });
 
 watch(image, (newValue) => {
-  if (newValue) {
-    field_errors.value.image = null;
+  if (newValue || newValue === null) {
+    field_errors.value.image = null; // Clear the error if there's a new value or it's null
   }
 });
 
