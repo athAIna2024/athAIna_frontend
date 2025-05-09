@@ -12,6 +12,7 @@ const props = defineProps({
   height: String,
   width: String,
 });
+const filterBarRef = ref(null);
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -29,10 +30,25 @@ const filterStudySets = async (query) => {
       .filter(studyset => studyset.subject === query)
       .toArray();
 };
+
+const handleClickOutside = (event) => {
+  if (filterBarRef.value && !filterBarRef.value.contains(event.target)) {
+    emit("update:modelValue", false); // Hide the modal
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("mousedown", handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("mousedown", handleClickOutside);
+});
 </script>
 
 <template>
   <div
+      ref="filterBarRef"
       class="absolute z-50 max-h-[150px] overflow-y-auto h-[150px] w-[250px] border-athAIna-orange border-[4px] rounded-3xl bg-athAIna-white flex flex-col gap-y-3 justify-between p-5 shadow-md items-center"
       :style="{
       top: `${top}`,
