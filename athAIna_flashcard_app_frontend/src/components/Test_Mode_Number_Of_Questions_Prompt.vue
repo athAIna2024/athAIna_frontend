@@ -23,10 +23,10 @@ const studySetTitle = ref(studySetStore.getStudySetTitle());
 const studySetId = ref(studySetStore.getStudySetId());
 
 const fetchFlashcardCounts = async () => {
-  console.log("ID", studySetId.value);
+  // console.log("ID", studySetId.value);
   const flashcard = await studySetDb.studysets.get(Number(studySetId.value));
   flashcardCounts.value = flashcard ? flashcard.flashcard_count : 0;
-  console.log("FLASHCARD COUNTS FROM INDEXEDDB: ", flashcardCounts.value);
+  // console.log("FLASHCARD COUNTS FROM INDEXEDDB: ", flashcardCounts.value);
 };
 
 const isSuccessful_test = ref(false);
@@ -135,7 +135,7 @@ const randomizeTestQuestions = async () => {
 watch(
     () => studySetStore.getStudySetTitle(),
     (newTitle, oldTitle) => {
-      console.log(`StudySetTitle changed from ${oldTitle} to ${newTitle}`);
+      // console.log(`StudySetTitle changed from ${oldTitle} to ${newTitle}`);
       if (newTitle) {
         studySetTitle.value = String(newTitle);
       }
@@ -145,7 +145,7 @@ watch(
 watch(
     () => studySetStore.getStudySetId(),
     (newId, oldId) => {
-      console.log(`StudySetId changed from ${oldId} to ${newId}`);
+      // console.log(`StudySetId changed from ${oldId} to ${newId}`);
       if (newId) {
         studySetId.value = Number(newId);
       }
