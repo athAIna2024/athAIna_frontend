@@ -85,6 +85,7 @@ const saveFlashcard = async () => {
       question.value = "";
       answer.value = "";
       image.value = "";
+      field_errors.value = {};
     }
 
   } catch (error) {
