@@ -5,7 +5,7 @@ import { useAuthStore } from "../../stores/authStore";
 import axiosInstance from "@/axiosConfig";
 import Cookies from "js-cookie";
 import Confirmation_Prompt from "./Confirmation_Prompt.vue"; // Import Confirmation component
-
+import account_Delete_Confirmation from "@/views/accountapp/account_Delete_Confirmation.vue";
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -21,6 +21,7 @@ const confirmDelete = ref(false);
 const isLoading = ref(false);
 const isSuccessMessageVisible = ref(false);
 const showConfirmation = ref(false);
+const showDeleteConfirmation = ref(false); // Add ref for Delete_Confirmation
 const confirmationMessage = ref(
   "Your account has been successfully deleted. You will be redirected to the login page."
 );
@@ -33,6 +34,7 @@ watch(
       confirmDelete.value = false;
       deleteError.value = "";
       showConfirmation.value = false;
+      showDeleteConfirmation.value = false;
     }
   }
 );
@@ -43,6 +45,10 @@ const close = () => {
 
 const closeConfirmation = () => {
   showConfirmation.value = false;
+};
+
+const closeDeleteConfirmation = () => {
+  showDeleteConfirmation.value = false;
 };
 
 const handleConfirm = () => {
@@ -60,41 +66,46 @@ const deleteAccount = async () => {
     });
 
     if (response.status === 200) {
-      // Clear all auth-related data
-      Cookies.remove("access_token");
-      Cookies.remove("refresh_token");
-      Cookies.remove("athAIna_csrfToken");
-      localStorage.removeItem("user");
-      sessionStorage.clear();
-      authStore.logout();
+      // Show confirmation immediately before clearing auth data
+      showDeleteConfirmation.value = true;
+
+      // Delay logout and redirect to allow user to see the confirmation
+      setTimeout(() => {
+        // Clear all auth-related data
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
+        Cookies.remove("athAIna_csrfToken");
+        localStorage.removeItem("user");
+        sessionStorage.clear();
+        authStore.logout();
+
+        showDeleteConfirmation.value = false;
+        close();
+        router.push({ name: "Login" });
+      }, 2000);
     }
   } catch (error) {
     console.error("Error deleting account:", error);
     deleteError.value =
       error.response?.data?.message ||
       "An error occurred while deleting your account";
-  } finally {
     isLoading.value = false;
-
-    // On successful deletion (no error)
-    if (!deleteError.value) {
-      showConfirmation.value = true;
-
-      // Ensure confirmation is shown for at least 2 seconds
-      setTimeout(() => {
-        showConfirmation.value = false;
-        close();
-        router.push({ name: "Login" });
-      });
-    }
   }
 };
 </script>
 
 <template>
+  <!-- Delete Confirmation - placed outside the main modal to ensure it appears on top -->
+  <account_Delete_Confirmation
+    :isVisible="showDeleteConfirmation"
+    title="Account Deleted"
+    @close="closeDeleteConfirmation"
+  />
+
   <div
     v-if="isOpen"
-    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50"
+    class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] z-[9000]"
+    style="width: 100vw; height: 100vh; top: 0; left: 0; right: 0; bottom: 0"
   >
     <!-- Confirmation Prompt -->
     <Confirmation_Prompt
@@ -162,3 +173,15 @@ const deleteAccount = async () => {
     </div>
   </div>
 </template>
+<style scoped>
+/* Ensure modals and overlays properly cover everything */
+.fixed.inset-0 {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+</style>
