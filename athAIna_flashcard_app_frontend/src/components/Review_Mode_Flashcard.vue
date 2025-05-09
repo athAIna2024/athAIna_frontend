@@ -31,7 +31,7 @@ const fetchStudysetName = async (studysetId) => {
       .first();
     studysetName.value = studyset ? studyset.title : "Unknown Studyset";
   } catch (error) {
-    console.error("Failed to fetch study set:", error);
+    // console.error("Failed to fetch study set:", error);
     studysetName.value = "Unknown Studyset";
   }
 };
@@ -163,7 +163,7 @@ const navigateToPreviousFlashcard = () => {
         name: 'Library_Page_Flashcard',
         params: {
           studySetTitle: studysetName.value,
-          studySetID: flashcard.studyset_id,
+          studySetId: flashcard.studyset_id,
         },
       }"
     >
@@ -188,22 +188,24 @@ const navigateToPreviousFlashcard = () => {
   </div>
 
   <div class="review-mode-container">
-    <button @click="navigateToPreviousFlashcard" class="prev-button">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="#69003D"
-        class="w-6 h-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15 19l-7-7 7-7"
-        />
-      </svg>
-    </button>
+    <div class="flex items-center justify-center w-1/6">
+      <button @click="navigateToPreviousFlashcard" class="prev-button">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="#69003D"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
+    </div>
     <div @click="flipCard" class="flashcard h-full">
       <div v-if="flashcard" class="card mx-12 h-48 py-80">
         <div
@@ -222,7 +224,10 @@ const navigateToPreviousFlashcard = () => {
                 <div class="font-semibold text-lg">
                   <h1></h1>
                 </div>
-                <div v-if="isValidImage" class="flex flex-col-reverse xl:flex-row p-0 items-center">
+                <div
+                  v-if="isValidImage"
+                  class="flex flex-col-reverse xl:flex-row p-0 items-center"
+                >
                   <div>
                     <h1
                       class="text-athAIna-violet text-xs sm:text-sm md:text-md 2xl:text-2xl p-10 lg:p-20 w-full"
@@ -275,7 +280,8 @@ const navigateToPreviousFlashcard = () => {
         </div>
       </div>
     </div>
-    <button @click="navigateToRandomFlashcard" class="next-button">
+    <div class="flex items-center justify-center w-1/6">
+      <button @click="navigateToRandomFlashcard" class="next-button">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -287,6 +293,7 @@ const navigateToPreviousFlashcard = () => {
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </button>
+    </div>
   </div>
 </template>
 
@@ -303,15 +310,6 @@ const navigateToPreviousFlashcard = () => {
 }
 .answer {
   transform: rotateX(180deg);
-}
-.circle-button {
-  background-color: white;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 }
 
 .review-mode-container {

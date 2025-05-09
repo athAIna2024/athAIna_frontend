@@ -12,18 +12,19 @@ const flashcard = ref(null);
 onMounted(async () => {
   try {
     flashcard.value = await flashcardsDB.flashcards.get(
-        Number(flashcardId.value)
+      Number(flashcardId.value)
     );
-    console.log(flashcardId.value);
+    // console.log(flashcardId.value);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 });
 </script>
 
 <template>
   <div class="p-10">
-    <Review_Mode_Flashcard :flashcard="flashcard" />
+    <Review_Mode_Flashcard v-if="flashcard" :flashcard="flashcard" />
+    <div v-else>Loading flashcard...</div>
   </div>
 </template>
 
