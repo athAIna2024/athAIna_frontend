@@ -79,7 +79,7 @@ const updateFlashcard = async () => {
     message.value = response.data.message;
 
 
-    console.log(response.data.data.image);
+    // console.log(response.data.data.image);
 
     const updateFlashcard = {
       id: Number(flashcardId),
