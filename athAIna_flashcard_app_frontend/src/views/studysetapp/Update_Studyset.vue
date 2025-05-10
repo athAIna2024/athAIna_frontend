@@ -25,6 +25,7 @@ const message_updated = ref("");
 
 const showSuccessMessage = ref(false);
 
+const isDataFetched = ref(false);
 
 const modals = ref({ subjectSelectModal: false });
 
@@ -108,6 +109,8 @@ const fetchStudySetData = async () => {
       isSuccessful_retrieved.value = false;
       message_retrieved.value = "An error occurred. Please try again later.";
     }
+  } finally {
+    isDataFetched.value = true;
   }
 };
 
@@ -165,26 +168,6 @@ const updateStudySet = async () => {
   }
 };
 
-watch(() => title.value, (newValue) => {
-  if (newValue.trim() !== "") {
-    field_errors.value.title = ""; // Clear the error
-  }
-  message_updated.value = ""; // Always reset the message
-});
-
-watch(() => subject.value, (newValue) => {
-  if (newValue?.key) {
-    field_errors.value.subject = ""; // Clear the error
-  }
-  message_updated.value = ""; // Always reset the message
-});
-
-watch(() => description.value, (newValue) => {
-  if (newValue.trim() !== "") {
-    field_errors.value.description = ""; // Clear the error
-  }
-  message_updated.value = ""; // Always reset the message
-});
 </script>
 
 <template>
