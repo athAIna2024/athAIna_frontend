@@ -94,10 +94,10 @@ const resetSearchResults = () => {
               :to="{ name: 'Review_Mode', params: { id: props.flashcardId } }"
               @click="resetSearchResults"
             >
-              <div v-if="question.length > 50">
+              <div v-if="question.length > 50" class="text-wrap break-words">
                 {{ question.substring(0, 50) + "..." }}
               </div>
-              <div v-else>
+              <div v-else class="text-wrap break-words">
                 {{ question }}
               </div>
             </router-link>
@@ -151,4 +151,12 @@ const resetSearchResults = () => {
   />
 </template>
 
-<style scoped></style>
+<style scoped>
+.text-wrap
+{
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+</style>
