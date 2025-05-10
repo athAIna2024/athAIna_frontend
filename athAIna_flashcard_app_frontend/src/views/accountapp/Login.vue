@@ -100,25 +100,36 @@ const login = async () => {
       // console.log(response.data.error);
     }
   } catch (error) {
-    // console.log(error.value);
-    if (error.response.status === 400 || error.response.status === 401) {
-      errors.value.email = error.response.data.email || [];
+    console.error("Login error:", error);
 
-      if (errors.value.password) {
-        if (!error.response.data.email) {
+    // Make sure we handle all possible error structures
+    if (
+      error.response &&
+      (error.response.status === 400 || error.response.status === 401)
+    ) {
+      errors.value.email = error.response?.data?.email || [];
+
+      if (error.response?.data?.password) {
+        if (!error.response?.data?.email) {
           handleFailedAttempt(userId);
         }
         errors.value.password = error.response.data.password || [];
       }
-      if (error.response.data.non_field_errors) {
+      if (error.response?.data?.non_field_errors) {
         errors.value.email.push(...error.response.data.non_field_errors);
       }
+
+      errors.value.general =
+        error.response?.data?.error ||
+        error.response?.data?.detail ||
+        "Login failed";
     } else {
-      errors.value.general = error.response.data.error || error.response.data.detail;
+      // Handle any other types of errors
+      errors.value.general = "An unexpected error occurred. Please try again.";
     }
   } finally {
     isLoading.value = false;
-    // console.log("Logging in done...", isLoading.value);
+    console.log("Login process completed. isLoading set to:", isLoading.value);
   }
 };
 
@@ -140,7 +151,7 @@ const handleFailedAttempt = (userId) => {
     :loadingMessage="'Please wait a minute'"
     :loadingHeader="'Logging in...'"
     :isVisible="isLoading"
-    :condition="!isLoading"
+    :condition="true"
   />
 
   <div class="flex flex-row gap-x-0 mt-8 my-16 mr-16 ml-14 p-0 max-h-screen">
