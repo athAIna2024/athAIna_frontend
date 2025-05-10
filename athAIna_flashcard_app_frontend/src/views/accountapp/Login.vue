@@ -113,8 +113,9 @@ const login = async () => {
       if (error.response.data.non_field_errors) {
         errors.value.email.push(...error.response.data.non_field_errors);
       }
-    } else {
+
       errors.value.general = error.response.data.error || error.response.data.detail;
+      console.log(error.response.data);
     }
   } finally {
     isLoading.value = false;
