@@ -1,9 +1,10 @@
 <script setup>
-import { ref, watch } from "vue";
-import axios from "@/axios";
+import { ref } from 'vue';
+import { watch } from 'vue';
+import axios from '@/axios';
 import studySetDb from "@/views/studysetapp/dexie.js";
 import Success_Message from "@/components/Success_Message.vue";
-import { useUserStore } from "../../../stores/userStore.js";
+import {useUserStore} from "../../../stores/userStore.js";
 import Subject_Selector from "@/components/Subject_Selector.vue";
 import Floating_Dropdown from "@/components/Floating_Dropdown.vue";
 import Filter_Bar_Studyset from "@/components/Filter_Bar_Studyset.vue";
@@ -15,7 +16,6 @@ const message = ref("");
 const title = ref("");
 const description = ref("");
 const subject = ref({});
-const previousSubject = ref({}); // Add this line
 
 const userStore = useUserStore();
 const learnerId = userStore.getUserID();
@@ -23,28 +23,29 @@ const learnerId = userStore.getUserID();
 const props = defineProps({
   isVisible: {
     type: Boolean,
-    required: true,
+    required: true
   },
   title: {
     type: String,
-    default: "Modal Title",
-  },
+    default: "Modal Title"
+  }
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 
 const clearSubjectSelected = () => {
   subject.value = {};
 };
 
 const close = () => {
+
   title.value = "";
   description.value = "";
   subject.value = {};
 
   message.value = "";
   field_errors.value = {};
-  emit("close");
+  emit('close');
 };
 const modals = ref({ subjectSelectModal: false });
 
@@ -54,29 +55,26 @@ const toggleModal = (modalName) => {
 
 const updateSubject = (key, value) => {
   subject.value = { key, value };
-  toggleModal("subjectSelectModal");
+  toggleModal('subjectSelectModal');
 };
 
-watch(
-  () => props.isVisible,
-  (newValue) => {
-    if (newValue) {
-      document.title = `${props.title}`;
-    } else {
-      document.title = `Library – athAIna`;
-    }
+watch(() => props.isVisible, (newValue) => {
+  if (newValue) {
+    document.title = `${props.title}`;
+  } else {
+    document.title = `Library – athAIna`;
   }
-);
+});
 
 const saveStudySet = async () => {
   try {
     const requestData = {
       learner_instance: Number(learnerId), // Ensure this is an integer
       title: title.value,
-      subject: subject.value.key, // Ensure this matches the field name in your serializer
+      subject: subject.value.key // Ensure this matches the field name in your serializer
     };
 
-    if (description.value !== null && description.value !== "") {
+    if (description.value !== null && description.value !== '') {
       requestData.description = description.value;
     }
 
@@ -94,7 +92,7 @@ const saveStudySet = async () => {
       flashcard_count: Number(0),
       created_at: Date(request.data.data.created_at),
       updated_at: Date(request.data.data.updated_at),
-    };
+    }
 
     await studySetDb.studysets.add(newStudySet);
     // console.log(studySetDb.studysets.get({ id: newStudySet.id }));
@@ -102,56 +100,48 @@ const saveStudySet = async () => {
     if (isSuccessful.value) {
       close();
     }
+
+
   } catch (error) {
+
     if (error.response.status === 400) {
       isSuccessful.value = error.response.data.successful;
       message.value = error.response.data.message;
 
       field_errors.value = Object.fromEntries(
-        Object.entries(error.response.data.errors).map(([key, value]) => [
-          key,
-          value[0],
-        ])
+          Object.entries(error.response.data.errors).map(([key, value]) => [key, value[0]])
       );
-    } else {
+    }
+    else {
       isSuccessful.value = false;
       message.value = "An error occurred. Please try again later.";
     }
   }
 };
 
-watch(
-  () => subject.value,
-  (newValue, oldValue) => {
-    if (newValue?.key !== oldValue?.key) {
-      field_errors.value.subject = "";
-      message.value = "";
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => title.value,
-  (newValue) => {
-    if (newValue.trim() !== "") {
-      field_errors.value.title = null;
-      message.value = "";
-    }
+watch(() => subject.value, (newValue) => {
+  if (newValue.key !== previousSubject.value.key) {
+    field_errors.value.subject = "";
+    message.value = "";
   }
-);
+}, { immediate: true });
 
-watch(
-  () => description.value,
-  (newValue) => {
-    if (newValue.trim() === "") {
-      message.value = "";
-    }
+watch(() => title.value, (newValue) => {
+  if (newValue.trim() !== "") {
+    field_errors.value.title = null;
+    message.value = "";
   }
-);
+});
+
+watch(() => description.value, (newValue) => {
+  if (newValue.trim() === "") {
+    message.value = "";
+  }
+});
 </script>
 
 <template>
+
   <Success_Message
     :isVisible="isSuccessful"
     :successHeader="'Saving studyset'"
@@ -160,105 +150,74 @@ watch(
   />
 
   <form @submit.prevent="saveStudySet">
-    <div
-      v-if="props.isVisible"
-      class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50"
-    >
-      <div
-        class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red z-50 p-[4px] w-[620px] rounded-[20px] shadow-lg w-96"
-        style="background-color: white !important"
-      >
+    <div v-if="props.isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50">
+      <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red z-50 p-[4px] w-[620px] rounded-[20px] shadow-lg w-96" style="background-color: white !important;">
         <div class="bg-athAIna-white p-[30px] rounded-[15px] flex flex-col">
+
           <div class="flex justify-end mb-[30px]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              @click="close"
-              class="size-6 hover:cursor-pointer"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18 18 6M6 6l12 12"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" @click="close" class="size-6 hover:cursor-pointer">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </div>
           <div class="flex justify-center mb-[30px]">
             <h2 class="font-semibold text-[20px]">Create a Study Set</h2>
           </div>
 
-          <div
-            class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium"
-          >
-            <p>Study Set Name</p>
+          <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
+            <p> Study Set Name </p>
             <input
-              type="text"
-              placeholder="Name"
-              class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"
-              v-model="title"
+                type="text"
+                placeholder="Name"
+                class="border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[5px] pl-[14px]"
+                v-model="title"
             />
-            <div
-              v-if="field_errors.title"
-              class="text-athAIna-red text-[14px] font-medium"
-            >
+            <div v-if="field_errors.title" class="text-athAIna-red text-[14px] font-medium">
               {{ field_errors.title }}
             </div>
+
           </div>
 
-          <div
-            class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium"
-          >
-            <p>Subject</p>
+          <div class="flex flex-col justify-between gap-2 mb-[30px] text-[16px] font-medium">
+            <p> Subject </p>
             <div class="relative flex w-full max-h-full">
               <Subject_Selector
-                @click="toggleModal('subjectSelectModal')"
-                @cancel="clearSubjectSelected"
-                class="relative w-full"
-                :placeholder="'Choose Subject'"
-                :outerClass="''"
-                :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
-                v-model="subject.value"
+                  @click="toggleModal('subjectSelectModal')"
+                  @cancel="clearSubjectSelected"
+                  class="relative w-full"
+                  :placeholder="'Choose Subject'"
+                  :outerClass="''"
+                  :innerClass="'border-athAIna-violet border-solid border-[3px] rounded-[20px] text-[14px] p-[5px] pl-[14px]'"
+                  v-model="subject.value"
               />
 
               <div class="">
                 <Floating_Dropdown
-                  v-if="modals.subjectSelectModal"
-                  class="lg:w-full w-full sm:w-full"
-                  top="50px"
-                  right="0px"
-                  height="max-content"
-                  width="full"
-                  @update:modelValue="
-                    ({ key, value }) => updateSubject(key, value)
-                  "
+                    v-if="modals.subjectSelectModal"
+                    class="lg:w-full w-full sm:w-full"
+                    top="50px"
+                    right="0px"
+                    height="max-content"
+                    width="full"
+                    @update:modelValue="({ key, value }) => updateSubject(key, value)"
                 />
               </div>
+
             </div>
 
-            <div
-              v-if="field_errors.subject"
-              class="text-athAIna-red text-[14px] font-medium"
-            >
+            <div v-if="field_errors.subject" class="text-athAIna-red text-[14px] font-medium">
               {{ field_errors.subject }}
             </div>
           </div>
 
-          <div
-            class="flex flex-col justify-between gap-2 mb-[25px] text-[16px] font-medium"
-          >
-            <p>Description</p>
+
+          <div class="flex flex-col justify-between gap-2 mb-[25px] text-[16px] font-medium">
+            <p> Description </p>
             <textarea
-              placeholder="Type Description (Optional)"
-              class="focus:outline-none text-athAIna-orange border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[14px] pl-[14px] h-[82px]"
-              v-model="description"
+                placeholder="Type Description (Optional)"
+                class="focus:outline-none text-athAIna-orange border-athAIna-violet border-solid border-[3px] rounded-[20px] placeholder-athAIna-orange text-[14px] p-[14px] pl-[14px] h-[82px]"
+                v-model="description"
             />
-            <div
-              v-if="field_errors.description"
-              class="text-athAIna-red text-[14px] font-medium"
-            >
+            <div v-if="field_errors.description" class="text-athAIna-red text-[14px] font-medium">
               {{ field_errors.description }}
             </div>
           </div>
@@ -269,16 +228,18 @@ watch(
             </div>
           </div>
 
-          <div></div>
+          <div>
+
+          </div>
           <div class="flex justify-end mb-[20px]">
-            <button type="submit" class="btn font-medium w-[200px]">
-              Create Study Set
-            </button>
+            <button type="submit" class="btn font-medium w-[200px]"> Create Study Set </button>
           </div>
         </div>
+
       </div>
     </div>
   </form>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
