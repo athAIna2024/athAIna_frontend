@@ -114,7 +114,7 @@ const login = async () => {
         errors.value.email.push(...error.response.data.non_field_errors);
       }
     } else {
-      errors.value.general = error.response.data.error;
+      errors.value.general = error.response.data.error || error.response.data.detail;
     }
   } finally {
     isLoading.value = false;
