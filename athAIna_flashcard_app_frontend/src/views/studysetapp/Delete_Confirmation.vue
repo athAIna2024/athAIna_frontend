@@ -1,0 +1,51 @@
+<script setup>
+import { watch, defineProps, defineEmits } from 'vue';
+import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
+
+const props = defineProps({
+  isVisible: {
+    type: Boolean,
+    required: true,
+  },
+  title: {
+    type: String,
+    default: "Modal Title",
+  },
+});
+
+const emit = defineEmits(['close']);
+
+const close = () => {
+  emit('close');
+};
+
+watch(() => props.isVisible, (newValue) => {
+  if (newValue) {
+    document.title = `${props.title}`;
+  } else {
+    document.title = route.meta.title;
+  }
+});
+</script>
+
+<template>
+  <div v-if="isVisible" class="fixed inset-0 flex items-center justify-center bg-athAIna-black bg-opacity-50 z-50">
+    <div class="bg-gradient-to-br from-athAIna-yellow via-athAIna-orange to-athAIna-red p-[4px] rounded-[20px] flex flex-col w-[350px] font-semibold">
+      <div class="flex flex-col justify-between space-y-3 items-center bg-athAIna-white p-[35px] rounded-[15px]">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="green" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <p> Study Set Deleted </p>
+
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+
+</style>

@@ -1,23 +1,27 @@
 <script setup>
-
-import Guest_Navbar from '@/components/Guest_Navbar.vue';
+import { useAuthStore } from "../stores/authStore.js";
+import Guest_Navbar from "@/components/Guest_Navbar.vue";
 import Learner_Navbar from "@/components/Learner_Navbar.vue";
+import Footer_Navbar from "@/components/Footer_Navbar.vue";
+import { computed } from "vue";
 
+const authStore = useAuthStore();
+const isLoggedIn = computed(() => authStore.isLoggedIn);
 </script>
 
-<template>
-  <header>
-<!--    Put logic here if the user is authenticated and is a learner or a guest-->
-      <Guest_Navbar />
-      <Learner_Navbar />
+<template class="flex flex-col min-h-screen">
+  <header v-if="$route.name !== 'NotFound'">
+    <Guest_Navbar v-if="!isLoggedIn" />
+    <Learner_Navbar v-if="isLoggedIn" />
   </header>
 
-  <main>
+  <main class="bg-athAIna-white">
     <router-view />
-
   </main>
+
+  <footer v-if="$route.name !== 'NotFound'">
+    <Footer_Navbar />
+  </footer>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

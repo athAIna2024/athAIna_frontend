@@ -1,0 +1,572 @@
+<script setup>
+import { ref, onMounted, reactive } from "vue"; // Added reactive import
+import { useRoute, useRouter } from "vue-router";
+import axios from "@/axios";
+import { useAuthStore } from "../../../stores/authStore";
+import axiosInstance from "@/axiosConfig";
+import Cookies from "js-cookie";
+import Loading_Modal from "@/components/Loading_Modal.vue";
+import Success_Message from "@/components/Success_Message.vue"; // Import Success_Message component
+// Import all required stores
+import { useFlashcardSearchStore } from "../../../stores/flashcardSearchStore.js";
+import { useStudysetStore } from "../../../stores/studySetStore.js";
+import { useLockedUsersStore } from "../../../stores/lockedUsersStore.js";
+import { useStudySetSearchStore } from "../../../stores/studySetSearchStore.js";
+import { useUserStore } from "../../../stores/userStore.js";
+import { useTestModeStore } from "../../../stores/testModeStore.js";
+
+// Initialize all stores
+const authStore = useAuthStore();
+const flashcardSearchStore = useFlashcardSearchStore();
+const studysetStore = useStudysetStore();
+const lockedUsersStore = useLockedUsersStore();
+const studySetSearchStore = useStudySetSearchStore();
+const userStore = useUserStore();
+const testModeStore = useTestModeStore();
+
+const goBackToLibrary = () => {
+  router.push({
+    name: "Library_Page_Studyset",
+  });
+};
+
+const isLoading = ref(false);
+const isLoadingModalVisible = ref(false); // Add this for loading modal visibility
+const isSuccessMessageVisible = ref(false); // Add this for success message visibility
+
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    required: true,
+  },
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const oldPassword = ref("");
+const newPassword = ref("");
+const confirmPassword = ref("");
+const success = ref(null);
+
+// Replace single error with field-specific errors
+const errors = reactive({
+  old_password: "",
+  new_password: "",
+  confirm_new_password: "",
+  general: "",
+});
+
+// Get token and uidb64 from URL parameters
+const token = route.params.token;
+const uidb64 = route.params.uidb64;
+
+const showPassword = ref(false);
+const showPassword2 = ref(false);
+const showPassword3 = ref(false);
+
+const togglePassword = () => {
+  showPassword.value = !showPassword.value;
+};
+
+const togglePassword2 = () => {
+  showPassword2.value = !showPassword2.value;
+};
+
+const togglePassword3 = () => {
+  showPassword3.value = !showPassword3.value;
+};
+
+// Add the logout function
+const logout = async () => {
+  try {
+    // Clear all cookies
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    Cookies.remove("athAIna_csrfToken");
+
+    // Clear session storage
+    sessionStorage.clear();
+
+    // Clear IndexedDB
+    let dbs = await indexedDB.databases();
+    dbs.forEach((db) => {
+      indexedDB.deleteDatabase(db.name);
+    });
+
+    // Clear all stores
+    authStore.logout();
+    flashcardSearchStore.clear();
+    studysetStore.clear();
+    studySetSearchStore.clear();
+    testModeStore.clear();
+    userStore.clear();
+
+    // Redirect will happen after the success message timeout
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
+
+// Enhanced updatePassword function with better error handling
+const updatePassword = async () => {
+  // Clear previous errors
+  Object.keys(errors).forEach((key) => {
+    if (Array.isArray(errors[key])) {
+      errors[key] = [];
+    } else {
+      errors[key] = "";
+    }
+  });
+  success.value = null;
+
+  // Only check for empty fields in frontend
+  if (!oldPassword.value) {
+    errors.old_password = "Old password is required";
+    return;
+  }
+
+  if (!newPassword.value) {
+    errors.new_password = "New password is required";
+    return;
+  }
+
+  if (!confirmPassword.value) {
+    errors.confirm_new_password = "Please confirm your new password";
+    return;
+  }
+
+  // Show loading modal and set loading state
+  isLoading.value = true;
+  isLoadingModalVisible.value = true;
+
+  try {
+    const response = await axiosInstance.patch(
+      `/account/change-password/${uidb64}/${token}/`,
+      {
+        old_password: oldPassword.value,
+        new_password: newPassword.value,
+        confirm_new_password: confirmPassword.value,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (response.status === 200) {
+      // Hide loading modal and show success message
+      isLoadingModalVisible.value = false;
+      isSuccessMessageVisible.value = true;
+
+      // Log out the user
+      await logout();
+
+      // Redirect to login page after successful password reset
+      setTimeout(() => {
+        router.push({
+          name: "Login",
+        });
+      }, 2000);
+    }
+  } catch (err) {
+    // Handle backend validation errors
+    isLoadingModalVisible.value = false;
+
+    // Parse and display backend errors
+    if (err.response?.data) {
+      const responseData = err.response.data;
+
+      // Check for message in the response
+      if (responseData.message) {
+        if (typeof responseData.message === "string") {
+          // Handle single error message
+          if (responseData.message.includes("Password must:")) {
+            errors.new_password = responseData.message;
+          } else if (responseData.message.includes("passwords do not match")) {
+            errors.confirm_new_password = responseData.message;
+          } else if (
+            responseData.message.includes("Old password is incorrect")
+          ) {
+            errors.old_password = responseData.message;
+          } else if (
+            responseData.message.includes("same as the old password")
+          ) {
+            errors.new_password = responseData.message;
+          } else {
+            errors.general = responseData.message;
+          }
+        } else if (typeof responseData.message === "object") {
+          // Handle field-specific errors
+          if (responseData.message.old_password) {
+            errors.old_password = responseData.message.old_password[0];
+          }
+          if (responseData.message.new_password) {
+            errors.new_password = responseData.message.new_password[0];
+          }
+          if (responseData.message.confirm_new_password) {
+            errors.confirm_new_password =
+              responseData.message.confirm_new_password[0];
+          }
+          if (responseData.message.non_field_errors) {
+            errors.general = responseData.message.non_field_errors[0];
+          }
+        }
+      } else {
+        // Fallback error
+        errors.general = "An error occurred while changing your password";
+      }
+    } else {
+      errors.general = "An error occurred while changing your password";
+    }
+  } finally {
+    // Set loading state back to false after API call completes
+    isLoading.value = false;
+  }
+};
+
+// Add these functions for modal control
+const closeLoadingModal = () => {
+  isLoadingModalVisible.value = false;
+};
+
+const closeSuccessMessage = () => {
+  isSuccessMessageVisible.value = false;
+};
+</script>
+<template>
+  <div
+    class="flex flex-row min-h-screen mt-6 mb-12 items-center justify-center content-center text-center bg-center"
+  >
+    <!-- Right Card -->
+    <div
+      class="mt-8 ml-10 rotate-[-12deg] shadow-md w-[400px] h-[550px] rounded-lg bg-gradient-to-br from-athAIna-yellow to-athAIna-red"
+    ></div>
+
+    <!-- Left Card -->
+    <div
+      class="mt-16 mr-12 rotate-[15deg] shadow-md w-[400px] h-[500px] rounded-lg bg-gradient-to-bl from-athAIna-yellow to-athAIna-red"
+    ></div>
+
+    <!-- Middle Card -->
+    <div
+      class="absolute bg-gradient-to-b rounded-[15px] from-athAIna-yellow via-athAIna-orange to-athAIna-red w-[450px] h-[600px] bg-athAIna-white flex flex-col p-[5px]"
+    >
+      <div
+        class="absolute m-0 w-[440px] h-[590px] rounded-[10px] bg-athAIna-white flex flex-col p-10"
+      >
+        <div class="absolute top-8 left-8 z-10">
+          <button
+            @click="goBackToLibrary"
+            class="flex items-center text-athAIna-violet hover:text-athAIna-red transition-colors duration-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-6 h-6 mr-1"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              />
+            </svg>
+            <span class="font-medium">Back to Library</span>
+          </button>
+        </div>
+        <!-- Logo -->
+        <div class="mt-5 w-auto flex flex-row justify-center items-center">
+          <img
+            src="@/assets/athAIna.svg"
+            alt="Logo"
+            class="w-[185px] h-[111px] mb-3"
+          />
+        </div>
+
+        <!-- Title -->
+        <h1
+          class="text-athAIna-violet font-semibold text-lg w-full text-center"
+        >
+          Change Password
+        </h1>
+
+        <!-- Old Password Field -->
+        <div
+          class="m-2 mt-7 mb-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-auto"
+        >
+          <div class="relative flex flex-row items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+            <input
+              v-model="oldPassword"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Old Password"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+            />
+            <button
+              v-if="oldPassword"
+              @click="togglePassword"
+              type="button"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2"
+            >
+              <svg
+                v-if="showPassword"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 text-athAIna-violet"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 text-athAIna-violet"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Old password field error message -->
+        <div
+          v-if="errors.old_password"
+          class="text-athAIna-red text-xs mb-3 ml-4"
+        >
+          {{ errors.old_password }}
+        </div>
+
+        <!-- New Password Field -->
+        <div
+          class="m-2 mb-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-auto"
+        >
+          <div class="relative flex flex-row items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+            <input
+              v-model="newPassword"
+              :type="showPassword2 ? 'text' : 'password'"
+              placeholder="New Password"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+            />
+            <button
+              v-if="newPassword"
+              @click="togglePassword2"
+              type="button"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2"
+            >
+              <svg
+                v-if="showPassword2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 text-athAIna-violet"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 text-athAIna-violet"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- New password field error message -->
+        <div
+          v-if="errors.new_password"
+          class="text-athAIna-red text-xs mb-3 ml-4"
+        >
+          {{ errors.new_password }}
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div
+          class="m-2 mb-5 bg-gradient-to-br from-athAIna-violet to-athAIna-violet rounded-[20px] h-[40px] w-auto"
+        >
+          <div class="relative flex flex-row items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="size-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-athAIna-violet ml-2 mr-3"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+            <input
+              v-model="confirmPassword"
+              :type="showPassword3 ? 'text' : 'password'"
+              placeholder="Confirm New Password"
+              class="text-[14px] text-athAIna-violet placeholder-athAIna-violet focus: outline-none ring- ring-athAIna-yellow w-full rounded-[15px] m-[4px] h-[32px] flex flex-row items-center pl-[50px]"
+            />
+            <button
+              v-if="confirmPassword"
+              @click="togglePassword3"
+              type="button"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2"
+            >
+              <svg
+                v-if="showPassword3"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 text-athAIna-violet"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5 text-athAIna-violet"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm password field error message -->
+        <div
+          v-if="errors.confirm_new_password"
+          class="text-athAIna-red text-xs mb-3 ml-4"
+        >
+          {{ errors.confirm_new_password }}
+        </div>
+
+        <!-- Success Message -->
+        <div v-if="success" class="text-athAIna-violet text-center mt-2">
+          {{ success }}
+        </div>
+
+        <!-- General Error Message - Uncommented to display general errors -->
+        <div v-if="errors.general" class="text-athAIna-red text-center mt-2">
+          {{ errors.general }}
+        </div>
+
+        <!-- Change Password Button -->
+        <div class="flex mt-6 justify-center">
+          <button @click="updatePassword" class="btn w-full">
+            {{ "Change Password" }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <Loading_Modal
+      :loadingMessage="'Processing your password change'"
+      :loadingHeader="'Please wait'"
+      :isVisible="isLoadingModalVisible"
+      :condition="!isLoading"
+      @close="closeLoadingModal"
+    />
+
+    <!-- Success Message -->
+    <Success_Message
+      :successHeader="'Password Change Successful'"
+      :successMessage="'Your password has been updated. You will be logged out and redirected to login...'"
+      :isVisible="isSuccessMessageVisible"
+      @close="closeSuccessMessage"
+    />
+  </div>
+</template>
+
+<style scoped>
+.btn {
+  @apply bg-athAIna-violet py-2 px-4 rounded-lg hover:bg-opacity-90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  color: white;
+}
+</style>

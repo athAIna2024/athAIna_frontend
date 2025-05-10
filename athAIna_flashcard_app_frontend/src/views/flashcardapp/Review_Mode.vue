@@ -1,20 +1,31 @@
-<script>
-import Review_Mode_Flashcard from '@/components/Review_Mode_Flashcard.vue';
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import Review_Mode_Flashcard from "@/components/Review_Mode_Flashcard.vue";
+import Dexie from "dexie";
+import flashcardsDB from "./dexie";
 
-export default {
-  name: 'Review_Mode',
-  components: {Review_Mode_Flashcard},
-};
+const route = useRoute();
+const flashcardId = ref(route.params.id);
+const flashcard = ref(null);
 
+onMounted(async () => {
+  try {
+    flashcard.value = await flashcardsDB.flashcards.get(
+      Number(flashcardId.value)
+    );
+    // console.log(flashcardId.value);
+  } catch (error) {
+    // console.error(error);
+  }
+});
 </script>
 
 <template>
-  <div class="">
-    Review Mode
-    Refer to 4.3 View flashcards via review mode
+  <div class="p-10">
+    <Review_Mode_Flashcard v-if="flashcard" :flashcard="flashcard" />
+    <div v-else>Loading flashcard...</div>
   </div>
-  <Review_Mode_Flashcard />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

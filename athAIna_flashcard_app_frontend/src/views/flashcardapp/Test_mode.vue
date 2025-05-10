@@ -1,19 +1,181 @@
-<script>
+<script setup>
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+import { watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useTestModeStore } from '../../../stores/testModeStore.js';
+import { useStudysetStore } from '../../../stores/studySetStore.js';
+import flashcardsDB, {testModeDB} from '@/views/flashcardapp/dexie.js';
 import Test_Mode_Flashcard from '@/components/Test_Mode_Flashcard.vue';
+import Confirmation_Prompt from "@/components/Confirmation_Prompt.vue";
+import Test_Mode_Number_Of_Questions_Prompt from "@/components/Test_Mode_Number_Of_Questions_Prompt.vue";
 
-export default {
-  name: 'Test_Mode',
-  components: {Test_Mode_Flashcard},
+const router = useRouter();
+const testModeStore = useTestModeStore();
+const studySetStore = useStudysetStore();
+
+const studySetName = studySetStore.studySetTitle;
+const studySetId = studySetStore.studySetId;
+const batchId = testModeStore.batchId; // originally has ref but for testing atm it is gonna removed
+
+const progress = ref(testModeStore.currentQuestionIndex + 1);
+const flashcardId = ref(0);
+const flashcardIds = ref(testModeStore.testModeQuestions);
+const questionIndex = ref(testModeStore.currentQuestionIndex);
+const questionLength = ref(Number(testModeStore.numberOfQuestions));
+
+const flashcard = ref(null);
+const flashcardQuestion = ref('');
+const flashcardImage = ref('');
+const flashcardAnswer = ref('');
+
+const showConfirmation = ref(false);
+
+const correctAnswersCount = ref(0);
+const scorePercentage = ref(0);
+const feedbackMessage = ref("");
+
+const navigateToLibraryPage = () => {
+  showConfirmation.value = true;
 };
+
+const navigateBackToLibraryPage = () => {
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+};
+
+const closeConfirmation = () => {
+  showConfirmation.value = false;
+};
+
+const confirmNavigation = () => {
+  showConfirmation.value = false;
+  router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
+};
+
+const isTestModeVisible = ref(false);
+const openTest_Mode = () => {
+  isTestModeVisible.value = true;
+};
+
+const closeTest_Mode = () => {
+  isTestModeVisible.value = false;
+};
+
+const refreshTest_Mode = () => {
+  router.go();
+}
+
+const loadQuestion = async () => {
+  try {
+    flashcardId.value = flashcardIds.value[questionIndex.value];
+    // console.log("Flashcard ID", flashcardId.value);
+
+    if (flashcardId.value !== null && flashcardId.value !== undefined) {
+      const fetchedFlashcard = await flashcardsDB.flashcards.get(flashcardId.value);
+      flashcard.value = fetchedFlashcard;
+
+      flashcardQuestion.value = flashcard.value?.question || '';
+      flashcardAnswer.value = flashcard.value?.answer || '';
+      flashcardImage.value = flashcard.value?.image || '';
+
+      // console.log("Question", flashcardQuestion.value);
+    } else {
+      console.error("Invalid flashcard ID:", flashcardId.value);
+    }
+  } catch (error) {
+    console.error("Error fetching flashcard:", error);
+  }
+};
+
+const showSummaryOfScore = async () => {
+  const testResults = await testModeDB.test_field.where('batch_id').equals(batchId).toArray();
+  correctAnswersCount.value = testResults.filter(result => result.is_correct).length;
+  scorePercentage.value = ((correctAnswersCount.value / questionLength.value) * 100).toFixed(1);
+};
+
+
+watch(() => testModeStore.currentQuestionIndex, async (newValue, oldValue) => {
+  // console.log("Question index changed from", oldValue, "to", newValue);
+  if (progress.value < questionLength.value) {
+    progress.value = newValue + 1;
+    questionIndex.value = newValue;
+  }
+ await loadQuestion();
+});
+
+
+onMounted(() => {
+  loadQuestion();
+});
 
 </script>
 
 <template>
-  <div class="">
-    Test Mode
-    Refer to 4.4 View flashcards via Test mode
+
+  <div class="mx-6">
+    <div class="athAIna-border-inner p-6 h-[500px]]">
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-row space-x-6 my-2 items-center">
+          <button @click="navigateToLibraryPage">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+          </button>
+
+          <div>
+            Test mode for <span class="font-bold text-athAIna-violet text-athAIna-large">{{ studySetName}}</span>
+          </div>
+        </div>
+
+        <span class="font-bold"> {{progress}} / {{questionLength}} </span>
+      </div>
+
+      <Test_Mode_Flashcard :question="flashcardQuestion" :image="flashcardImage" :answer="flashcardAnswer" :flashcardId="flashcardId" @showScore="showSummaryOfScore" />
+
+      <div v-if="testModeStore.isTestCompleted">
+        <div class="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50 z-50 min-h-screen">
+          <div class="athAIna-border-outer p-1 flex flex-col w-[550px]">
+            <div class="athAIna-border-inner p-4 text-center">
+
+              <button @click="navigateBackToLibraryPage" class="flex flex-start">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+              </button>
+
+              <h1 v-if="scorePercentage >= 70" class="m-8 text-athAIna-lg font-semibold">
+                You have done well! Keep it up!
+              </h1>
+              <h1 v-else class="m-8 text-athAIna-lg font-semibold">
+                Don't give up! Keep practicing!
+              </h1>
+
+              <h1 v-if="scorePercentage >= 70" class="m-8 text-2xl text-athAIna-green font-semibold"> {{ scorePercentage }}% </h1>
+              <h1 v-else class="m-8 text-2xl text-athAIna-red font-semibold"> {{ scorePercentage }}% </h1>
+
+              <p class="m-8 text-athAIna-md"> {{ correctAnswersCount }}/{{ questionLength }} questions answered correctly </p>
+              <div class="m-8 flex justify-center">
+                <button class="btn w-48" @click="openTest_Mode"> Start New Test </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <Test_Mode_Flashcard />
+  <Test_Mode_Number_Of_Questions_Prompt
+    :is-visible="isTestModeVisible"
+    @close="closeTest_Mode"
+    @refresh="refreshTest_Mode"
+  />
+  <Confirmation_Prompt
+      :confirmQuestion="'Are you sure you want to leave? All progress will be lost.'"
+      :isVisible="showConfirmation"
+      @close="closeConfirmation"
+      @confirm="confirmNavigation"
+  />
 </template>
 
 <style scoped>
