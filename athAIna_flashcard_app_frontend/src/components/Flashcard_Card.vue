@@ -94,8 +94,8 @@ const resetSearchResults = () => {
               :to="{ name: 'Review_Mode', params: { id: props.flashcardId } }"
               @click="resetSearchResults"
             >
-              <div v-if="question.length > 100">
-                {{ question.substring(0, 100) + "..." }}
+              <div v-if="question.length > 50">
+                {{ question.substring(0, 50) + "..." }}
               </div>
               <div v-else>
                 {{ question }}
