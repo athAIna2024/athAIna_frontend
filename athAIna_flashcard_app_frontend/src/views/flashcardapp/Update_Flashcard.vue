@@ -7,6 +7,7 @@ import axios from '@/axios';
 import { onMounted } from 'vue';
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 import Success_Message from "@/components/Success_Message.vue";
+import  { watch } from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -162,6 +163,25 @@ const navigateToLibraryPage = () => {
 onMounted(() => {
   fetchFlashcardData();
 });
+
+watch(question, (newValue) => {
+  if (newValue.trim() !== "") {
+    field_errors.value.question = null;
+  }
+});
+
+watch(answer, (newValue) => {
+  if (newValue.trim() !== "") {
+    field_errors.value.answer = null;
+  }
+});
+
+watch(image, (newValue) => {
+  if (newValue || newValue === null) {
+    field_errors.value.image = null; // Clear the error if there's a new value or it's null
+  }
+});
+
 </script>
 <template>
   <Success_Message

@@ -7,6 +7,7 @@ import axios from '@/axios';
 import flashcardsDB from "@/views/flashcardapp/dexie.js";
 import studySetDb from "@/views/studysetapp/dexie.js";
 import Success_Message from "@/components/Success_Message.vue";
+import { watch } from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -85,6 +86,7 @@ const saveFlashcard = async () => {
       question.value = "";
       answer.value = "";
       image.value = "";
+      field_errors.value = {};
     }
 
   } catch (error) {
@@ -103,6 +105,24 @@ const saveFlashcard = async () => {
 const navigateToLibraryPage = () => {
   router.push({ name: 'Library_Page_Flashcard', params: { studySetTitle: studySetName, studySetId: studySetId } });
 };
+
+watch(question, (newValue) => {
+  if (newValue.trim() !== "") {
+    field_errors.value.question = null;
+  }
+});
+
+watch(answer, (newValue) => {
+  if (newValue.trim() !== "") {
+    field_errors.value.answer = null;
+  }
+});
+
+watch(image, (newValue) => {
+  if (newValue || newValue === null) {
+    field_errors.value.image = null; // Clear the error if there's a new value or it's null
+  }
+});
 
 </script>
 

@@ -47,6 +47,7 @@ const togglePassword2 = () => {
 };
 
 // Updated resetPassword function with better error handling
+// Replace the resetPassword function with this version:
 const resetPassword = async () => {
   // Clear previous errors
   Object.keys(errors).forEach((key) => {
@@ -58,7 +59,7 @@ const resetPassword = async () => {
   });
   success.value = null;
 
-  // Client-side validation
+  // Only check for empty fields in frontend
   if (!newPassword.value) {
     errors.password = "This field may not be blank.";
     return;
@@ -67,41 +68,6 @@ const resetPassword = async () => {
   if (!confirmPassword.value) {
     errors.confirm_password =
       "This field may not be blank, Please confirm your password";
-    return;
-  }
-
-  if (newPassword.value !== confirmPassword.value) {
-    errors.general = "Passwords do not match";
-    return;
-  }
-
-  // Check password length
-  if (newPassword.value.length < 8) {
-    errors.password = "Password must be longer than 8 characters";
-    return;
-  }
-
-  // Check if password is entirely numeric
-  if (/^\d+$/.test(newPassword.value)) {
-    errors.password = "Password cannot be entirely numeric";
-    return;
-  }
-
-  // Check for at least one number
-  if (!/\d/.test(newPassword.value)) {
-    errors.password = "Password must contain at least one number";
-    return;
-  }
-
-  // Check for at least one uppercase letter
-  if (!/[A-Z]/.test(newPassword.value)) {
-    errors.password = "Password must contain at least one uppercase letter";
-    return;
-  }
-
-  // Check for at least one special character
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword.value)) {
-    errors.password = "Password must contain at least one special character";
     return;
   }
 
@@ -129,10 +95,43 @@ const resetPassword = async () => {
       });
     }, 2000);
   } catch (err) {
-    // console.log(err.response?.data);
-    errors.general =
-      err.response?.data?.error ||
-      "An error occurred while resetting your password";
+    // Handle backend validation errors
+    isLoadingModalVisible.value = false;
+
+    // Parse and display backend errors
+    if (err.response?.data) {
+      const responseData = err.response.data;
+
+      // Check for message in the response
+      if (responseData.message) {
+        if (typeof responseData.message === "string") {
+          // Handle single error message (like "Passwords do not match" or "Password must: ...")
+          if (responseData.message.includes("Password must:")) {
+            errors.password = responseData.message;
+          } else if (responseData.message.includes("Passwords do not match")) {
+            errors.general = responseData.message;
+          } else {
+            errors.general = responseData.message;
+          }
+        } else if (typeof responseData.message === "object") {
+          // Handle field-specific errors
+          if (responseData.message.password) {
+            errors.password = responseData.message.password[0];
+          }
+          if (responseData.message.confirm_password) {
+            errors.confirm_password = responseData.message.confirm_password[0];
+          }
+          if (responseData.message.non_field_errors) {
+            errors.general = responseData.message.non_field_errors[0];
+          }
+        }
+      } else {
+        // Fallback error
+        errors.general = "An error occurred while resetting your password";
+      }
+    } else {
+      errors.general = "An error occurred while resetting your password";
+    }
   } finally {
     // Set loading state back to false after API call completes
     isLoading.value = false;

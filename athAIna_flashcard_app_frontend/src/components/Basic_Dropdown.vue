@@ -9,22 +9,22 @@ const props = defineProps({
   itemList: Array,
 });
 
-const emit = defineEmits(["close", "itemClick"]);
+const emit = defineEmits(["close", "itemClick", "update:modelValue"]);
 
 const dropdownRef = ref(null);
 
 const handleClickOutside = (event) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-    emit("close");
+    emit("update:modelValue", false); // Hide the modal
   }
 };
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
+  document.addEventListener("mousedown", handleClickOutside);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("click", handleClickOutside);
+  document.removeEventListener("mousedown", handleClickOutside);
 });
 
 </script>
