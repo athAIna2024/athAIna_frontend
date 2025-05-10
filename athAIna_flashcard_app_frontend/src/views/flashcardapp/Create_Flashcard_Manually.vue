@@ -39,6 +39,13 @@ const clearImage = () => {
   imageName.value = null;
 };
 
+function smoothReload() {
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    location.reload();
+  }, 500); // Match the duration of the CSS transition
+}
+
 // SAVE FLASHCARD IN INDEXEDDB
 const saveFlashcard = async () => {
   try {
@@ -82,11 +89,8 @@ const saveFlashcard = async () => {
 
     if (isSuccessful) {
       showSuccessMessage.value = true;
+      smoothReload();
 
-      question.value = "";
-      answer.value = "";
-      image.value = "";
-      field_errors.value = {};
     }
 
   } catch (error) {
