@@ -115,7 +115,7 @@ const login = async () => {
       }
 
       errors.value.general = error.response.data.error || error.response.data.detail;
-      console.log(error.response.data);
+      // console.log(error.response.data);
     }
   } finally {
     isLoading.value = false;
